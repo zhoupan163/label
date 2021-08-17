@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pxing.label.business.dao.LabelTaskDao">
+
+    <resultMap id="LabelTaskVo" type="com.pxing.label.business.domain.vo.LabelTaskVo"></resultMap>
+
+
+
+    <select id="selectLabelTaskList" resultMap="LabelTaskVo">
+        select
+          task_id,
+          task_name,
+          project_id,
+          size,
+          status,
+          create_by,
+          create_time,
+          remark
+        from label_task
+    </select>
+</mapper>

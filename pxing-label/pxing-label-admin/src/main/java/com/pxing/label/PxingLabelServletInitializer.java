@@ -1,0 +1,18 @@
+package com.pxing.label;
+
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
+/**
+ * web容器中进行部署
+ *
+ * @author pxing 官方网址：www.pxing.vip
+ */
+public class PxingLabelServletInitializer extends SpringBootServletInitializer
+{
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application)
+    {
+        return application.sources(PxingLabelApplication.class);
+    }
+}
