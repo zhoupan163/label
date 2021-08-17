@@ -38,6 +38,7 @@ public class LabelTaskServiceImp implements LabelTaskService {
        Query query=Query.query(Criteria.where("taskId").is(taskId));
        LabelTaskViaVo labelTaskViaVo= mongoTemplate.findOne(query,LabelTaskViaVo.class);
         //LabelTaskViaVo labelTaskViaVo= mongoOps.findOne(query,LabelTaskViaVo.class);
+        System.out.println(labelTaskViaVo.toString());
         List<LabelTaskViaVo> list= new ArrayList<>();
        list.add(labelTaskViaVo);
         return list;

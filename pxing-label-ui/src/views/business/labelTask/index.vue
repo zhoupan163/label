@@ -513,7 +513,7 @@ export default {
     handleUpdate(row) {
       var token=getToken();
       alert(token)
-      window.open('http://10.66.66.101:8082/?to=' + token + '&taskId=' + row.taskId);
+      window.open('http://10.66.66.101:8082/?token=' + token + '&taskId=' + row.taskId);
     },
     /** 选择任务权限范围触发 */
     dataScopeSelectChange(value) {
