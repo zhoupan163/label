@@ -37,7 +37,7 @@
         <mybatis-plus-boot.version>3.3.1</mybatis-plus-boot.version>
         <mongo.version>2.2.6.RELEASE</mongo.version>
         <test.version>2.2.5.RELEASE</test.version>
-        <junit.version>4.11</junit.version>
+        <junit.version>4.12</junit.version>
     </properties>
 
     <!-- 依赖声明 -->

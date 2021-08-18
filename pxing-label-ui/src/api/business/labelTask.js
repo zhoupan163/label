@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 查询角色列表
+// 查询标注任务
 export function listLabelTask(query) {
   return request({
     url: '/business/labelTask/list',
@@ -9,20 +9,28 @@ export function listLabelTask(query) {
   })
 }
 
-// 查询角色详细
-export function getRole(roleId) {
+// 分配视频标注任务到用户
+export function assigningTask(taskId,token) {
   return request({
-    url: '/system/role/' + roleId,
+    url: '/business/labelTask/assigningTask'+'?taskId='+ taskId.toString()+'&token='+ token.toString(),
     method: 'get'
   })
 }
 
-// 新增角色
-export function addRole(data) {
+// 查询未标注的stream
+export function getLabelTaskStream(taskName) {
   return request({
-    url: '/system/role',
-    method: 'post',
-    data: data
+    url: '/business/labelTask/getLabelTaskStream'+'?taskName='+ taskName.toString(),
+    method: 'get',
+  })
+}
+
+
+// 分配stream
+export function assignLabelTaskStream(streamId, taskName, token) {
+  return request({
+    url: '/business/labelTask/assignLabelTaskStream'+ '?streamId='+ streamId.toString()+ '&taskName=' +taskName+ '&token='+ token.toString(),
+    method: 'get',
   })
 }
 

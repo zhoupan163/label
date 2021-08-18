@@ -10,4 +10,6 @@ import java.util.List;
 public interface LabelTaskDao {
 
     List<LabelTaskVo> selectLabelTaskList(LabelTaskVo labelTaskVo);
+
+    void updateLabelBy(@Param("taskId") String taskId,@Param("labelBy")String labelBy);
 }

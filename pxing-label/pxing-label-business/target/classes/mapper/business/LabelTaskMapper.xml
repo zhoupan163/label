@@ -15,7 +15,13 @@
           status,
           create_by,
           create_time,
+          type,
+          label_by,
           remark
         from label_task
     </select>
+
+    <update id="updateLabelBy">
+      update label_task set label_by=#{labelBy} where task_id=#{taskId}
+    </update>
 </mapper>

@@ -34,6 +34,9 @@ public class LabelTaskVo {
     @ApiModelProperty("任务状态")
     private String status;
 
+    @ApiModelProperty("任务类型")
+    private String type;
+
     @ApiModelProperty("创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
@@ -41,10 +44,10 @@ public class LabelTaskVo {
     @ApiModelProperty("任务创建人")
     private String createBy;
 
+    @ApiModelProperty("任务标注人")
+    private String labelBy;
+
     @ApiModelProperty("任务备注")
     private String remark;
-
-
-
 
 }
