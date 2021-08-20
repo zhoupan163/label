@@ -3,9 +3,7 @@ package com.pxing.label.business.service;
 
 
 import com.mongodb.client.result.UpdateResult;
-import com.pxing.label.business.domain.vo.LabelTaskStreamVo;
-import com.pxing.label.business.domain.vo.LabelTaskViaVo;
-import com.pxing.label.business.domain.vo.LabelTaskVo;
+import com.pxing.label.business.domain.vo.*;
 
 
 import java.util.List;
@@ -25,7 +23,11 @@ public interface LabelTaskService {
 
     void labelTask(String taskId, String userName);
 
-    List<LabelTaskStreamVo> getLabelTaskStream(String taskName);
+    List<LabelStreamVo> getLabelTaskStream(String taskName);
 
     void assignLabelTaskStream(String streamId, String userName);
+
+    List<LabelTaskImageVo> getLabelTaskUnfinishedStream(String taskName, String token);
+
+    void changeStreamStatus(LabelViaProjectVo labelViaProjectVo);
 }

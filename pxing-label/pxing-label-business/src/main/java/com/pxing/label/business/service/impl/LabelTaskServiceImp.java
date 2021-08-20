@@ -3,10 +3,7 @@ package com.pxing.label.business.service.impl;
 
 import com.mongodb.client.result.UpdateResult;
 import com.pxing.label.business.dao.LabelTaskDao;
-import com.pxing.label.business.domain.vo.LabelTaskImageVo;
-import com.pxing.label.business.domain.vo.LabelTaskStreamVo;
-import com.pxing.label.business.domain.vo.LabelTaskViaVo;
-import com.pxing.label.business.domain.vo.LabelTaskVo;
+import com.pxing.label.business.domain.vo.*;
 import com.pxing.label.business.service.LabelTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -80,7 +77,7 @@ public class LabelTaskServiceImp implements LabelTaskService {
     }
 
     @Override
-    public List<LabelTaskStreamVo> getLabelTaskStream(String taskName) {
+    public List<LabelStreamVo> getLabelTaskStream(String taskName) {
         Query query1=Query.query(Criteria.where("task_name").is(taskName).and("label").is(""));
         List<LabelTaskImageVo> list=mongoTemplate.find(query1, LabelTaskImageVo.class);
         Map<String,Integer> map= new HashMap<>();
@@ -93,17 +90,17 @@ public class LabelTaskServiceImp implements LabelTaskService {
                 map.put(stream_id,1);
             }
         };
-        List<LabelTaskStreamVo> labelTaskStreamVoList=new ArrayList<>();
+        List<LabelStreamVo> labelStreamVoList =new ArrayList<>();
         for(String key : map.keySet()){
-             LabelTaskStreamVo labelTaskStreamVo= new LabelTaskStreamVo();
-             labelTaskStreamVo.setStreamId(key);
-             labelTaskStreamVo.setSize(map.get(key));
-             labelTaskStreamVo.setTaskName(taskName);
-             labelTaskStreamVoList.add(labelTaskStreamVo);
+             LabelStreamVo labelStreamVo = new LabelStreamVo();
+             labelStreamVo.setStreamId(key);
+             labelStreamVo.setSize(map.get(key));
+             labelStreamVo.setTaskName(taskName);
+             labelStreamVoList.add(labelStreamVo);
         };
 
 
-        return labelTaskStreamVoList;
+        return labelStreamVoList;
     }
 
     @Override
@@ -113,7 +110,25 @@ public class LabelTaskServiceImp implements LabelTaskService {
         update.set("label", userName );
         update.set("image_lock", 1);
         UpdateResult updateResult= mongoTemplate.updateMulti(query, update ,LabelTaskImageVo.class);
-        System.out.println(updateResult);
+        System.out.println(updateResult.toString());
         }
+
+    @Override
+    public List<LabelTaskImageVo> getLabelTaskUnfinishedStream(String taskName, String userName) {
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("label").is(userName).and("image_status").is("0"));
+        List<LabelTaskImageVo> list=mongoTemplate.find(query, LabelTaskImageVo.class);
+        return list;
+    }
+
+    @Override
+    public void changeStreamStatus(LabelViaProjectVo labelViaProjectVo) {
+        Query query=Query.query(Criteria.where("stream_id").is(labelViaProjectVo.getStream_id()));
+        Update update=new Update();
+        update.set("image_status", "1");
+        update.set("image_lock", "0");
+        UpdateResult updateResult= mongoTemplate.updateMulti(query, update ,LabelTaskImageVo.class);
+        System.out.println(updateResult.toString());
+
+    }
 
 }

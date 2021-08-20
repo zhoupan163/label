@@ -1,5 +1,6 @@
 package com.pxing.label.business.domain.vo;
 
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,35 +18,23 @@ import java.util.Date;
  * @since JDK1.8
  */
 @Data
-public class LabelTaskVo {
-
-    @ApiModelProperty("任务Id")
-    private Long taskId;
+public class LabelStreamVo {
+    //select stream_id, task_name, size, status, create_time, type, label_by, remark from label_stream where task_name=? and label_by= ?
+    @ApiModelProperty("stream_id")
+    private String streamId;
 
     @ApiModelProperty("任务名称")
     private String taskName;
 
-    @ApiModelProperty("关联工程id")
-    private Long projectId;
-
     @ApiModelProperty("图片数量")
-    private Long size;
+    private int size;
 
-    @ApiModelProperty("图片数量")
-    private Long finishedCount;
-
-    @ApiModelProperty("任务状态")
+    @ApiModelProperty("状态")
     private String status;
-
-    @ApiModelProperty("任务类型")
-    private String type;
 
     @ApiModelProperty("创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
-
-    @ApiModelProperty("任务创建人")
-    private String createBy;
 
     @ApiModelProperty("任务标注人")
     private String labelBy;
@@ -53,7 +42,4 @@ public class LabelTaskVo {
     @ApiModelProperty("任务备注")
     private String remark;
 
-    @ApiModelProperty("修改时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date updateTime;
 }

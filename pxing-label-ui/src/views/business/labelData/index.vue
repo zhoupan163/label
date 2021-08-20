@@ -63,7 +63,8 @@
       <el-table-column label="关联项目id" prop="projectId" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="任务状态" prop="status" width="120" />
       <el-table-column label="任务类型（0视频 1图片）" prop="type" width="120" />
-      <el-table-column label="图片数量" prop="size" width="120" />
+      <el-table-column label="图片总数量" prop="size" width="120" />
+      <el-table-column label="图片完成标注数量" prop="finishedCount" width="120" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
       <el-table-column labe
                        l="创建时间" align="center" prop="createTime" width="120">
@@ -77,10 +78,10 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
-            @click="handleImagesTask(scope.row)"
-            v-hasPermi="['business:labelTask:labelImages']"
-          >标注</el-button>
+            icon="el-icon-download"
+            @click="taskDownload(scope.row)"
+            v-hasPermi="['business:labelData:taskDownload']"
+          >下载</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -99,6 +100,7 @@
         <el-table-column label="stream_id" prop="streamId" width="120" />
         <el-table-column label="任务名称" prop="taskName" width="120" />
         <el-table-column label="图片数量" prop="size" width="120" />
+        <el-table-column label="状态" prop="status" width="120" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-button
@@ -107,7 +109,7 @@
               icon="el-icon-edit"
               @click="selectStream(scope.row)"
               v-hasPermi="['business:labelTask:labelTaskStreamSelect']"
-            >选取标注</el-button>
+            >选取下载</el-button>
           </template>
         </el-table-column>
       </el-table>

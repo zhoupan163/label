@@ -9,15 +9,15 @@ export function listLabelTask(query) {
   })
 }
 
-// 分配视频标注任务到用户
-export function assigningTask(taskId,token) {
+// 查询分配给自己却没有标注完成的stream
+export function getLabelTaskUnfinishedStream(taskName, token) {
   return request({
-    url: '/business/labelTask/assigningTask'+'?taskId='+ taskId.toString()+'&token='+ token.toString(),
-    method: 'get'
+    url: '/business/labelTask/getLabelTaskUnfinishedStream'+'?taskName='+ taskName.toString() +'&token='+ token.toString(),
+    method: 'get',
   })
 }
 
-// 查询未标注的stream
+// 查询未分配的stream
 export function getLabelTaskStream(taskName) {
   return request({
     url: '/business/labelTask/getLabelTaskStream'+'?taskName='+ taskName.toString(),
@@ -34,14 +34,7 @@ export function assignLabelTaskStream(streamId, taskName, token) {
   })
 }
 
-// 修改角色
-export function updateRole(data) {
-  return request({
-    url: '/system/role',
-    method: 'put',
-    data: data
-  })
-}
+
 
 // 角色数据权限
 export function dataScope(data) {

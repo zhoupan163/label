@@ -17,6 +17,7 @@
           create_time,
           type,
           label_by,
+          finished_count,
           remark
         from label_task
     </select>

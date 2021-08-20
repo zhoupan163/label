@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pxing.label.business.dao.LabelStreamDao">
+
+    <resultMap id="LabelStreamVo" type="com.pxing.label.business.domain.vo.LabelStreamVo"></resultMap>
+
+
+
+    <select id="getLabelTaskUnfinishedStream" resultMap="LabelStreamVo">
+        select
+          stream_id,
+          task_name,
+          size,
+          status,
+          create_time,
+          type,
+          label_by,
+          remark
+        from label_stream
+        where task_name=#{taskName} and label_by= #{labelBy} and status=0
+    </select>
+</mapper>

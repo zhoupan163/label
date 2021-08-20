@@ -2,14 +2,10 @@ package com.pxing.label.web.controller.business;
 
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.mongodb.client.result.UpdateResult;
-import com.pxing.label.business.domain.vo.LabelTaskStreamVo;
-import com.pxing.label.business.domain.vo.LabelTaskViaVo;
 import com.pxing.label.business.domain.vo.LabelViaProjectVo;
+import com.pxing.label.business.service.LabelTaskService;
 import com.pxing.label.business.service.LabelViaService;
 import com.pxing.label.common.core.controller.BaseController;
-import com.pxing.label.common.core.domain.model.LoginUser;
 import com.pxing.label.common.core.page.TableDataInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +25,9 @@ public class LabelViaController extends BaseController
     @Autowired
     private LabelViaService labelViaService;
 
+    @Autowired
+    private LabelTaskService labelTaskService;
+
     @GetMapping("/getStreamViaInfo")
     @ResponseBody
     public TableDataInfo getStreamViaInfo(@RequestParam("streamId")String streamId)
@@ -40,13 +39,24 @@ public class LabelViaController extends BaseController
 
     @PostMapping("/updateStreamViaInfo")
     @ResponseBody
-    //@RequestBody JSONObject params
-    public TableDataInfo getTaskViaInfo(@RequestBody String params)
+    public TableDataInfo updateTaskViaInfo(@RequestBody String params)
     {
         startPage();
-
         LabelViaProjectVo labelViaProjectVo= JSON.parseObject(params,LabelViaProjectVo.class);
         List<LabelViaProjectVo> list = labelViaService.updateSreamViaProject(labelViaProjectVo);
+        //labelTaskService.changeStreamStatus(labelViaProjectVo);
+        return getDataTable(new ArrayList<>());
+    }
+
+    @PostMapping("/commitStreamViaInfo")
+    @ResponseBody
+    //@RequestBody JSONObject params
+    public TableDataInfo commitStreamVia(@RequestBody String params)
+    {
+        startPage();
+        LabelViaProjectVo labelViaProjectVo= JSON.parseObject(params,LabelViaProjectVo.class);
+        List<LabelViaProjectVo> list = labelViaService.updateSreamViaProject(labelViaProjectVo);
+        labelTaskService.changeStreamStatus(labelViaProjectVo);
         return getDataTable(new ArrayList<>());
     }
 

@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.result.UpdateResult;
+import com.pxing.label.business.domain.vo.LabelStreamVo;
 import com.pxing.label.business.domain.vo.LabelTaskImageVo;
 import com.pxing.label.business.domain.vo.LabelTaskViaVo;
 import com.pxing.label.business.domain.vo.LabelViaProjectVo;
+import com.pxing.label.business.service.LabelStreamService;
 import com.pxing.label.business.service.LabelTaskService;
 import com.pxing.label.business.service.LabelViaService;
 import org.junit.Test;
@@ -100,6 +102,23 @@ public class SmartAdminApplicationTests {
         String taskName="pedestrian_reid";
         String streamId="4134cf44-ffd4-11eb-92e8-000c293913c8";
         labelViaService.getSreamViaProject(streamId);
+    }
+
+    @Test
+    public void test7(){
+        Query query=Query.query(Criteria.where("image_status").is("label"));
+        Update update=new Update();
+        update.set("image_status", "0");
+        UpdateResult updateResult= mongoTemplate.updateMulti(query, update ,LabelTaskImageVo.class);
+        System.out.println(updateResult.toString());
+    }
+
+    @Autowired
+    private LabelStreamService labelStreamService;
+    @Test
+    public void test8(){
+        List<LabelStreamVo> list= labelStreamService.getLabelTaskUnfinishedStream("pedestrian_reid","admin");
+        System.out.println("succ");
 
     }
 
