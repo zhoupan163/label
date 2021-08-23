@@ -1,6 +1,8 @@
 package com.pxing.label.business.service.impl;
 
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.mongodb.client.result.UpdateResult;
 import com.pxing.label.business.dao.LabelTaskDao;
 import com.pxing.label.business.domain.vo.*;
@@ -30,8 +32,19 @@ public class LabelTaskServiceImp implements LabelTaskService {
 
     @Override
     public List<LabelTaskVo> selectLabelTaskList(LabelTaskVo labelTaskVo) {
-        List<LabelTaskVo> list=labelTaskDao.selectLabelTaskList(labelTaskVo);
-        return list;
+        List<LabelTaskVo> list1=new ArrayList<>();
+        List<LabelTaskVo> list= labelTaskDao.selectLabelTaskList(labelTaskVo);
+        for(LabelTaskVo labelTaskVo1: list){
+            Query query=Query.query(Criteria.where("task_name").is(labelTaskVo1.getTaskName()));
+            long size= mongoTemplate.count(query, LabelTaskImageVo.class);
+            Query query1= Query.query(Criteria.where("task_name").is(labelTaskVo1.getTaskName()).and("image_status").is("finished"));
+            long finishedCount= mongoTemplate.count(query1, LabelTaskImageVo.class);
+            labelTaskVo1.setSize(size);
+            labelTaskVo1.setFinishedCount(finishedCount);
+
+            list1.add(labelTaskVo1);
+        }
+        return list1;
     }
 
     @Override
@@ -115,7 +128,7 @@ public class LabelTaskServiceImp implements LabelTaskService {
 
     @Override
     public List<LabelTaskImageVo> getLabelTaskUnfinishedStream(String taskName, String userName) {
-        Query query=Query.query(Criteria.where("task_name").is(taskName).and("label").is(userName).and("image_status").is("0"));
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("label").is(userName).and("image_status").is("label"));
         List<LabelTaskImageVo> list=mongoTemplate.find(query, LabelTaskImageVo.class);
         return list;
     }
@@ -124,11 +137,31 @@ public class LabelTaskServiceImp implements LabelTaskService {
     public void changeStreamStatus(LabelViaProjectVo labelViaProjectVo) {
         Query query=Query.query(Criteria.where("stream_id").is(labelViaProjectVo.getStream_id()));
         Update update=new Update();
-        update.set("image_status", "1");
+        update.set("image_status", "finished");
         update.set("image_lock", "0");
         UpdateResult updateResult= mongoTemplate.updateMulti(query, update ,LabelTaskImageVo.class);
         System.out.println(updateResult.toString());
 
+    }
+
+    @Override
+    public List<LabelTaskImageVo> getFinishedImageList(String taskName) {
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("image_status").is("finished"));
+        List<LabelTaskImageVo> list=mongoTemplate.find(query, LabelTaskImageVo.class);
+        return list;
+    }
+
+    @Override
+    public List<Update> updateLabelTaskImages(LabelViaProjectVo labelViaProjectVo) {
+        JSONObject via_img_metadata= labelViaProjectVo.getVia_img_metadata();
+        for (String jpgUrl : labelViaProjectVo.getVia_image_id_list()) {
+             JSONArray regions= via_img_metadata.getJSONObject(jpgUrl).getJSONArray("regions");
+             Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl));
+             Update update= new Update();
+             update.set("annotationInfo", regions);
+             mongoTemplate.updateFirst(query, update,LabelTaskImageVo.class);
+        }
+        return null;
     }
 
 }

@@ -5,6 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
+
 /**
  *  [标注任务]
  *
@@ -44,10 +47,10 @@ public class LabelTaskImageVo {
     private String file_date;
 
     @ApiModelProperty("width")
-    private String width;
+    private Double width;
 
     @ApiModelProperty("height")
-    private String height;
+    private Double height;
 
     @ApiModelProperty("png_url")
     private String png_url;
@@ -83,7 +86,7 @@ public class LabelTaskImageVo {
     private String qa2;
 
     @ApiModelProperty("标注属性")
-    private JSONObject annotationInfo;
+    private List<JSONObject> annotationInfo;
 
 
 }

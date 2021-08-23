@@ -8,6 +8,7 @@ import com.pxing.label.business.service.LabelViaService;
 import com.pxing.label.common.core.controller.BaseController;
 import com.pxing.label.common.core.page.TableDataInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class LabelViaController extends BaseController
     {
         startPage();
         LabelViaProjectVo labelViaProjectVo= JSON.parseObject(params,LabelViaProjectVo.class);
+        List<Update> list1= labelTaskService.updateLabelTaskImages(labelViaProjectVo);
         List<LabelViaProjectVo> list = labelViaService.updateSreamViaProject(labelViaProjectVo);
         //labelTaskService.changeStreamStatus(labelViaProjectVo);
         return getDataTable(new ArrayList<>());

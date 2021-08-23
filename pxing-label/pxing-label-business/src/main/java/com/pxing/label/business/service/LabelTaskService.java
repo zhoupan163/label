@@ -4,6 +4,7 @@ package com.pxing.label.business.service;
 
 import com.mongodb.client.result.UpdateResult;
 import com.pxing.label.business.domain.vo.*;
+import org.springframework.data.mongodb.core.query.Update;
 
 
 import java.util.List;
@@ -30,4 +31,8 @@ public interface LabelTaskService {
     List<LabelTaskImageVo> getLabelTaskUnfinishedStream(String taskName, String token);
 
     void changeStreamStatus(LabelViaProjectVo labelViaProjectVo);
+
+    List<LabelTaskImageVo> getFinishedImageList(String taskName);
+
+    List<Update> updateLabelTaskImages(LabelViaProjectVo labelViaProjectVo);
 }

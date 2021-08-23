@@ -1,14 +1,7 @@
 package com.pxing.label.common.utils.http;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.*;
+import java.net.*;
 import java.security.cert.X509Certificate;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -16,6 +9,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -260,4 +255,56 @@ public class HttpUtils
             return true;
         }
     }
-}
+
+
+
+    public static InputStream getInputStream(String urlPath) {
+        InputStream inputStream = null;
+        HttpURLConnection httpURLConnection = null;
+        try {
+            URL url = new URL(urlPath);
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            // 设置网络连接超时时间
+            httpURLConnection.setConnectTimeout(3000);
+            // 设置应用程序要从网络连接读取数据
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setRequestMethod("GET");
+            int responseCode = httpURLConnection.getResponseCode();
+            System.out.println("responseCode is:" + responseCode);
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // 从服务器返回一个输入流
+                inputStream = httpURLConnection.getInputStream();
+                } else {
+                inputStream = httpURLConnection.getErrorStream();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return inputStream;
+        }
+    public static void writeFile(HttpServletResponse resp, InputStream inputStream) {
+        OutputStream out = null;
+        try {
+            out = resp.getOutputStream();
+            int len = 0;
+            byte[] b = new byte[1024];
+            while ((len = inputStream.read(b)) != -1) {
+                out.write(b, 0, len);
+            }
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    }

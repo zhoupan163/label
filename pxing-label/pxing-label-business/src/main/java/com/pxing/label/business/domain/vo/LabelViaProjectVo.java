@@ -47,5 +47,4 @@ public class LabelViaProjectVo {
     @ApiModelProperty("via_data_format_version")
     private String via_data_format_version;
 
-
 }

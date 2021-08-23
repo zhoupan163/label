@@ -4,7 +4,6 @@ package com.pxing.label.business.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.client.result.UpdateResult;
 import com.pxing.label.business.domain.vo.LabelTaskImageVo;
-import com.pxing.label.business.domain.vo.LabelTaskViaVo;
 import com.pxing.label.business.domain.vo.LabelViaProjectVo;
 import com.pxing.label.business.service.LabelViaService;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,9 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class LabelViaServiceImp implements LabelViaService {
@@ -86,4 +83,7 @@ public class LabelViaServiceImp implements LabelViaService {
         System.out.println("hah");
         return null;
     }
+
+
+
 }

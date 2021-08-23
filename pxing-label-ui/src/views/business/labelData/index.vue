@@ -94,38 +94,13 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改任务配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-table v-loading="loading" :data="taskStreamList">
-        <el-table-column label="stream_id" prop="streamId" width="120" />
-        <el-table-column label="任务名称" prop="taskName" width="120" />
-        <el-table-column label="图片数量" prop="size" width="120" />
-        <el-table-column label="状态" prop="status" width="120" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-edit"
-              @click="selectStream(scope.row)"
-              v-hasPermi="['business:labelTask:labelTaskStreamSelect']"
-            >选取下载</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <pagination
-        v-show="total>0"
-        :total="total"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
-        @pagination="getLabelTaskStream(taskStreamList.get(0).taskName)"
-      />
-    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import { listLabelTask, getLabelTaskUnfinishedStream , getLabelTaskStream, assignLabelTaskStream} from "@/api/business/labelTask"
+import {downLoadLabelData} from "@/api/business/labelData"
 import { getToken } from "@/utils/auth";
 
 export default {
@@ -235,8 +210,20 @@ export default {
         }
       );
     },
-
-
+    taskDownload(row){
+      downLoadLabelData(row.taskName).then(
+        response =>{
+          const aLink =document.createElement('a')
+          const blob = new Blob([response], { type: 'application/zip' })
+          let fileName =`${row.taskName}`
+          aLink.href = window.URL.createObjectURL(blob)
+          aLink.setAttribute('download', fileName)
+          document.body.appendChild(aLink)
+          aLink.click()
+          document.body.appendChild(aLink)
+        }
+      );
+    },
     // 取消按钮
     cancel() {
       this.open = false;

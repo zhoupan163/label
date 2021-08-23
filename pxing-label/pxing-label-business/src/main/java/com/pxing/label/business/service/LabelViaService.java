@@ -12,4 +12,5 @@ public interface LabelViaService {
     List<LabelViaProjectVo> getSreamViaProject(String streamId);
 
     List<LabelViaProjectVo> updateSreamViaProject(LabelViaProjectVo labelViaProjectVo);
+
 }

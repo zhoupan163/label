@@ -23,8 +23,12 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import com.pxing.label.business.dataTransformation.LabelAnnotionToMott;
 
 
 @RunWith(SpringRunner.class)
@@ -106,9 +110,12 @@ public class SmartAdminApplicationTests {
 
     @Test
     public void test7(){
-        Query query=Query.query(Criteria.where("image_status").is("label"));
+        Query query=Query.query(Criteria.where("label").is("admin"));
         Update update=new Update();
-        update.set("image_status", "0");
+        update.set("image_status", "label");
+        update.set("annotationInfo", "");
+        //update.set("label","");
+        //update.set("image_lock","0");
         UpdateResult updateResult= mongoTemplate.updateMulti(query, update ,LabelTaskImageVo.class);
         System.out.println(updateResult.toString());
     }
@@ -119,6 +126,26 @@ public class SmartAdminApplicationTests {
     public void test8(){
         List<LabelStreamVo> list= labelStreamService.getLabelTaskUnfinishedStream("pedestrian_reid","admin");
         System.out.println("succ");
+
+    };
+
+    @Test
+    public void test9(){
+        List<LabelTaskImageVo> list= labelTaskService.getFinishedImageList("pedestrian_reid");
+        for(LabelTaskImageVo labelTaskImageVo : list){
+           // String data= LabelAnnotionToMott.getMott(labelTaskImageVo);
+            System.out.println("succ");
+
+        }
+
+
+    }
+
+    @Test
+    public void test10(){
+
+
+
 
     }
 
