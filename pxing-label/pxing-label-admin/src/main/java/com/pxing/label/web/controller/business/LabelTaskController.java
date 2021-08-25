@@ -52,19 +52,6 @@ public class LabelTaskController extends BaseController
         return getDataTable(list);
     }
 
-
-    @GetMapping("/labelTask")
-    @ResponseBody
-    public TableDataInfo labelTask(@RequestParam("taskId")String taskId ,@RequestParam("token")String token)
-    {
-        startPage();
-        LoginUser loginUser= tokenService.getLoginUser(token);
-        String  userName=loginUser.getUser().getUserName();
-        labelTaskService.labelTask(taskId,userName);
-        List<UpdateResult> list= new ArrayList<>();
-        return getDataTable(list);
-    }
-
     //获取已分配未标注完成的stream
     @GetMapping("/getLabelTaskUnfinishedStream")
     @ResponseBody
@@ -77,7 +64,6 @@ public class LabelTaskController extends BaseController
         //List<LabelStreamVo> list=labelStreamService.getLabelTaskUnfinishedStream(taskName,userName);
         return getDataTable(list);
     }
-
 
     //获取未分配的stream
     @GetMapping("/getLabelTaskStream")

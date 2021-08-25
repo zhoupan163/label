@@ -110,12 +110,12 @@ public class SmartAdminApplicationTests {
 
     @Test
     public void test7(){
-        Query query=Query.query(Criteria.where("label").is("admin"));
+        Query query=Query.query(Criteria.where("image_status").is("label"));
         Update update=new Update();
-        update.set("image_status", "label");
+        update.set("image_status", "0");
         update.set("annotationInfo", "");
-        //update.set("label","");
-        //update.set("image_lock","0");
+        update.set("label","");
+        update.set("image_lock","0");
         UpdateResult updateResult= mongoTemplate.updateMulti(query, update ,LabelTaskImageVo.class);
         System.out.println(updateResult.toString());
     }

@@ -15,14 +15,9 @@ public interface LabelTaskService {
 
     List<LabelTaskViaVo> selectLabelTaskViaInfo(String taskId);
 
-
     UpdateResult updateLabelTaskViaInfo(LabelTaskViaVo labelTaskViaVo);
 
     void insertLabelTaskViaInfo(LabelTaskViaVo labelTaskViaVo);
-
-    void assiginTask(String taskId, String labelBy);
-
-    void labelTask(String taskId, String userName);
 
     List<LabelStreamVo> getLabelTaskStream(String taskName);
 
