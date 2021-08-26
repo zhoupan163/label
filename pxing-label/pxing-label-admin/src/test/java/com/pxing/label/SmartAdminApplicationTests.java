@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -20,6 +22,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RunWith(SpringRunner.class)
@@ -96,12 +99,12 @@ public class SmartAdminApplicationTests {
     public  void test6(){
         String taskName="pedestrian_reid";
 
-        labelViaService.getSreamViaProject(taskName, "admin", "label");
+        labelViaService.getSreamViaProject(taskName, "","admin", "label");
     }
 
     @Test
     public void test7(){
-        Query query=Query.query(Criteria.where("image_status").is("label"));
+        Query query=Query.query(Criteria.where("image_status").is("0"));
         Update update=new Update();
         update.set("image_status", "0");
         update.set("annotationInfo", "");
@@ -135,11 +138,19 @@ public class SmartAdminApplicationTests {
     @Test
     public void test10(){
 
+        Query query=Query.query(Criteria.where("image_status").in("1","4").and("label").is("admin"));
 
-
-
+        List<LabelTaskImageVo> labelTaskImageVoList= mongoTemplate.find(query, LabelTaskImageVo.class);
+        List<LabelTaskImageVo> list=labelTaskImageVoList.stream().sorted((a, b)-> Integer.valueOf( a.getImage_status())- Integer.valueOf( b.getImage_status())).collect(Collectors.toList());
+        System.out.println("succ");
     }
 
 
 
+
+
 }
+
+
+
+

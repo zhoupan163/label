@@ -278,14 +278,25 @@ export default {
         response =>{
           this.taskStreamList = response.rows;
           if(this.taskStreamList.length>0){
-            //this.msgInfo("此任务下未你有未完成标注的stream，即将跳转标注界面");
-            alert("此任务下未你有未完成标注的图片，即将跳转标注界面")
-            window.open('http://10.66.66.121:8082/?token=' + token.toString() + '&taskName=' +row.taskName);
+            //alert(this.taskStreamList[0].stream_id);
+            //alert(this.taskStreamList[0].image_status);
+            if(row.type==0){
+              if (this.taskStreamList[0].image_status== 4){
+                alert("你有审批驳回的任务，即将跳转标注界面")
+              }else {
+                alert("你有未完成标注的任务，即将跳转标注界面")
+              };
+              window.open('http://10.66.66.121:8082/?token=' + token.toString() + '&taskName=' +row.taskName + '' + '&streamId=' +this.taskStreamList[0].stream_id);
+            }else{
+              alert("图片标注待开发");
+              //alert(aa)
+            };
+           // window.open('http://10.66.66.121:8082/?token=' + token.toString() + '&taskName=' +row.taskName);
           }else{
             this.msgInfo("请选定stream标定");
             this.reset();
             this.open = true;
-            this.title = row.taskName;
+            this.title = row.taskName.toString();
             getLabelTaskStream(row.taskName).then(
               response => {
                 this.taskStreamList = response.rows;
@@ -303,7 +314,7 @@ export default {
       assignLabelTaskStream(row.streamId, row.taskName, token, "label");
       this.msgSuccess("选定成功，开始标注");
       this.open = false;
-      window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +row.taskName);
+      window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +row.taskName +'&streamId=' +row.streamId);
     },
 
 

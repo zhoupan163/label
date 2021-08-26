@@ -67,34 +67,38 @@ public class LabelViaServiceImp implements LabelViaService {
     }
 
     @Override
-    public List<LabelViaProjectVo> getSreamViaProject(String taskName, String userName, String type) {
-        //Query query=Query.query(Criteria.where("task_name").is(taskName).and(type).is(userName));
-        //List<LabelViaProjectVo> list =mongoTemplate.find(query, LabelViaProjectVo.class);
+    public List<LabelViaProjectVo> getSreamViaProject(String taskName, String streamId, String userName, String type) {
 
-        //获取图片
-       // Query query=Query.query(Criteria.where("task_name").is(taskName).and("type").is("template"));
         Query query=Query.query(Criteria.where("task_name").is(taskName).and("type").is("template"));
         LabelViaProjectVo labelViaProjectVo= mongoTemplate.findOne(query ,LabelViaProjectVo.class);
 
-        Query query1=Query.query(Criteria.where("task_name").is(taskName).and(type).is(userName));
+        Query query1=Query.query(Criteria.where("task_name").is(taskName).and("stream_id").is(streamId).and(type).is(userName));
         List<LabelTaskImageVo> labelTaskImageVoList= mongoTemplate.find(query1 , LabelTaskImageVo.class);
 
         JSONObject via_img_metadata= new JSONObject();
         //获取图片
         List<String> imageList= new ArrayList<>();
+        List<String> qaCommentList= new ArrayList<>();
+        List<Integer> imgStatusList= new ArrayList<>();
         for(LabelTaskImageVo labelTaskImageVo : labelTaskImageVoList){
             String imageUrl=labelTaskImageVo.getJpg_url();
             imageList.add(imageUrl);
+            qaCommentList.add(labelTaskImageVo.getQa_comment());
+            imgStatusList.add(Integer.valueOf(labelTaskImageVo.getImage_status()));
+
             JSONObject jsonObject= new JSONObject();
             jsonObject.put("filename", imageUrl);
             jsonObject.put("size", -1);
             jsonObject.put("regions", labelTaskImageVo.getAnnotationInfo());
             jsonObject.put("file_attributes", new JSONObject());
             via_img_metadata.put(imageUrl, jsonObject);
-        };
+        }
 
         labelViaProjectVo.setVia_image_id_list(imageList);
+        labelViaProjectVo.setQa_comment_list(qaCommentList);
+        labelViaProjectVo.setImg_status_list(imgStatusList);
         labelViaProjectVo.setVia_img_metadata(via_img_metadata);
+
         List<LabelViaProjectVo> list=new ArrayList<>();
         list.add(labelViaProjectVo);
 

@@ -9,7 +9,7 @@ public interface LabelViaService {
 
     List<LabelViaProjectVo> insertSreamViaProject(String streamId,String taskName);
 
-    List<LabelViaProjectVo> getSreamViaProject(String taskName, String userName, String type);
+    List<LabelViaProjectVo> getSreamViaProject(String taskName,String streamId, String userName, String type);
 
     List<LabelViaProjectVo> updateSreamViaProject(LabelViaProjectVo labelViaProjectVo);
 

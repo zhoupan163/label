@@ -42,6 +42,7 @@ public class LabelCheckServiceImp implements LabelCheckService {
                 update.set("image_status", "2");
             } else {
                 update.set("image_status", "3");
+                update.set("image_lock", "0");
             }
         }
 

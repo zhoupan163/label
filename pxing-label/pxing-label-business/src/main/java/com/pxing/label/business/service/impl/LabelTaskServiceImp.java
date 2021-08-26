@@ -8,6 +8,7 @@ import com.pxing.label.business.dao.LabelTaskDao;
 import com.pxing.label.business.domain.vo.*;
 import com.pxing.label.business.service.LabelTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -112,7 +113,7 @@ public class LabelTaskServiceImp implements LabelTaskService {
 
     @Override
     public List<LabelTaskImageVo> getLabelTaskUnfinishedStream(String taskName, String userName) {
-        Query query=Query.query(Criteria.where("task_name").is(taskName).and("label").is(userName).and("image_status").is("0"));
+        Query query=Query.query(Criteria.where("image_status").in("0","4").and("task_name").is(taskName).and("label").is(userName)).with(Sort.by(Sort.Direction.DESC, "image_status"));
         List<LabelTaskImageVo> list=mongoTemplate.find(query, LabelTaskImageVo.class);
         return list;
     }

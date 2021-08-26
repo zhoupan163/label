@@ -41,6 +41,12 @@ public class LabelViaProjectVo {
     @ApiModelProperty("via_image_id_list")
     private List<String> via_image_id_list;
 
+    @ApiModelProperty("qa_comment_list")
+    private List<String> qa_comment_list;
+
+    @ApiModelProperty("qa_status_list")
+    private List<Integer> img_status_list;
+
     @ApiModelProperty("via_data_format_version")
     private String via_data_format_version;
 

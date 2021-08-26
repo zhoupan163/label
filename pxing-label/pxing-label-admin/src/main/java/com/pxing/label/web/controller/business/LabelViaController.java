@@ -37,12 +37,13 @@ public class LabelViaController extends BaseController
 
     @GetMapping("/getTaskViaInfo")
     @ResponseBody
-    public TableDataInfo getStreamViaInfo(@RequestParam("taskName")String taskName, HttpServletRequest request, @RequestParam("type")String type)
+    public TableDataInfo getStreamViaInfo(@RequestParam("taskName")String taskName, HttpServletRequest request,
+                                          @RequestParam("type")String type ,@RequestParam("streamId")String streamId)
     {
         startPage();
         LoginUser loginUser= tokenService.getLoginUser(request);
         String  userName=loginUser.getUser().getUserName();
-        List<LabelViaProjectVo> list = labelViaService.getSreamViaProject(taskName, userName, type);
+        List<LabelViaProjectVo> list = labelViaService.getSreamViaProject(taskName, streamId, userName, type);
         return getDataTable(list);
     }
 
