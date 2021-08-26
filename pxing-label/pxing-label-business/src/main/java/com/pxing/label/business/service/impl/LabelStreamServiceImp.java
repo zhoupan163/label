@@ -5,8 +5,6 @@ package com.pxing.label.business.service.impl;
 import com.pxing.label.business.dao.LabelStreamDao;
 import com.pxing.label.business.domain.vo.*;
 import com.pxing.label.business.service.LabelStreamService;
-
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

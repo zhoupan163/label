@@ -17,6 +17,6 @@ public class PxingLabelApplication
     {
         // System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(PxingLabelApplication.class, args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  吉想启动成功   ლ(´ڡ`ლ)ﾞ  \n");
+        System.out.println("(♥◠‿◠)ﾉﾞ  芜湖！起飞！！！   ლ(´ڡ`ლ)ﾞ  \n");
     }
 }

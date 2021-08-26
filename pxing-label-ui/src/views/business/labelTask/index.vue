@@ -298,11 +298,10 @@ export default {
         }
       )
     },
-
     selectStream(row){
       let token=getToken();
       alert(row.streamId);
-      assignLabelTaskStream(row.streamId, row.taskName, token);
+      assignLabelTaskStream(row.streamId, row.taskName, token, "label");
       this.msgSuccess("选定成功，开始标注");
       this.open = false;
       window.open('http://10.66.66.121:8082/?token=' + token + '&streamId=' + row.streamId);

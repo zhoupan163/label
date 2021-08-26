@@ -13,6 +13,8 @@ import com.pxing.label.common.core.domain.model.LoginUser;
 import com.pxing.label.common.core.page.TableDataInfo;
 import com.pxing.label.framework.web.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +30,6 @@ import java.util.List;
 @RequestMapping("/business/labelTask")
 public class LabelTaskController extends BaseController
 {
-
-
     @Autowired
     private LabelTaskService labelTaskService;
 
@@ -71,20 +71,24 @@ public class LabelTaskController extends BaseController
     public TableDataInfo getLabelTaskStream(@RequestParam("taskName")String taskName )
     {
         startPage();
-        List<LabelStreamVo> list=labelTaskService.getLabelTaskStream(taskName);
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("label").is(""));
+        List<LabelStreamVo> list=labelTaskService.getLabelTaskStream(taskName, query);
         return getDataTable(list);
     }
 
     //分配stream
     @GetMapping("/assignLabelTaskStream")
     @ResponseBody
-    public TableDataInfo assignLabelTaskStream(@RequestParam("streamId")String streamId,@RequestParam("token")String token, @RequestParam("taskName")String taskName)
+    public TableDataInfo assignLabelTaskStream(@RequestParam("streamId")String streamId, @RequestParam("token")String token,
+                                               @RequestParam("taskName")String taskName, @RequestParam("type")String type)
     {
         startPage();
         LoginUser loginUser= tokenService.getLoginUser(token);
         String  userName=loginUser.getUser().getUserName();
-        labelTaskService.assignLabelTaskStream(streamId, userName);
-        labelViaService.insertSreamViaProject(streamId, taskName);
+        labelTaskService.assignLabelTaskStream(streamId, userName, type);
+        if(type.equals("label")){
+          labelViaService.insertSreamViaProject(streamId, taskName);
+        };
         List<UpdateResult> list= new ArrayList<>();
         return getDataTable(list);
     }

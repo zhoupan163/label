@@ -85,6 +85,9 @@ public class LabelTaskImageVo {
     @ApiModelProperty("qa2")
     private String qa2;
 
+    @ApiModelProperty("qa_comment")
+    private String qa_comment;
+
     @ApiModelProperty("标注属性")
     private List<JSONObject> annotationInfo;
 

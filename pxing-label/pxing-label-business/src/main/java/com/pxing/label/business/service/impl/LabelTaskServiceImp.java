@@ -78,11 +78,9 @@ public class LabelTaskServiceImp implements LabelTaskService {
     }
 
     @Override
-    public List<LabelStreamVo> getLabelTaskStream(String taskName) {
-        Query query1=Query.query(Criteria.where("task_name").is(taskName).and("label").is(""));
-        List<LabelTaskImageVo> list=mongoTemplate.find(query1, LabelTaskImageVo.class);
+    public List<LabelStreamVo> getLabelTaskStream(String taskName, Query query) {
+        List<LabelTaskImageVo> list=mongoTemplate.find(query, LabelTaskImageVo.class);
         Map<String,Integer> map= new HashMap<>();
-
         for(LabelTaskImageVo labelTaskImageVo : list){
             String stream_id=labelTaskImageVo.getStream_id();
             if(map.containsKey(stream_id)){
@@ -99,16 +97,14 @@ public class LabelTaskServiceImp implements LabelTaskService {
              labelStreamVo.setTaskName(taskName);
              labelStreamVoList.add(labelStreamVo);
         };
-
-
         return labelStreamVoList;
     }
 
     @Override
-    public void assignLabelTaskStream(String streamId, String userName) {
-        Query query=Query.query(Criteria.where("stream_id").is(streamId).and("label").is(""));
+    public void assignLabelTaskStream(String streamId, String userName, String type) {
+        Query query=Query.query(Criteria.where("stream_id").is(streamId).and(type).is(""));
         Update update=new Update();
-        update.set("label", userName );
+        update.set(type, userName);
         update.set("image_lock", 1);
         UpdateResult updateResult= mongoTemplate.updateMulti(query, update ,LabelTaskImageVo.class);
         System.out.println(updateResult.toString());
@@ -134,7 +130,7 @@ public class LabelTaskServiceImp implements LabelTaskService {
 
     @Override
     public List<LabelTaskImageVo> getFinishedImageList(String taskName) {
-        Query query=Query.query(Criteria.where("task_name").is(taskName).and("image_status").is("4"));
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("image_status").is("3"));
         List<LabelTaskImageVo> list=mongoTemplate.find(query, LabelTaskImageVo.class);
         return list;
     }

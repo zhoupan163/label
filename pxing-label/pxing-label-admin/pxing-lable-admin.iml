@@ -85,8 +85,8 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:5.2.12.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-aop:2.2.13.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.aspectj:aspectjweaver:1.9.6" level="project" />
-    <orderEntry type="library" name="Maven: com.alibaba:druid-spring-boot-starter:1.2.6" level="project" />
-    <orderEntry type="library" name="Maven: com.alibaba:druid:1.2.6" level="project" />
+    <orderEntry type="library" name="Maven: com.alibaba:druid-spring-boot-starter:1.1.21" level="project" />
+    <orderEntry type="library" name="Maven: com.alibaba:druid:1.1.21" level="project" />
     <orderEntry type="library" name="Maven: com.github.penggle:kaptcha:2.3.2" level="project" />
     <orderEntry type="library" name="Maven: com.jhlabs:filters:2.0.235-1" level="project" />
     <orderEntry type="library" name="Maven: com.github.oshi:oshi-core:5.8.0" level="project" />

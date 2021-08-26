@@ -58,29 +58,36 @@
 
     <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="任务编号" prop="taskId" width="120" />
       <el-table-column label="任务名称" prop="taskName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="关联项目id" prop="projectId" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="任务状态" prop="status" width="120" />
-      <el-table-column label="任务类型（0视频 1图片）" prop="type" width="120" />
-      <el-table-column label="图片数量" prop="size" width="120" />
+      <el-table-column label="任务类型（0视频 1图片 3点云）" prop="type" width="120" />
+      <el-table-column label="图片总数量" prop="size" width="120" />
+      <el-table-column label="待标注图片数量" prop="size" width="120" />
+      <el-table-column label="待一级审核图片数量" prop="size" width="120" />
+      <el-table-column label="待二级审核图片数量" prop="size" width="120" />
+      <el-table-column label="审核完成数量" prop="size" width="120" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
-      <el-table-column labe
-                       l="创建时间" align="center" prop="createTime" width="120">
+      <el-table-column label="创建时间" align="center" prop="createTime" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注信息" prop="remark" width="120" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope" v-if="scope.row.type== 0">
+        <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="handleImagesTask(scope.row)"
-            v-hasPermi="['business:labelTask:labelImages']"
-          >审核</el-button>
+            @click="checkTask(scope.row, 1)"
+            v-hasPermi="['business:labelCheck:qa1']"
+          >一级审核</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="checkTask(scope.row, 2)"
+            v-hasPermi="['business:labelCheck:qa2']"
+          >二级审核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -124,6 +131,7 @@
 
 <script>
 import { listLabelTask, getLabelTaskUnfinishedStream , getLabelTaskStream, assignLabelTaskStream} from "@/api/business/labelTask"
+import {getUnFinishedCheckedImage, getUnCheckedStream} from "@/api/business/labelCheck"
 import { getToken } from "@/utils/auth";
 
 export default {
@@ -196,6 +204,8 @@ export default {
         projectId: undefined,
         status: undefined
       },
+      //审核类型
+      qa_type:undefined,
       // 表单参数
       form: {},
       defaultProps: {
@@ -223,8 +233,6 @@ export default {
     /** 查询任务列表 */
     getList() {
       this.loading = true;
-      let token=getToken();
-      //alert(token)
       listLabelTask(this.addDateRange(this.queryParams, this.dateRange)).then(
         response => {
           this.roleList = response.rows;
@@ -272,22 +280,23 @@ export default {
       this.handleQuery();
     },
     /** 选取stream_id按钮操作 */
-    handleImagesTask(row) {
+    checkTask(row, qa_level) {
       let token=getToken();
-      getLabelTaskUnfinishedStream(row.taskName, token).then(
+      this.qa_type="qa"+qa_level;
+      getUnFinishedCheckedImage(row.taskName, token ,qa_level).then(
         response =>{
           this.taskStreamList = response.rows;
           if(this.taskStreamList.length>0){
             //this.msgInfo("此任务下未你有未完成审核的stream，即将跳转审核界面");
             alert("此任务下未你有未完成审核的stream，即将跳转审核界面")
             let taskStream=this.taskStreamList[0];
-            window.open('http://10.66.66.121:8082/?token=' + token.toString() + '&streamId=' + taskStream.stream_id);
+            alert(taskStream.stream_id)
+            window.open('http://10.66.66.121:8082/check.html?token=' + token + '&streamId=' + taskStream.stream_id + "&qa_type="+ this.qa_type);
           }else{
-            this.msgInfo("请选定stream标定");
             this.reset();
             this.open = true;
             this.title = row.taskName;
-            getLabelTaskStream(row.taskName).then(
+            getUnCheckedStream(row.taskName, qa_level).then(
               response => {
                 this.taskStreamList = response.rows;
                 //alert(response.rows)
@@ -298,17 +307,14 @@ export default {
         }
       )
     },
-
     selectStream(row){
       let token=getToken();
       alert(row.streamId);
-      assignLabelTaskStream(row.streamId, row.taskName, token);
+      assignLabelTaskStream(row.streamId, row.taskName, token, this.qa_type);
       this.msgSuccess("选定成功，开始审核");
       this.open = false;
-      window.open('http://10.66.66.121:8082/?token=' + token + '&streamId=' + row.streamId);
+      window.open('http://10.66.66.121:8082/check.html?token=' + token + '&streamId=' + row.streamId + "&qa_type="+ this.qa_type);
     },
-
-
   }
 };
 </script>
