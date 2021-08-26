@@ -26,7 +26,7 @@ public interface LabelTaskService {
 
     List<LabelTaskImageVo> getLabelTaskUnfinishedStream(String taskName, String token);
 
-    void changeStreamStatus(LabelViaProjectVo labelViaProjectVo);
+    void commitTaskImage(LabelViaProjectVo labelViaProjectVo);
 
     List<LabelTaskImageVo> getFinishedImageList(String taskName);
 

@@ -72,11 +72,11 @@ public class LabelCheckController extends BaseController
     // 审核操作
     @GetMapping("/qa")
     @ResponseBody
-    public TableDataInfo qa(@RequestParam("qaType")String qaType, @RequestParam("streamId")String streamId, @RequestParam("imgUrl")String imgUrl,
+    public TableDataInfo qa(@RequestParam("qaType")String qaType, @RequestParam("taskName")String taskName, @RequestParam("imgUrl")String imgUrl,
                             @RequestParam("qaComment")String qaComment, @RequestParam("operation")String operation)
     {
         startPage();
-        List<UpdateResult> updateResults= labelCheckService.qa(qaType, streamId, imgUrl, qaComment, operation);
+        List<UpdateResult> updateResults= labelCheckService.qa(qaType, taskName, imgUrl, qaComment, operation);
         return getDataTable(updateResults);
     }
 }

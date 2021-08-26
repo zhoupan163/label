@@ -67,9 +67,6 @@
       <el-table-column label="审核完成数量" prop="size" width="120" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="120">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
       </el-table-column>
       <el-table-column label="备注信息" prop="remark" width="120" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -288,10 +285,8 @@ export default {
           this.taskStreamList = response.rows;
           if(this.taskStreamList.length>0){
             //this.msgInfo("此任务下未你有未完成审核的stream，即将跳转审核界面");
-            alert("此任务下未你有未完成审核的stream，即将跳转审核界面")
-            let taskStream=this.taskStreamList[0];
-            alert(taskStream.stream_id)
-            window.open('http://10.66.66.121:8082/check.html?token=' + token + '&streamId=' + taskStream.stream_id + "&qa_type="+ this.qa_type);
+            alert("此任务下未你有未完成审核的图片，即将跳转审核界面");
+            window.open('http://10.66.66.121:8082/check.html?token=' + token + '&taskName=' + row.taskName + "&qa_type="+ this.qa_type);
           }else{
             this.reset();
             this.open = true;
@@ -299,9 +294,7 @@ export default {
             getUnCheckedStream(row.taskName, qa_level).then(
               response => {
                 this.taskStreamList = response.rows;
-                //alert(response.rows)
                 this.total = response.total;
-                //this.loading = false;
               });
           }
         }
@@ -309,11 +302,10 @@ export default {
     },
     selectStream(row){
       let token=getToken();
-      alert(row.streamId);
       assignLabelTaskStream(row.streamId, row.taskName, token, this.qa_type);
       this.msgSuccess("选定成功，开始审核");
       this.open = false;
-      window.open('http://10.66.66.121:8082/check.html?token=' + token + '&streamId=' + row.streamId + "&qa_type="+ this.qa_type);
+      window.open('http://10.66.66.121:8082/check.html?token=' + token + '&taskName=' + row.taskName + "&qa_type="+ this.qa_type);
     },
   }
 };

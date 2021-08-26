@@ -118,14 +118,16 @@ public class LabelTaskServiceImp implements LabelTaskService {
     }
 
     @Override
-    public void changeStreamStatus(LabelViaProjectVo labelViaProjectVo) {
-        Query query=Query.query(Criteria.where("stream_id").is(labelViaProjectVo.getStream_id()));
-        Update update=new Update();
-        update.set("image_status", "1");
-        update.set("image_lock", "0");
-        UpdateResult updateResult= mongoTemplate.updateMulti(query, update ,LabelTaskImageVo.class);
-        System.out.println(updateResult.toString());
-
+    public void commitTaskImage(LabelViaProjectVo labelViaProjectVo) {
+        JSONObject via_img_metadata= labelViaProjectVo.getVia_img_metadata();
+        for (String jpgUrl : labelViaProjectVo.getVia_image_id_list()) {
+            JSONArray regions= via_img_metadata.getJSONObject(jpgUrl).getJSONArray("regions");
+            Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl));
+            Update update= new Update();
+            update.set("annotationInfo", regions);
+            update.set("image_status","1");
+            mongoTemplate.updateFirst(query, update,LabelTaskImageVo.class);
+        }
     }
 
     @Override

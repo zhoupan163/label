@@ -279,9 +279,8 @@ export default {
           this.taskStreamList = response.rows;
           if(this.taskStreamList.length>0){
             //this.msgInfo("此任务下未你有未完成标注的stream，即将跳转标注界面");
-            alert("此任务下未你有未完成标注的stream，即将跳转标注界面")
-            let taskStream=this.taskStreamList[0];
-            window.open('http://10.66.66.121:8082/?token=' + token.toString() + '&streamId=' + taskStream.stream_id);
+            alert("此任务下未你有未完成标注的图片，即将跳转标注界面")
+            window.open('http://10.66.66.121:8082/?token=' + token.toString() + '&taskName=' +row.taskName);
           }else{
             this.msgInfo("请选定stream标定");
             this.reset();
@@ -300,11 +299,11 @@ export default {
     },
     selectStream(row){
       let token=getToken();
-      alert(row.streamId);
+      //alert(row.streamId);
       assignLabelTaskStream(row.streamId, row.taskName, token, "label");
       this.msgSuccess("选定成功，开始标注");
       this.open = false;
-      window.open('http://10.66.66.121:8082/?token=' + token + '&streamId=' + row.streamId);
+      window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +row.taskName);
     },
 
 

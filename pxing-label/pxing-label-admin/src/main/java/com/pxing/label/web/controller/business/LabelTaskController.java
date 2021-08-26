@@ -86,9 +86,6 @@ public class LabelTaskController extends BaseController
         LoginUser loginUser= tokenService.getLoginUser(token);
         String  userName=loginUser.getUser().getUserName();
         labelTaskService.assignLabelTaskStream(streamId, userName, type);
-        if(type.equals("label")){
-          labelViaService.insertSreamViaProject(streamId, taskName);
-        };
         List<UpdateResult> list= new ArrayList<>();
         return getDataTable(list);
     }

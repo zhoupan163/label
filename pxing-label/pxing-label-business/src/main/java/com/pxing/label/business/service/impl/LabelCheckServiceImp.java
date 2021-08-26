@@ -29,14 +29,14 @@ public class LabelCheckServiceImp implements LabelCheckService {
     }
 
     @Override
-    public List<UpdateResult> qa(String qaType, String streamId, String imgUrl, String qaComment, String operation) {
-        Query query = Query.query(Criteria.where("stream_id").is(streamId).and("jpg_url").is(imgUrl));
+    public List<UpdateResult> qa(String qaType, String taskName, String imgUrl, String qaComment, String operation) {
+        Query query = Query.query(Criteria.where("task_name").is(taskName).and("jpg_url").is(imgUrl));
         List<UpdateResult> updateResultList = new ArrayList<>();
 
         Update update = new Update();
+        update.set("qa_comment", qaComment);
         if (operation.equals("reject")) {
             update.set("image_status", "4");
-            update.set("qa_comment", qaComment);
         } else {
             if (qaType.equals("qa1")) {
                 update.set("image_status", "2");

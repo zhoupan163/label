@@ -51,7 +51,7 @@ public class LabelViaServiceImp implements LabelViaService {
 
         //存储到mongo
         labelViaProjectVo.setVia_image_id_list(imageList);
-        labelViaProjectVo.setStream_id(streamId);
+        //labelViaProjectVo.setStream_id(streamId);
         labelViaProjectVo.setType("stream_project");
         labelViaProjectVo.setVia_img_metadata(via_img_metadata);
 
@@ -67,16 +67,43 @@ public class LabelViaServiceImp implements LabelViaService {
     }
 
     @Override
-    public List<LabelViaProjectVo> getSreamViaProject(String streamId) {
-        Query query=Query.query(Criteria.where("stream_id").is(streamId));
-        List<LabelViaProjectVo> list =mongoTemplate.find(query, LabelViaProjectVo.class);
-        System.out.println("succ");
+    public List<LabelViaProjectVo> getSreamViaProject(String taskName, String userName, String type) {
+        //Query query=Query.query(Criteria.where("task_name").is(taskName).and(type).is(userName));
+        //List<LabelViaProjectVo> list =mongoTemplate.find(query, LabelViaProjectVo.class);
+
+        //获取图片
+       // Query query=Query.query(Criteria.where("task_name").is(taskName).and("type").is("template"));
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("type").is("template"));
+        LabelViaProjectVo labelViaProjectVo= mongoTemplate.findOne(query ,LabelViaProjectVo.class);
+
+        Query query1=Query.query(Criteria.where("task_name").is(taskName).and(type).is(userName));
+        List<LabelTaskImageVo> labelTaskImageVoList= mongoTemplate.find(query1 , LabelTaskImageVo.class);
+
+        JSONObject via_img_metadata= new JSONObject();
+        //获取图片
+        List<String> imageList= new ArrayList<>();
+        for(LabelTaskImageVo labelTaskImageVo : labelTaskImageVoList){
+            String imageUrl=labelTaskImageVo.getJpg_url();
+            imageList.add(imageUrl);
+            JSONObject jsonObject= new JSONObject();
+            jsonObject.put("filename", imageUrl);
+            jsonObject.put("size", -1);
+            jsonObject.put("regions", labelTaskImageVo.getAnnotationInfo());
+            jsonObject.put("file_attributes", new JSONObject());
+            via_img_metadata.put(imageUrl, jsonObject);
+        };
+
+        labelViaProjectVo.setVia_image_id_list(imageList);
+        labelViaProjectVo.setVia_img_metadata(via_img_metadata);
+        List<LabelViaProjectVo> list=new ArrayList<>();
+        list.add(labelViaProjectVo);
+
         return list;
     }
 
     @Override
     public List<LabelViaProjectVo> updateSreamViaProject(LabelViaProjectVo labelViaProjectVo) {
-        Query query=Query.query(Criteria.where("stream_id").is(labelViaProjectVo.getStream_id()));
+        Query query=Query.query(Criteria.where("task_name").is(labelViaProjectVo.getTask_name()));
         Update update=new Update();
         update.set("via_img_metadata",labelViaProjectVo.getVia_img_metadata());
         UpdateResult updateResult= mongoTemplate.updateFirst(query, update, LabelViaProjectVo.class);
