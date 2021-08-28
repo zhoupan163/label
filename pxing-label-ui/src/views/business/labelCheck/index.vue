@@ -58,13 +58,16 @@
 
     <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="任务编号" prop="taskId" width="120" />
       <el-table-column label="任务名称" prop="taskName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="任务类型（0视频 1图片 3点云）" prop="type" width="120" />
+      <el-table-column label="关联项目id" prop="projectId" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="任务状态" prop="status" width="120" />
+      <el-table-column label="任务类型（0视频 1图片）" prop="type" width="120" />
       <el-table-column label="图片总数量" prop="size" width="120" />
-      <el-table-column label="待标注图片数量" prop="size" width="120" />
-      <el-table-column label="待一级审核图片数量" prop="size" width="120" />
-      <el-table-column label="待二级审核图片数量" prop="size" width="120" />
-      <el-table-column label="审核完成数量" prop="size" width="120" />
+      <el-table-column label="待一级审核图片数量" prop="qa1Size" width="120" />
+      <el-table-column label="待二级审核图片数量" prop="qa2Size" width="120" />
+      <el-table-column label="审核完成图片数量" prop="rejectSize" width="120" />
+      <el-table-column label="审核完成图片数量" prop="finishedSize" width="120" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="120">
       </el-table-column>

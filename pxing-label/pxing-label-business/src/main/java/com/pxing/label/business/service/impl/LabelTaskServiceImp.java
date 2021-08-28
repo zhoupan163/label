@@ -45,7 +45,15 @@ public class LabelTaskServiceImp implements LabelTaskService {
             Query query1= Query.query(Criteria.where("task_name").is(labelTaskVo1.getTaskName()).and("image_status").is("finished"));
             long finishedCount= mongoTemplate.count(query1, LabelTaskImageVo.class);
             labelTaskVo1.setSize(size);
-            labelTaskVo1.setFinishedCount(finishedCount);
+
+            labelTaskVo1.setQa1Size(mongoTemplate.count(Query.query(Criteria.where("task_name").is(labelTaskVo1.getTaskName())
+                    .and("image_status").is(1)), LabelTaskImageVo.class));
+            labelTaskVo1.setQa2Size(mongoTemplate.count(Query.query(Criteria.where("task_name").is(labelTaskVo1.getTaskName())
+                    .and("image_status").is(2)), LabelTaskImageVo.class));
+            labelTaskVo1.setFinishedSize(mongoTemplate.count(Query.query(Criteria.where("task_name").is(labelTaskVo1.getTaskName())
+                    .and("image_status").is(3)), LabelTaskImageVo.class));
+            labelTaskVo1.setRejectSize(mongoTemplate.count(Query.query(Criteria.where("task_name").is(labelTaskVo1.getTaskName())
+                    .and("image_status").is(4)), LabelTaskImageVo.class));
 
             list1.add(labelTaskVo1);
         }

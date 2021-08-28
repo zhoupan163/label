@@ -28,11 +28,20 @@ public class LabelTaskVo {
     @ApiModelProperty("关联工程id")
     private Long projectId;
 
-    @ApiModelProperty("图片数量")
+    @ApiModelProperty("图片总数量")
     private Long size;
 
-    @ApiModelProperty("图片数量")
-    private Long finishedCount;
+    @ApiModelProperty("一级审核中图片数量")
+    private Long qa1Size;
+
+    @ApiModelProperty("二级审核中图片数量")
+    private Long qa2Size;
+
+    @ApiModelProperty("驳回中图片数量")
+    private Long rejectSize;
+
+    @ApiModelProperty("审核完成图片数量")
+    private Long finishedSize;
 
     @ApiModelProperty("任务状态")
     private String status;
