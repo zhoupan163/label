@@ -29,6 +29,9 @@ public class LabelViaProjectVo {
     @ApiModelProperty("type")
     private String type;
 
+    @ApiModelProperty("streamId")
+    private String streamId;
+
     @ApiModelProperty("via_settings")
     private JSONObject via_settings;
 

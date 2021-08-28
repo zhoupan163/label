@@ -6,17 +6,71 @@
 
 
 
-    <select id="getLabelTaskUnfinishedStream" resultMap="LabelStreamVo">
+    <select id="getLabelTaskUnCheckedStream" parameterType="LabelStreamVo" resultMap="LabelStreamVo">
         select
           stream_id,
           task_name,
-          size,
           status,
+          size,
+          qa1,
+          qa2,
           create_time,
-          type,
-          label_by,
           remark
         from label_stream
-        where task_name=#{taskName} and label_by= #{labelBy} and status=0
+        <where>
+            <if test="qa1 != null and qa1 != ''">
+                AND qa1= #{qa1}
+            </if>
+            <if test="qa2 != null and qa2 != ''">
+                AND qa2= #{qa2}
+            </if>
+            <if test="taskName != null and taskName != ''">
+                AND task_name= #{taskName}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
     </select>
+
+
+    <insert id="insertLabelStreamVo" parameterType="LabelStreamVo" useGeneratedKeys="true">
+        insert into label_stream(
+        <if test="taskName != null and taskName != '' ">task_name,</if>
+        <if test="streamId != null and streamId != ''">stream_id,</if>
+        <if test="status != null and status  != ''">status,</if>
+        <if test="size != null and size != 0">size,</if>
+        <if test="qa1 != null and qa1 != ''">qa1,</if>
+        <if test="qa2 != null and qa2 != ''">qa2,</if>
+        <if test="labelBy != null and labelBy != ''">label_by,</if>
+        <if test="remark != null and remark != ''">remark,</if>
+        create_time
+        )values(
+        <if test="taskName != null and taskName != '' ">#{taskName},</if>
+        <if test="streamId != null and streamId != ''">#{streamId},</if>
+        <if test="status != null and status  != ''">#{status},</if>
+        <if test="size != null and size != 0">#{size},</if>
+        <if test="qa1 != null and qa1 != ''">#{qa1},</if>
+        <if test="qa2 != null and qa2 != ''">#{qa2},</if>
+        <if test="labelBy != null and labelBy != ''">#{labelBy},</if>
+        <if test="remark != null and remark != ''">#{remark},</if>
+        sysdate()
+        )
+    </insert>
+
+    <update id="updateLabelStreamVo" parameterType="LabelStreamVo">
+       update label_stream
+        <set>
+            <if test="taskName != null and taskName != '' ">task_name= #{taskName},</if>
+            <if test="streamId != null and streamId != ''">stream_id= #{streamId},</if>
+            <if test="status != null and status  != ''">status= #{status},</if>
+            <if test="size != null and size != 0">size = #{size},</if>
+            <if test="qa1 != null and qa1 != ''">qa1= #{qa1},</if>
+            <if test="qa2 != null and qa2 != ''">qa2= #{qa2},</if>
+            <if test="labelBy != null and labelBy != ''">label_by= #{labelBy},</if>
+            <if test="remark != null and remark != ''">remark= #{reamark}</if>
+        </set>
+     where stream_id = #{streamId}
+    </update>
+
 </mapper>

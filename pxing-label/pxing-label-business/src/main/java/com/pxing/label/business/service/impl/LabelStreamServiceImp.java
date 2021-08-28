@@ -19,7 +19,23 @@ public class LabelStreamServiceImp implements LabelStreamService {
 
     @Override
     public List<LabelStreamVo> getLabelTaskUnfinishedStream(String taskName, String userName) {
-        List<LabelStreamVo>  list= labelStreamDao.getLabelTaskUnfinishedStream(taskName, userName);
-        return list;
+       // List<LabelStreamVo>  list= labelStreamDao.getLabelTaskUnfinishedStream(taskName, userName);
+        return null;
+    }
+
+    @Override
+    public void insertLabelStreamVo(LabelStreamVo labelStreamVo) {
+        labelStreamDao.insertLabelStreamVo(labelStreamVo);
+    }
+
+    @Override
+    public void updateLabelStreamService(LabelStreamVo labelStreamVo) {
+        labelStreamDao.updateLabelStreamVo(labelStreamVo);
+    }
+
+    @Override
+    public List<LabelStreamVo> getUnCheckedStream(LabelStreamVo labelStreamVo) {
+
+        return labelStreamDao.getLabelTaskUnCheckedStream(labelStreamVo);
     }
 }

@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.mongodb.client.result.UpdateResult;
 import com.pxing.label.business.dao.LabelTaskDao;
 import com.pxing.label.business.domain.vo.*;
+import com.pxing.label.business.service.LabelStreamService;
 import com.pxing.label.business.service.LabelTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -30,6 +31,9 @@ public class LabelTaskServiceImp implements LabelTaskService {
 
     @Resource
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private LabelStreamService labelStreamService;
 
     @Override
     public List<LabelTaskVo> selectLabelTaskList(LabelTaskVo labelTaskVo) {
@@ -102,18 +106,38 @@ public class LabelTaskServiceImp implements LabelTaskService {
     }
 
     @Override
-    public void assignLabelTaskStream(String streamId, String userName, String type) {
+    public void assignLabelTaskStream(String taskName, String streamId, String userName, String type) {
         Query query=Query.query(Criteria.where("stream_id").is(streamId).and(type).is(""));
         Update update=new Update();
-        update.set(type, userName);
         update.set("image_lock", 1);
+        update.set(type, userName);
         UpdateResult updateResult= mongoTemplate.updateMulti(query, update ,LabelTaskImageVo.class);
         System.out.println(updateResult.toString());
+
+        LabelStreamVo labelStreamVo= new LabelStreamVo();
+        labelStreamVo.setTaskName(taskName);
+        labelStreamVo.setStreamId(streamId);
+        if(type.equals("qa1")){
+            labelStreamVo.setQa1(userName);
+            labelStreamService.updateLabelStreamService(labelStreamVo);
+        }else if (type.equals("qa2")){
+            labelStreamVo.setQa2(userName);
+            labelStreamService.updateLabelStreamService(labelStreamVo);
+        }else{
+            Query query1=Query.query(Criteria.where("stream_id").is(streamId).and("task_name").is(taskName));
+            long size= mongoTemplate.count(query1, LabelTaskImageVo.class);
+
+            labelStreamVo.setLabelBy(userName);
+            labelStreamVo.setStatus(0);
+            labelStreamVo.setSize(size);
+            labelStreamService.insertLabelStreamVo(labelStreamVo);
+        };
+
         }
 
     @Override
     public List<LabelTaskImageVo> getLabelTaskUnfinishedStream(String taskName, String userName) {
-        Query query=Query.query(Criteria.where("image_status").in("0","4").and("task_name").is(taskName).and("label").is(userName)).with(Sort.by(Sort.Direction.DESC, "image_status"));
+        Query query=Query.query(Criteria.where("image_status").in(0,4).and("task_name").is(taskName).and("label").is(userName)).with(Sort.by(Sort.Direction.DESC, "image_status"));
         List<LabelTaskImageVo> list=mongoTemplate.find(query, LabelTaskImageVo.class);
         return list;
     }
@@ -123,17 +147,23 @@ public class LabelTaskServiceImp implements LabelTaskService {
         JSONObject via_img_metadata= labelViaProjectVo.getVia_img_metadata();
         for (String jpgUrl : labelViaProjectVo.getVia_image_id_list()) {
             JSONArray regions= via_img_metadata.getJSONObject(jpgUrl).getJSONArray("regions");
-            Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl));
+            Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl).and("image_status").in(0,4));
             Update update= new Update();
             update.set("annotationInfo", regions);
-            update.set("image_status","1");
+            update.set("image_status",1);
             mongoTemplate.updateFirst(query, update,LabelTaskImageVo.class);
-        }
+        };
+
+        LabelStreamVo labelStreamVo = new LabelStreamVo();
+        labelStreamVo.setStreamId(labelViaProjectVo.getStreamId());
+        labelStreamVo.setTaskName(labelStreamVo.getTaskName());
+        labelStreamVo.setStatus(1);
+        labelStreamService.updateLabelStreamService(labelStreamVo);
     }
 
     @Override
     public List<LabelTaskImageVo> getFinishedImageList(String taskName) {
-        Query query=Query.query(Criteria.where("task_name").is(taskName).and("image_status").is("3"));
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("image_status").is(3));
         List<LabelTaskImageVo> list=mongoTemplate.find(query, LabelTaskImageVo.class);
         return list;
     }
@@ -145,6 +175,7 @@ public class LabelTaskServiceImp implements LabelTaskService {
              JSONArray regions= via_img_metadata.getJSONObject(jpgUrl).getJSONArray("regions");
              Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl));
              Update update= new Update();
+             update.set("image_status", 0);
              update.set("annotationInfo", regions);
              mongoTemplate.updateFirst(query, update,LabelTaskImageVo.class);
         }

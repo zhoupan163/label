@@ -46,6 +46,7 @@ public class LabelDataController extends BaseController
              List<String> idList= Arrays.asList(ids.split(" "));
              String streamId=labelTaskImageVo.getStream_id();
              Set<String> idSet= idList.stream().collect(Collectors.toSet());
+
              if (!streamMap.containsKey(streamId)){
                  streamMap.put(streamId, idSet);
              }else{

@@ -104,12 +104,15 @@ public class SmartAdminApplicationTests {
 
     @Test
     public void test7(){
-        Query query=Query.query(Criteria.where("image_status").is("0"));
+        Query query=Query.query(Criteria.where("image_status").in(0, "0" ,"2", 2 , '4', 4, '3',3,'1', 1));
         Update update=new Update();
-        update.set("image_status", "0");
+        update.set("image_status", 0);
         update.set("annotationInfo", "");
+        update.set("qa_comment", "");
         update.set("label","");
-        update.set("image_lock","0");
+        update.set("image_lock",0);
+        update.set("qa1","");
+        update.set("qa2","");
         UpdateResult updateResult= mongoTemplate.updateMulti(query, update ,LabelTaskImageVo.class);
         System.out.println(updateResult.toString());
     }
@@ -137,12 +140,10 @@ public class SmartAdminApplicationTests {
 
     @Test
     public void test10(){
-
-        Query query=Query.query(Criteria.where("image_status").in("1","4").and("label").is("admin"));
-
-        List<LabelTaskImageVo> labelTaskImageVoList= mongoTemplate.find(query, LabelTaskImageVo.class);
-        List<LabelTaskImageVo> list=labelTaskImageVoList.stream().sorted((a, b)-> Integer.valueOf( a.getImage_status())- Integer.valueOf( b.getImage_status())).collect(Collectors.toList());
-        System.out.println("succ");
+        //pedestrian_reid
+        Query query=Query.query(Criteria.where("image_status").is(0).and("task_name").is("pedestrian_reid").and("label").is("admin"));
+        List<LabelTaskImageVo> list=mongoTemplate.find(query, LabelTaskImageVo.class);
+        System.out.println("aa");
     }
 
 

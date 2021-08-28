@@ -2,6 +2,7 @@ package com.pxing.label.web.controller.business;
 
 
 import com.alibaba.fastjson.JSON;
+import com.pxing.label.business.domain.vo.LabelStreamVo;
 import com.pxing.label.business.domain.vo.LabelViaProjectVo;
 import com.pxing.label.business.service.LabelTaskService;
 import com.pxing.label.business.service.LabelViaService;
@@ -66,6 +67,7 @@ public class LabelViaController extends BaseController
         startPage();
         LabelViaProjectVo labelViaProjectVo= JSON.parseObject(params,LabelViaProjectVo.class);
         labelTaskService.commitTaskImage(labelViaProjectVo);
+
         return getDataTable(new ArrayList<>());
     }
 

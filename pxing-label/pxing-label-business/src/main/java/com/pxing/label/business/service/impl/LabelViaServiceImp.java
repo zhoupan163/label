@@ -84,7 +84,14 @@ public class LabelViaServiceImp implements LabelViaService {
             String imageUrl=labelTaskImageVo.getJpg_url();
             imageList.add(imageUrl);
             qaCommentList.add(labelTaskImageVo.getQa_comment());
-            imgStatusList.add(Integer.valueOf(labelTaskImageVo.getImage_status()));
+            //qa2 的Img_status_list做特殊处理
+            if(type.equals("qa2")){
+                imgStatusList.add(Integer.valueOf(labelTaskImageVo.getImage_status()) - 2);
+            }else if(type.equals("qa1")){
+                imgStatusList.add(Integer.valueOf(labelTaskImageVo.getImage_status()) - 1);
+            }else {
+                imgStatusList.add(Integer.valueOf(labelTaskImageVo.getImage_status()));
+            }
 
             JSONObject jsonObject= new JSONObject();
             jsonObject.put("filename", imageUrl);
@@ -92,7 +99,7 @@ public class LabelViaServiceImp implements LabelViaService {
             jsonObject.put("regions", labelTaskImageVo.getAnnotationInfo());
             jsonObject.put("file_attributes", new JSONObject());
             via_img_metadata.put(imageUrl, jsonObject);
-        }
+        };
 
         labelViaProjectVo.setVia_image_id_list(imageList);
         labelViaProjectVo.setQa_comment_list(qaCommentList);

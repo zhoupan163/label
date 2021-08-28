@@ -3,9 +3,11 @@ package com.pxing.label.web.controller.business;
 
 import com.mongodb.client.result.UpdateResult;
 import com.pxing.label.business.dataTransformation.LabelAnnotionToMott;
+import com.pxing.label.business.domain.vo.LabelImageCheck;
 import com.pxing.label.business.domain.vo.LabelStreamVo;
 import com.pxing.label.business.domain.vo.LabelTaskImageVo;
 import com.pxing.label.business.service.LabelCheckService;
+import com.pxing.label.business.service.LabelStreamService;
 import com.pxing.label.business.service.LabelTaskService;
 import com.pxing.label.common.core.controller.BaseController;
 import com.pxing.label.common.core.domain.model.LoginUser;
@@ -46,10 +48,13 @@ public class LabelCheckController extends BaseController
     @Autowired
     private  LabelTaskService labelTaskService;
 
+    @Autowired
+    private LabelStreamService labelStreamService;
+
     //获取已分配未审核完成的stream
     @GetMapping("/getUnFinishedCheckedVideoStream")
     @ResponseBody
-    public TableDataInfo getUnFinishedCheckedVideoStream(@RequestParam("taskName")String taskName, @RequestParam("token")String token, @RequestParam("qa_level")String qa_level)
+    public TableDataInfo getUnFinishedCheckedVideoStream(@RequestParam("taskName")String taskName, @RequestParam("token")String token, @RequestParam("qa_level")int qa_level)
     {
         startPage();
         LoginUser loginUser= tokenService.getLoginUser(token);
@@ -61,22 +66,32 @@ public class LabelCheckController extends BaseController
     // 查询已经标注完成却没有开始审核的stream
     @GetMapping("/getUnCheckedStream")
     @ResponseBody
-    public TableDataInfo getUnCheckedStream(@RequestParam("taskName")String taskName, @RequestParam("qa_level")String qa_level)
+    public TableDataInfo getUnCheckedStream(@RequestParam("taskName")String taskName, @RequestParam("qa_level")int qa_level)
     {
         startPage();
-        Query query=Query.query(Criteria.where("task_name").is(taskName).and("image_status").is(qa_level));
-        List<LabelStreamVo> list=labelTaskService.getLabelTaskStream(taskName, query);
+        //Query query=Query.query(Criteria.where("task_name").is(taskName).and("image_status").is(qa_level));
+        //List<LabelStreamVo> list=labelTaskService.getLabelTaskStream(taskName, query);
+        LabelStreamVo labelStreamVo= new LabelStreamVo();
+        labelStreamVo.setTaskName(taskName);
+        if(qa_level==1){
+            labelStreamVo.setQa1("");
+            labelStreamVo.setStatus(1);
+        }else{
+            labelStreamVo.setQa2("");
+            labelStreamVo.setStatus(2);
+        }
+        List<LabelStreamVo> list=labelStreamService.getUnCheckedStream(labelStreamVo);
+
         return getDataTable(list);
     }
 
     // 审核操作
-    @GetMapping("/qa")
+    @PostMapping("/qa")
     @ResponseBody
-    public TableDataInfo qa(@RequestParam("qaType")String qaType, @RequestParam("taskName")String taskName, @RequestParam("imgUrl")String imgUrl,
-                            @RequestParam("qaComment")String qaComment, @RequestParam("operation")String operation)
+    public TableDataInfo qa(@RequestBody LabelImageCheck labelImageCheck)
     {
         startPage();
-        List<UpdateResult> updateResults= labelCheckService.qa(qaType, taskName, imgUrl, qaComment, operation);
+        List<UpdateResult> updateResults= labelCheckService.qa(labelImageCheck);
         return getDataTable(updateResults);
     }
 }

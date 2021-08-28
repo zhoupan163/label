@@ -22,7 +22,7 @@ public interface LabelTaskService {
 
     List<LabelStreamVo> getLabelTaskStream(String taskName, Query query);
 
-    void assignLabelTaskStream(String streamId, String userName, String type);
+    void assignLabelTaskStream(String taskName, String streamId, String userName, String type);
 
     List<LabelTaskImageVo> getLabelTaskUnfinishedStream(String taskName, String token);
 

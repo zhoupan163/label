@@ -1,9 +1,9 @@
 package com.pxing.label.business.domain.vo;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
@@ -18,28 +18,19 @@ import java.util.Date;
  * @since JDK1.8
  */
 @Data
-public class LabelStreamVo {
-
-    @ApiModelProperty("stream_id")
-    private String streamId;
+public class LabelTaskStream {
 
     @ApiModelProperty("任务名称")
     private String taskName;
 
     @ApiModelProperty("图片数量")
-    private long size;
+    private Long size;
 
-    @ApiModelProperty("状态")
-    private int status;
+    @ApiModelProperty("streamId")
+    private String streamId;
 
-    @ApiModelProperty("一级审核人")
-    private String qa1;
-
-    @ApiModelProperty("二级审核人")
-    private String qa2;
-
-    @ApiModelProperty("标注人")
-    private String labelBy;
+    @ApiModelProperty("status")
+    private String status;
 
     @ApiModelProperty("任务备注")
     private String remark;
