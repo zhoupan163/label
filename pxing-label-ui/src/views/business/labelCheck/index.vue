@@ -289,7 +289,7 @@ export default {
           if(this.taskStreamList.length>0){
             //this.msgInfo("此任务下未你有未完成审核的stream，即将跳转审核界面");
             alert("此任务下未你有未完成审核的图片，即将跳转审核界面");
-            window.open('http://10.66.66.121:8082/check.html?token=' + token + '&taskName=' + row.taskName + "&qa_type="+ this.qa_type+ '&streamId=' +this.taskStreamList[0].stream_id);
+            window.open('http://10.66.66.121:8082/check.html?token=' + token + '&taskName=' + row.taskName + "&qa_type="+ this.qa_type+ '&streamId=' +this.taskStreamList[0].streamId);
           }else{
             this.reset();
             this.open = true;

@@ -1,6 +1,7 @@
 package com.pxing.label.web.controller.business;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mongodb.client.result.UpdateResult;
 import com.pxing.label.business.domain.vo.LabelTaskImageVo;
 import com.pxing.label.business.domain.vo.LabelStreamVo;
@@ -52,7 +53,7 @@ public class LabelTaskController extends BaseController
         return getDataTable(list);
     }
 
-    //获取已分配未标注完成的stream
+    //获取已分配未标注完成或者被驳回的stream
     @GetMapping("/getLabelTaskUnfinishedStream")
     @ResponseBody
     public TableDataInfo getLabelTaskUnfinishedStream(@RequestParam("taskName")String taskName, @RequestParam("token")String token)
@@ -60,8 +61,7 @@ public class LabelTaskController extends BaseController
         startPage();
         LoginUser loginUser= tokenService.getLoginUser(token);
         String  userName=loginUser.getUser().getUserName();
-        List<LabelTaskImageVo> list=labelTaskService.getLabelTaskUnfinishedStream(taskName,userName);
-        //List<LabelStreamVo> list=labelStreamService.getLabelTaskUnfinishedStream(taskName,userName);
+        List<LabelStreamVo> list= labelStreamService.getLabelTaskUnfinishedStream(taskName, userName);
         return getDataTable(list);
     }
 

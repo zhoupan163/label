@@ -28,7 +28,7 @@ public interface LabelTaskService {
 
     void commitTaskImage(LabelViaProjectVo labelViaProjectVo);
 
-    List<LabelTaskImageVo> getFinishedImageList(String taskName);
+    List<LabelTaskImageVo> getFinishedImageList(String taskName, List<String> streamIdList);
 
     List<Update> updateLabelTaskImages(LabelViaProjectVo labelViaProjectVo);
 }

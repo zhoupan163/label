@@ -1,11 +1,11 @@
 package com.pxing.label.business.domain.vo;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.Date;
+
 
 /**
  *  [标注任务]
@@ -18,7 +18,8 @@ import java.util.Date;
  * @since JDK1.8
  */
 @Data
-public class LabelStreamVo {
+@TableName("label_stream")
+public class LabelStreamVo{
 
     @ApiModelProperty("stream_id")
     private String streamId;
@@ -27,10 +28,10 @@ public class LabelStreamVo {
     private String taskName;
 
     @ApiModelProperty("图片数量")
-    private long size;
+    private Integer size;
 
     @ApiModelProperty("状态")
-    private int status;
+    private Integer status;
 
     @ApiModelProperty("一级审核人")
     private String qa1;

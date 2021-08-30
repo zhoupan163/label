@@ -2,8 +2,11 @@ package com.pxing.label.web.controller.business;
 
 
 
+import com.pxing.label.business.dao.LabelStreamDao;
 import com.pxing.label.business.dataTransformation.LabelAnnotionToMott;
+import com.pxing.label.business.domain.vo.LabelStreamVo;
 import com.pxing.label.business.domain.vo.LabelTaskImageVo;
+import com.pxing.label.business.service.LabelStreamService;
 import com.pxing.label.business.service.LabelTaskService;
 import com.pxing.label.common.core.controller.BaseController;
 import com.pxing.label.common.utils.file.ZipUtils;
@@ -32,10 +35,20 @@ public class LabelDataController extends BaseController
     @Autowired
     private LabelTaskService labelTaskService;
 
+    @Autowired
+    private LabelStreamService labelStreamService;
+
     @GetMapping("/getLabelTaskZip/")
     @ApiOperation(value = "下载压缩包")
     public void getZip(@RequestParam("taskName") String taskName, HttpServletResponse response) throws Exception {
-        List<LabelTaskImageVo> list=labelTaskService.getFinishedImageList(taskName);
+        LabelStreamVo labelStreamVo= new LabelStreamVo();
+        labelStreamVo.setTaskName(taskName);
+        labelStreamVo.setStatus(3);
+        List<LabelStreamVo> labelStreamVoList=  labelStreamService.getStreamList(labelStreamVo);
+        List<String> streamIdList= labelStreamVoList.stream().map(LabelStreamVo::getStreamId).collect(Collectors.toList());
+
+         //图片
+        List<LabelTaskImageVo> list=labelTaskService.getFinishedImageList(taskName, streamIdList);
         Map<String, InputStream> map=new HashMap<>();
         Map<String,Set<String>> streamMap= new HashMap<>();
         Set<String> result = new HashSet<>();

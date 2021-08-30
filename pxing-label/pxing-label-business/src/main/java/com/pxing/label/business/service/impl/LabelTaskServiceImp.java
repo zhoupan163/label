@@ -127,17 +127,17 @@ public class LabelTaskServiceImp implements LabelTaskService {
         labelStreamVo.setStreamId(streamId);
         if(type.equals("qa1")){
             labelStreamVo.setQa1(userName);
-            labelStreamService.updateLabelStreamService(labelStreamVo);
+            labelStreamService.updateLabelStream(labelStreamVo);
         }else if (type.equals("qa2")){
             labelStreamVo.setQa2(userName);
-            labelStreamService.updateLabelStreamService(labelStreamVo);
+            labelStreamService.updateLabelStream(labelStreamVo);
         }else{
             Query query1=Query.query(Criteria.where("stream_id").is(streamId).and("task_name").is(taskName));
             long size= mongoTemplate.count(query1, LabelTaskImageVo.class);
 
             labelStreamVo.setLabelBy(userName);
             labelStreamVo.setStatus(0);
-            labelStreamVo.setSize(size);
+            labelStreamVo.setSize((int)size);
             labelStreamService.insertLabelStreamVo(labelStreamVo);
         };
 
@@ -166,12 +166,12 @@ public class LabelTaskServiceImp implements LabelTaskService {
         labelStreamVo.setStreamId(labelViaProjectVo.getStreamId());
         labelStreamVo.setTaskName(labelStreamVo.getTaskName());
         labelStreamVo.setStatus(1);
-        labelStreamService.updateLabelStreamService(labelStreamVo);
+        labelStreamService.updateLabelStream(labelStreamVo);
     }
 
     @Override
-    public List<LabelTaskImageVo> getFinishedImageList(String taskName) {
-        Query query=Query.query(Criteria.where("task_name").is(taskName).and("image_status").is(3));
+    public List<LabelTaskImageVo> getFinishedImageList(String taskName, List<String> streamIdList) {
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("image_status").is(3).and("stream_id").in(streamIdList));
         List<LabelTaskImageVo> list=mongoTemplate.find(query, LabelTaskImageVo.class);
         return list;
     }

@@ -1,5 +1,6 @@
 package com.pxing.label.business.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.pxing.label.business.domain.vo.*;
@@ -74,6 +75,7 @@ public class LabelCheckServiceImp implements LabelCheckService {
 
         LabelStreamVo labelStreamVo= new LabelStreamVo();
         labelStreamVo.setStreamId(labelImageCheck.getStreamId());
+
         if(imgStatusList.contains("4")){
             labelStreamVo.setStatus(4);
         }else{
@@ -83,7 +85,8 @@ public class LabelCheckServiceImp implements LabelCheckService {
                 labelStreamVo.setStatus(3);
             }
         };
-        labelStreamService.updateLabelStreamService(labelStreamVo);
+
+        labelStreamService.updateLabelStream(labelStreamVo);
         return new ArrayList<>();
     }
 

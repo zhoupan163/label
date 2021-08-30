@@ -9,9 +9,10 @@ public interface LabelStreamService {
 
     List<LabelStreamVo> getLabelTaskUnfinishedStream(String taskName, String userName);
 
-    void insertLabelStreamVo(LabelStreamVo labelStreamVo);
+    int insertLabelStreamVo(LabelStreamVo labelStreamVo);
 
-    void updateLabelStreamService(LabelStreamVo labelStreamVo);
+    int updateLabelStream(LabelStreamVo labelStreamVo);
 
-    List<LabelStreamVo> getUnCheckedStream(LabelStreamVo labelStreamVo);
+    List<LabelStreamVo> getStreamList(LabelStreamVo labelStreamVo);
+
 }

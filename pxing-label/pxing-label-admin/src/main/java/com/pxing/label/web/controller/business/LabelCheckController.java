@@ -59,30 +59,38 @@ public class LabelCheckController extends BaseController
         startPage();
         LoginUser loginUser= tokenService.getLoginUser(token);
         String  userName=loginUser.getUser().getUserName();
-        List<LabelTaskImageVo> list=labelCheckService.getUnFinishedCheckedImage(taskName, userName, qa_level);
-        return getDataTable(list);
+        LabelStreamVo labelStreamVo= new LabelStreamVo();
+        labelStreamVo.setTaskName(taskName);
+        if (qa_level== 1){
+            labelStreamVo.setQa1(userName);
+            labelStreamVo.setStatus(1);
+        }else{
+            labelStreamVo.setQa2(userName);
+            labelStreamVo.setStatus(2);
+        }
+
+        List<LabelStreamVo> labelStreamVoList= labelStreamService.getStreamList(labelStreamVo);
+        return getDataTable(labelStreamVoList);
     }
 
-    // 查询已经标注完成却没有开始审核的stream
+    // 查询没有开始审核的stream
     @GetMapping("/getUnCheckedStream")
     @ResponseBody
     public TableDataInfo getUnCheckedStream(@RequestParam("taskName")String taskName, @RequestParam("qa_level")int qa_level)
     {
         startPage();
-        //Query query=Query.query(Criteria.where("task_name").is(taskName).and("image_status").is(qa_level));
-        //List<LabelStreamVo> list=labelTaskService.getLabelTaskStream(taskName, query);
         LabelStreamVo labelStreamVo= new LabelStreamVo();
         labelStreamVo.setTaskName(taskName);
-        if(qa_level==1){
+
+        if (qa_level== 1){
             labelStreamVo.setQa1("");
             labelStreamVo.setStatus(1);
         }else{
             labelStreamVo.setQa2("");
             labelStreamVo.setStatus(2);
         }
-        List<LabelStreamVo> list=labelStreamService.getUnCheckedStream(labelStreamVo);
-
-        return getDataTable(list);
+        List<LabelStreamVo> labelStreamVoList= labelStreamService.getStreamList(labelStreamVo);
+        return getDataTable(labelStreamVoList);
     }
 
     // 审核操作

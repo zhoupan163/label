@@ -14,7 +14,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -22,7 +21,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RunWith(SpringRunner.class)
@@ -128,13 +126,6 @@ public class SmartAdminApplicationTests {
 
     @Test
     public void test9(){
-        List<LabelTaskImageVo> list= labelTaskService.getFinishedImageList("pedestrian_reid");
-        for(LabelTaskImageVo labelTaskImageVo : list){
-           // String data= LabelAnnotionToMott.getMott(labelTaskImageVo);
-            System.out.println("succ");
-
-        }
-
 
     }
 
@@ -145,8 +136,6 @@ public class SmartAdminApplicationTests {
         List<LabelTaskImageVo> list=mongoTemplate.find(query, LabelTaskImageVo.class);
         System.out.println("aa");
     }
-
-
 
 
 

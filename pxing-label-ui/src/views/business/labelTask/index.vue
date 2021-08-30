@@ -285,12 +285,12 @@ export default {
             //alert(this.taskStreamList[0].stream_id);
             //alert(this.taskStreamList[0].image_status);
             if(row.type==0){
-              if (this.taskStreamList[0].image_status== 4){
+              if (this.taskStreamList[0].status== 4){
                 alert("你有审批驳回的任务，即将跳转标注界面")
               }else {
                 alert("你有未完成标注的任务，即将跳转标注界面")
               };
-              window.open('http://10.66.66.121:8082/?token=' + token.toString() + '&taskName=' +row.taskName + '' + '&streamId=' +this.taskStreamList[0].stream_id);
+              window.open('http://10.66.66.121:8082/?token=' + token.toString() + '&taskName=' +row.taskName + '' + '&streamId=' +this.taskStreamList[0].streamId);
             }else{
               alert("图片标注待开发");
               //alert(aa)
