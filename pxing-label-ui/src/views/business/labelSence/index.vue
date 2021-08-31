@@ -21,17 +21,17 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="任务类型" prop="status">
+      <el-form-item label="状态" prop="status">
         <!--参考激活或者什么-->
         <el-select
           v-model="queryParams.status"
-          placeholder="视频 图片 点云"
+          placeholder="任务状态"
           clearable
           size="small"
           style="width: 240px"
         >
           <el-option
-            v-for="dict in typeOptions"
+            v-for="dict in statusOptions"
             :key="dict.dictValue"
             :label="dict.dictLabel"
             :value="dict.dictValue"
@@ -61,7 +61,8 @@
       <el-table-column label="任务编号" prop="taskId" width="120" />
       <el-table-column label="任务名称" prop="taskName" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="关联项目id" prop="projectId" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="任务类型":formatter="typeFormat" prop="type" width="120" />
+      <el-table-column label="任务状态" prop="status" width="120" />
+      <el-table-column label="任务类型（0视频 1图片）" prop="type" width="120" />
       <el-table-column label="图片总数量" prop="size" width="120" />
       <el-table-column label="待一级审核图片数量" prop="qa1Size" width="120" />
       <el-table-column label="待二级审核图片数量" prop="qa2Size" width="120" />
@@ -163,7 +164,34 @@ export default {
       // 日期范围
       dateRange: [],
       // 状态数据字典
-      typeOptions: [],
+      statusOptions: [],
+      // 数据范围选项
+      dataScopeOptions: [
+        {
+          value: "1",
+          label: "全部数据权限"
+        },
+        {
+          value: "2",
+          label: "自定数据权限"
+        },
+        {
+          value: "3",
+          label: "本部门数据权限"
+        },
+        {
+          value: "4",
+          label: "本部门及以下数据权限"
+        },
+        {
+          value: "5",
+          label: "仅本人数据权限"
+        }
+      ],
+      // 菜单列表
+      menuOptions: [],
+      // 部门列表
+      deptOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -191,8 +219,8 @@ export default {
   },
   created() {
     this.getList();
-    this.getDicts("business_labelTask_type").then(response => {
-      this.typeOptions = response.data;
+    this.getDicts("sys_normal_disable").then(response => {
+      this.statusOptions = response.data;
     });
   },
   methods: {
@@ -209,12 +237,7 @@ export default {
         }
       );
     },
-    typeFormat(row, column) {
-      if (row.menuType == "F") {
-        return "";
-      }
-      return this.selectDictLabel(this.typeOptions, row.type);
-    },
+
 
     // 取消按钮
     cancel() {

@@ -1,19 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" v-show="showSearch" :inline="true">
-      <el-form-item label="任务名称" prop="taskName">
+
+      <el-form-item label="项目id" prop="projectId">
         <el-input
-          v-model="queryParams.taskName"
-          placeholder="请输入任务名称"
-          clearable
-          size="small"
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="关联项目id" prop="projectId">
-        <el-input
-          v-model="queryParams.projectId"
+          v-model="queryParams.id"
           placeholder="请输入项目id"
           clearable
           size="small"
@@ -21,23 +12,18 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="任务类型" prop="status">
-        <!--参考激活或者什么-->
-        <el-select
-          v-model="queryParams.status"
-          placeholder="视频 图片 点云"
+
+      <el-form-item label="项目名称" prop="taskName">
+        <el-input
+          v-model="queryParams.projectName"
+          placeholder="请输入任务名称"
           clearable
           size="small"
           style="width: 240px"
-        >
-          <el-option
-            v-for="dict in typeOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
+          @keyup.enter.native="handleQuery"
+        />
       </el-form-item>
+
       <el-form-item label="创建时间">
         <el-date-picker
           v-model="dateRange"
@@ -56,17 +42,46 @@
       </el-form-item>
     </el-form>
 
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['business:labelProject:add']"
+        >新增</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          plain
+          icon="el-icon-edit"
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['business:labelProject:edit']"
+        >修改</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['business:labelProject:remove']"
+        >删除</el-button>
+      </el-col>
+      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
+    </el-row>
+
     <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="任务编号" prop="taskId" width="120" />
-      <el-table-column label="任务名称" prop="taskName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="关联项目id" prop="projectId" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="任务类型":formatter="typeFormat" prop="type" width="120" />
-      <el-table-column label="图片总数量" prop="size" width="120" />
-      <el-table-column label="待一级审核图片数量" prop="qa1Size" width="120" />
-      <el-table-column label="待二级审核图片数量" prop="qa2Size" width="120" />
-      <el-table-column label="审核完成图片数量" prop="rejectSize" width="120" />
-      <el-table-column label="审核完成图片数量" prop="finishedSize" width="120" />
+      <el-table-column label="工程id" prop="id" width="120" />
+      <el-table-column label="工程名称" prop="projectName" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
       <el-table-column labe
                        l="创建时间" align="center" prop="createTime" width="120">
@@ -74,18 +89,13 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注信息" prop="remark" width="120" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope" v-if="scope.row.type== 0">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleImagesTask(scope.row)"
-            v-hasPermi="['business:labelTask:labelImages']"
-          >标注</el-button>
+      <el-table-column labe
+                       l="修改时间" align="center" prop="createTime" width="120">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="备注信息" prop="remark" width="120" />
     </el-table>
 
     <pagination
@@ -147,9 +157,6 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 任务表格数据
-      roleList: [],
-      taskStreamList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -163,7 +170,12 @@ export default {
       // 日期范围
       dateRange: [],
       // 状态数据字典
-      typeOptions: [],
+      statusOptions: [],
+      // 数据范围选项,
+      // 菜单列表
+      menuOptions: [],
+      // 部门列表
+      deptOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -180,19 +192,16 @@ export default {
       },
       // 表单校验
       rules: {
-        taskName: [
+        projectName: [
           { required: true, message: "任务名称不能为空", trigger: "blur" }
-        ],
-        projectId: [
-          { required: true, message: "权限字符不能为空", trigger: "blur" }
         ]
       }
     };
   },
   created() {
     this.getList();
-    this.getDicts("business_labelTask_type").then(response => {
-      this.typeOptions = response.data;
+    this.getDicts("sys_normal_disable").then(response => {
+      this.statusOptions = response.data;
     });
   },
   methods: {
@@ -209,12 +218,7 @@ export default {
         }
       );
     },
-    typeFormat(row, column) {
-      if (row.menuType == "F") {
-        return "";
-      }
-      return this.selectDictLabel(this.typeOptions, row.type);
-    },
+
 
     // 取消按钮
     cancel() {

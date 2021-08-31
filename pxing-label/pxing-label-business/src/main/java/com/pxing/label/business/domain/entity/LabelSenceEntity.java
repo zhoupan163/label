@@ -8,7 +8,7 @@ import lombok.Data;
 
 
 /**
- *  [标注任务]
+ *  [标注场景]
  *
  * @author zhoup
  * @version 1.0
@@ -18,15 +18,13 @@ import lombok.Data;
  * @since JDK1.8
  */
 @Data
-@TableName("label_task")
-public class LabelTaskEntity extends LabelBaseEntity {
+@TableName("label_sence")
+public class LabelSenceEntity extends LabelBaseEntity {
 
     @ApiModelProperty("项目id")
     private Long projectId;
 
-    @ApiModelProperty("任务名称")
-    private String taskName;
+    @ApiModelProperty("场景名称")
+    private String senceName;
 
-    @ApiModelProperty("任务类型")
-    private Integer type;
 }
