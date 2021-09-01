@@ -68,8 +68,7 @@
       <el-table-column label="审核完成图片数量" prop="rejectSize" width="120" />
       <el-table-column label="审核完成图片数量" prop="finishedSize" width="120" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
-      <el-table-column labe
-                       l="创建时间" align="center" prop="createTime" width="120">
+      <el-table-column label="创建时间" align="center" prop="createTime" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
@@ -82,7 +81,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleImagesTask(scope.row)"
-            v-hasPermi="['business:labelTask:labelImages']"
+            v-hasPermi="['business:labelTask:label']"
           >标注</el-button>
         </template>
       </el-table-column>
@@ -109,7 +108,6 @@
               type="text"
               icon="el-icon-edit"
               @click="selectStream(scope.row)"
-              v-hasPermi="['business:labelTask:labelTaskStreamSelect']"
             >选取标注</el-button>
           </template>
         </el-table-column>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pxing.label.business.dao.LabelProjectDao">
+
+    <resultMap id="LabelProjectEntity" type="com.pxing.label.business.domain.entity.LabelProjectEntity"></resultMap>
+
+
+
+    <select id="selectLabelProjectList" resultMap="LabelProjectEntity">
+        select
+         id,
+         project_name,
+         create_time,
+         update_time,
+         create_by,
+         remark
+        from label_project
+    </select>
+
+</mapper>

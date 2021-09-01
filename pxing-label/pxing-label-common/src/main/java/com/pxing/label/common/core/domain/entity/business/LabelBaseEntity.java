@@ -2,6 +2,7 @@ package com.pxing.label.common.core.domain.entity.business;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -30,17 +31,23 @@ public class LabelBaseEntity {
     /**
      * 更新时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
     /**
      * 创建人
      */
-    private String createtBy;
+    private String createBy;
+    /**
+     * 备注信息
+     */
+    private String remark;
 
 
 

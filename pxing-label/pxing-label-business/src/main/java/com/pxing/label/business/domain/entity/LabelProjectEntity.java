@@ -24,4 +24,5 @@ public class LabelProjectEntity extends LabelBaseEntity {
     @ApiModelProperty("项目名称")
     private String projectName;
 
+
 }
