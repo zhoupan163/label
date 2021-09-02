@@ -79,14 +79,12 @@
             type="text"
             icon="el-icon-edit"
             @click="checkTask(scope.row, 1)"
-            v-hasPermi="['business:labelCheck:qa1']"
           >一级审核</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="checkTask(scope.row, 2)"
-            v-hasPermi="['business:labelCheck:qa2']"
           >二级审核</el-button>
         </template>
       </el-table-column>
@@ -113,7 +111,6 @@
               type="text"
               icon="el-icon-edit"
               @click="selectStream(scope.row)"
-              v-hasPermi="['business:labelTask:labelTaskStreamSelect']"
             >选取审核</el-button>
           </template>
         </el-table-column>
