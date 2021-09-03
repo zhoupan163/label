@@ -81,7 +81,9 @@
     <el-table v-loading="loading" :data="sceneList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="场景id" prop="id" width="120" />
-      <el-table-column label="标签名称" prop="tagName" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="项目id" prop="projectId" width="120" />
+      <el-table-column label="项目名称" prop="projectId" :formatter ="projectFormat" width="120" />
+      <el-table-column label="场景名称" prop="sceneName" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
       <el-table-column label="修改时间" align="center" prop="createTime" width="180"/>
@@ -101,18 +103,18 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="标签名称" prop="tagName">
-              <el-input v-model="form.tagName" placeholder="请输入标签名称" maxlength="30" />
+            <el-form-item label="场景名称" prop="sceneName">
+              <el-input v-model="form.sceneName" placeholder="请输入场景名称" maxlength="30" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-form-item label="场景名称">
-            <el-select v-model="form.sceneId" placeholder="请选择">
+          <el-form-item label="项目名称">
+            <el-select v-model="form.projectId" placeholder="请选择">
               <el-option
-                v-for="item in sceneOptions"
+                v-for="item in projectOptions"
                 :key="item.id"
-                :label="item.sceneName"
+                :label="item.projectName"
                 :value="item.id"
               ></el-option>
             </el-select>
@@ -135,14 +137,13 @@
 </template>
 
 <script>
-import {listLabelScene} from "@/api/business/labelScene"
+import {listLabelScene, addLabelScene} from "@/api/business/labelScene"
 import {listLabelProject} from "@/api/business/labelProject"
-import {listLabelTag, addLabelTag} from "@/api/business/labelTag";
 
 
 
 export default {
-  name: "Tag",
+  name: "Role",
   data() {
     return {
       // 遮罩层
@@ -172,9 +173,11 @@ export default {
       // 日期范围
       dateRange: [],
       menuOptions: [],
-      sceneOptions: [],
+      projectIds:[],
+      projectOptions: [],
+      projectDict:{},
       // 查询参数
-      tagList: [],
+      sceneList: [],
       queryParams: {
         pageNum: 1,
         pageSize: 10,
@@ -188,8 +191,8 @@ export default {
       },
       // 表单校验
       rules: {
-        tagName: [
-          { required: true, message: "标签名称不能为空", trigger: "blur" }
+        sceneName: [
+          { required: true, message: "项目名称不能为空", trigger: "blur" }
         ]
       }
     };
@@ -200,8 +203,14 @@ export default {
   methods: {
     /** 查询任务列表 */
     getList() {
-      this.loading = true;
-      listLabelTag(this.addDateRange(this.queryParams, this.dateRange)).then(
+      listLabelProject().then(response => {
+        this.projectOptions= response.rows;
+        this.reset();
+        //this.open = true;
+        this.title = "添加场景";
+      });
+      this.loading = false;
+      listLabelScene(this.addDateRange(this.queryParams, this.dateRange)).then(
         response => {
           this.sceneList= response.rows;
           this.total = response.total;
@@ -209,13 +218,21 @@ export default {
         }
       );
     },
+    projectFormat(row,column){
+      //alert(row.id);
+      for(var index in this.projectOptions){
+        var project= this.projectOptions[index];
+        if(project.id== row.projectId)
+             return project.projectName;
+        }
+    },
     /** 新增按钮操作 */
     handleAdd() {
-      listLabelScene().then(response => {
-        this.sceneOptions= response.rows;
+      listLabelProject().then(response => {
+        this.projectOptions= response.rows;
         this.reset();
         this.open = true;
-        this.title = "添加标签";
+        this.title = "添加场景";
       })
     },
     // 取消按钮
@@ -259,13 +276,9 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != undefined) {
-            //updateLabelProject(this.form).then(response => {
-            //  this.msgSuccess("修改成功");
-              //this.open = false;
-             // this.getList();
-           // });
+
           } else {
-            addLabelTag(this.form).then(response => {
+            addLabelScene(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();

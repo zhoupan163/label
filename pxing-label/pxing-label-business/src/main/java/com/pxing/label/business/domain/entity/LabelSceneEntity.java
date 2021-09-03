@@ -18,13 +18,13 @@ import lombok.Data;
  * @since JDK1.8
  */
 @Data
-@TableName("label_sence")
-public class LabelSenceEntity extends LabelBaseEntity {
+@TableName("label_scene")
+public class LabelSceneEntity extends LabelBaseEntity {
 
-    @ApiModelProperty("项目id")
-    private Long projectId;
+    @ApiModelProperty("项目Id")
+    private String projectId;
 
     @ApiModelProperty("场景名称")
-    private String senceName;
+    private String sceneName;
 
 }

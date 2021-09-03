@@ -22,7 +22,7 @@ import lombok.Data;
 public class LabelTagEntity extends LabelBaseEntity {
 
     @ApiModelProperty("场景id")
-    private Long senceId;
+    private Long sceneId;
 
     @ApiModelProperty("标签名称")
     private String tagName;
