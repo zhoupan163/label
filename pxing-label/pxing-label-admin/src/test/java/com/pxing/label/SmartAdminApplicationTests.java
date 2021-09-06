@@ -102,7 +102,7 @@ public class SmartAdminApplicationTests {
 
     @Test
     public void test7(){
-        Query query=Query.query(Criteria.where("image_status").in(0, "0" ,"2", 2 , '4', 4, '3',3,'1', 1));
+        Query query=Query.query(Criteria.where("stream_id").is("55702336-fffd-11eb-92e8-000c293913c8"));
         Update update=new Update();
         update.set("image_status", 0);
         update.set("annotationInfo", "");
@@ -126,6 +126,8 @@ public class SmartAdminApplicationTests {
 
     @Test
     public void test9(){
+        List<LabelTaskImageVo> list= labelTaskService.selectUnTaggedImageList("f703d1ac-00e8-11ec-92e8-000c293913c8");
+        System.out.println("ok");
 
     }
 

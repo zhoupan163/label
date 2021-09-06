@@ -54,7 +54,8 @@ public class LabelCheckController extends BaseController
     //获取已分配未审核完成的stream
     @GetMapping("/getUnFinishedCheckedVideoStream")
     @ResponseBody
-    public TableDataInfo getUnFinishedCheckedVideoStream(@RequestParam("taskName")String taskName, @RequestParam("token")String token, @RequestParam("qa_level")int qa_level)
+    public TableDataInfo getUnFinishedCheckedVideoStream(@RequestParam("taskName")String taskName, @RequestParam("token")String token,
+                                                         @RequestParam("qa_level")int qa_level)
     {
         startPage();
         LoginUser loginUser= tokenService.getLoginUser(token);

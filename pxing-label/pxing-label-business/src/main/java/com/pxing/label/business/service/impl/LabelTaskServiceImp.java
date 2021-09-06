@@ -200,4 +200,12 @@ public class LabelTaskServiceImp implements LabelTaskService {
         return (int)mongoTemplate.updateFirst(query,update, LabelTaskImageVo.class).getModifiedCount();
     }
 
+    @Override
+    public List<LabelTaskImageVo> selectUnTaggedImageList(String streamId) {
+        Query query=Query.query(Criteria.where("stream_id").is(streamId));
+        query.fields().include("jpg_url");
+
+        return mongoTemplate.find(query, LabelTaskImageVo.class);
+    }
+
 }
