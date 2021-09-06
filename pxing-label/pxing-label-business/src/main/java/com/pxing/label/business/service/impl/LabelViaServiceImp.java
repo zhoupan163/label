@@ -72,7 +72,7 @@ public class LabelViaServiceImp implements LabelViaService {
         Query query=Query.query(Criteria.where("task_name").is(taskName).and("type").is("template"));
         LabelViaProjectVo labelViaProjectVo= mongoTemplate.findOne(query ,LabelViaProjectVo.class);
 
-        Query query1=Query.query(Criteria.where("task_name").is(taskName).and("stream_id").is(streamId).and(type).is(userName));
+        Query query1=Query.query(Criteria.where("task_name").is(taskName).and("stream_id").is(streamId).and(type).is(userName).and("image_status").nin(5));
         List<LabelTaskImageVo> labelTaskImageVoList= mongoTemplate.find(query1 , LabelTaskImageVo.class);
 
         JSONObject via_img_metadata= new JSONObject();

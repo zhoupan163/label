@@ -54,6 +54,8 @@ public class LabelTaskServiceImp implements LabelTaskService {
                     .and("image_status").is(3)), LabelTaskImageVo.class));
             labelTaskVo1.setRejectSize(mongoTemplate.count(Query.query(Criteria.where("task_name").is(labelTaskVo1.getTaskName())
                     .and("image_status").is(4)), LabelTaskImageVo.class));
+            labelTaskVo1.setDiscardSize(mongoTemplate.count(Query.query(Criteria.where("task_name").is(labelTaskVo1.getTaskName())
+                    .and("image_status").is(5)), LabelTaskImageVo.class));
 
             list1.add(labelTaskVo1);
         }
@@ -188,6 +190,14 @@ public class LabelTaskServiceImp implements LabelTaskService {
              mongoTemplate.updateFirst(query, update,LabelTaskImageVo.class);
         }
         return null;
+    }
+
+    @Override
+    public int discardImage(String taskName, String streamId, String imgId) {
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("image_status").is(0).and("stream_id").is(streamId).and("jpg_url").is(imgId));
+        Update update= new Update();
+        update.set("image_status", 5);
+        return (int)mongoTemplate.updateFirst(query,update, LabelTaskImageVo.class).getModifiedCount();
     }
 
 }

@@ -43,6 +43,9 @@ public class LabelTaskVo {
     @ApiModelProperty("审核完成图片数量")
     private Long finishedSize;
 
+    @ApiModelProperty("废弃图片数量")
+    private Long discardSize;
+
     @ApiModelProperty("任务状态")
     private String status;
 

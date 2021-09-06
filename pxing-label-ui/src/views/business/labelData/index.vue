@@ -66,11 +66,11 @@
       <el-table-column label="图片总数量" prop="size" width="120" />
       <el-table-column label="待一级审核图片数量" prop="qa1Size" width="120" />
       <el-table-column label="待二级审核图片数量" prop="qa2Size" width="120" />
-      <el-table-column label="审核完成图片数量" prop="rejectSize" width="120" />
+      <el-table-column label="审核驳回图片数量" prop="rejectSize" width="120" />
+      <el-table-column label="废弃图片数量" prop="discardSize" width="120" />
       <el-table-column label="审核完成图片数量" prop="finishedSize" width="120" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
-      <el-table-column labe
-                       l="创建时间" align="center" prop="createTime" width="120">
+      <el-table-column label="创建时间" align="center" prop="createTime" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>

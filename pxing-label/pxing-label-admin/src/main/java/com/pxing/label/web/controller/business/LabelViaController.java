@@ -7,6 +7,7 @@ import com.pxing.label.business.domain.vo.LabelViaProjectVo;
 import com.pxing.label.business.service.LabelTaskService;
 import com.pxing.label.business.service.LabelViaService;
 import com.pxing.label.common.core.controller.BaseController;
+import com.pxing.label.common.core.domain.AjaxResult;
 import com.pxing.label.common.core.domain.model.LoginUser;
 import com.pxing.label.common.core.page.TableDataInfo;
 import com.pxing.label.framework.web.service.TokenService;
@@ -69,6 +70,15 @@ public class LabelViaController extends BaseController
         labelTaskService.commitTaskImage(labelViaProjectVo);
 
         return getDataTable(new ArrayList<>());
+    }
+
+    @PutMapping("discardImg")
+    @ResponseBody
+    public  AjaxResult discardImg(@RequestParam("taskName")String taskName, @RequestParam("streamId")String streamId,
+                                  @RequestParam("imageId")String imgId){
+        int res= labelTaskService.discardImage(taskName, streamId, imgId);
+        return toAjax(res);
+
     }
 
 

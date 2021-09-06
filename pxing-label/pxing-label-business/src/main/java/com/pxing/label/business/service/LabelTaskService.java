@@ -31,4 +31,6 @@ public interface LabelTaskService {
     List<LabelTaskImageVo> getFinishedImageList(String taskName, List<String> streamIdList);
 
     List<Update> updateLabelTaskImages(LabelViaProjectVo labelViaProjectVo);
+
+    int discardImage(String taskName, String streamId, String imgId);
 }
