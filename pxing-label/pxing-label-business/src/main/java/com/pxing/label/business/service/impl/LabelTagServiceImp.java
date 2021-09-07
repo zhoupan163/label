@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.pxing.label.business.dao.LabelTagDao;
 import com.pxing.label.business.domain.entity.LabelProjectEntity;
 import com.pxing.label.business.domain.entity.LabelTagEntity;
+import com.pxing.label.business.domain.vo.LabelTagVo;
 import com.pxing.label.business.service.LabelTagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,5 +39,10 @@ public class LabelTagServiceImp implements LabelTagService {
     @Override
     public int deleteLabelTagByIds(Long[] projectIds) {
         return 0;
+    }
+
+    @Override
+    public List<LabelTagVo> selectTagListByProjectId(Long projectId) {
+        return null;
     }
 }

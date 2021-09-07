@@ -192,7 +192,7 @@ export default {
     /** 查询任务列表 */
     getList() {
       this.loading = true;
-      listLabelProject(this.addDateRange(this.queryParams, this.dateRange)).then(
+      listLabelProject().then(
         response => {
           this.projectList = response.rows;
           this.total = response.total;

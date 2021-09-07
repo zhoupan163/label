@@ -56,34 +56,34 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="streamList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="任务编号" prop="taskId" width="120" />
-      <el-table-column label="任务名称" prop="taskName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="关联项目id" prop="projectId" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="任务类型":formatter="typeFormat" prop="type" width="120" />
-      <el-table-column label="图片总数量" prop="size" width="120" />
+      <el-table-column label="id" prop="id" width="120" />
+      <el-table-column label="传感器位置" prop="sensorLocation" width="120" />
+      <el-table-column label="传感器类型" prop="sensorType" width="120" />
+      <el-table-column label="topic类型" prop="topicType" width="120" />
+      <el-table-column label="标记状态" prop="tagStatus" width="120" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="120">
+      <el-table-column label="创建时间" align="center" prop="createTime" width="220">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注信息" prop="remark" width="120" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope" v-if="scope.row.type== 0">
+        <template slot-scope="scope" v-if="scope.row.tagStatus== 0">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="TagImagesTask(scope.row)"
+            @click="tagStream(scope.row)"
             v-hasPermi="['business:labelTask:label']"
           >标记</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="TagImagesTask(scope.row)"
+            @click="tagStream(scope.row)"
             v-hasPermi="['business:labelTask:label']"
           >查看标记</el-button>
         </template>
@@ -98,20 +98,20 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改任务配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-table v-loading="loading" :data="taskStreamList">
-        <el-table-column label="stream_id" prop="streamId" width="120" />
-        <el-table-column label="任务名称" prop="taskName" width="120" />
-        <el-table-column label="图片数量" prop="size" width="120" />
+    <!-- 选择指定的项目 -->
+    <el-dialog :title="title1" :visible.sync="open1" width="500px" append-to-body>
+      <el-table v-loading="loading" :data="projectList">
+        <el-table-column label="id" prop="Id" width="120" />
+        <el-table-column label="项目名称" prop="projectName" width="120" />
+        <el-table-column label="备注" prop="remark" width="120" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-button
               size="mini"
               type="text"
               icon="el-icon-edit"
-              @click="selectStream(scope.row)"
-            >选取标记</el-button>
+              @click="selectProject(scope.row)"
+            >选取项目</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -120,18 +120,18 @@
         :total="total"
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
-        @pagination="getLabelTaskStream(taskStreamList.get(0).taskName)"
+        @pagination="getProjectList(taskStreamList.get(0).taskName)"
       />
     </el-dialog>
 
-    <el-dialog :title="title1" :visible.sync="open1" width="1000px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body>
       <el-row :gutter="20">
-        <el-col :span="6">
+        <el-col :span="56">
           <div class="app1">
             <el-table v-loading="loading" :data="imageTableList">
-              <el-table-column label="图片列表" prop="jpg_url" width="120" >
+              <el-table-column label="图片列表" prop="jpgUrl" width="120" >
                 <template   slot-scope="scope">
-                  <img :src="scope.row.jpg_url"  min-width="140" height="100" />
+                  <img :src="scope.row.jpgUrl"  min-width="140" height="100" />
                 </template>
               </el-table-column>
             </el-table>
@@ -155,14 +155,18 @@
         :limit.sync="queryParams.pageSize"
         @pagination="getList1()"
       />
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { listLabelTask, getLabelTaskStream} from "@/api/business/labelTask"
+import { listLabelProject} from "@/api/business/labelProject"
 import { getToken } from "@/utils/auth";
-import { selectUnTaggedImageList} from "@/api/business/labelStreamTag"
+import { selectUnTaggedImageList ,selectStreamTagList , selectImageListByStreamId} from "@/api/business/labelStreamTag"
 export default {
   name: "Role",
   data() {
@@ -182,7 +186,17 @@ export default {
       // 总条数
       total: 0,
       // 任务表格数据
-      taskStreamList: [],
+      streamList: [],
+
+      streamId: undefined,
+
+      projectTotal: 0,
+      projectList: [],
+      projectTableList:[],
+      // 弹出层标题
+      title1: "",
+      // 是否显示弹出层
+      open1: false,
 
       imageTotal: 0,
       imageList: [],
@@ -191,10 +205,6 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
-
-      title1: "",
-      // 是否显示弹出层
-      open1: false,
       // 是否显示弹出层（数据权限）
       openDataScope: false,
       menuExpand: false,
@@ -223,6 +233,7 @@ export default {
         children: "children",
         label: "label"
       },
+      tagList:{},
       // 表单校验
       rules: {
         taskName: [
@@ -250,15 +261,13 @@ export default {
       alert("666");
       alert(value);
       alert(key);
-      alert(tag)
+      alert(tag);
     },
     getList() {
       this.loading = true;
-      let token = getToken();
-      //alert(token)
-      listLabelTask(this.addDateRange(this.queryParams, this.dateRange)).then(
+      selectStreamTagList().then(
         response => {
-          this.roleList = response.rows;
+          this.streamList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
@@ -308,25 +317,33 @@ export default {
       this.handleQuery();
     },
     /** 选取stream_id按钮操作 */
-    TagImagesTask(row) {
-      getLabelTaskStream(row.taskName).then(response => {
-        this.taskStreamList = response.rows;
-        this.total = response.total;
-        this.open = true;
-        this.title = row.taskName.toString();
-      });
-      },
-    selectStream(row) {
-      selectUnTaggedImageList(row.streamId).then(response =>{
-        this.imageList= response.rows;
-        this.imageTotal= response.total;
-        this.imageTableList= this.imageList.slice((this.queryParams.pageNum-1)*this.queryParams.pageSize, this.queryParams
+    tagStream(row) {
+      this.streamId= row.id;
+      listLabelProject().then(response =>{
+        this.projectList= response.rows;
+        this.projectTotal= response.total;
+        //alert(this.imageTotal);
+        this.projectTableList= this.projectList.slice((this.queryParams.pageNum-1)*this.queryParams.pageSize, this.queryParams
           .pageNum*this.queryParams.pageSize)
         this.open1 = true;
-        this.title1 = row.taskName.toString();
+        this.title1= "选取项目"
       })
+      },
 
-  }
+    selectProject(row){
+      selectTagByProjectId(row.id).then(response =>{
+
+      });
+      selectImageListByStreamId(this.streamId).then(response => {
+        this.imageList= response.rows;
+        this.imageTotal= response.total;
+        //alert(this.imageTotal);
+        this.imageTableList= this.imageList.slice((this.queryParams.pageNum-1)*this.queryParams.pageSize, this.queryParams
+          .pageNum*this.queryParams.pageSize)
+        this.open = true;
+        this.title= "标记stream"
+      })
+    }
  }
 };
 </script>

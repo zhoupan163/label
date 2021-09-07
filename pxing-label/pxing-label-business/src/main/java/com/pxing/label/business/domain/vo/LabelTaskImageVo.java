@@ -47,10 +47,10 @@ public class LabelTaskImageVo {
     private String file_date;
 
     @ApiModelProperty("width")
-    private Double width;
+    private Integer width;
 
     @ApiModelProperty("height")
-    private Double height;
+    private Integer height;
 
     @ApiModelProperty("png_url")
     private String png_url;

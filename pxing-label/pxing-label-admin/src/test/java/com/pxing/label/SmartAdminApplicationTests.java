@@ -3,6 +3,10 @@ package com.pxing.label;
 
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.client.result.UpdateResult;
+import com.pxing.label.business.dao.ImageDao;
+import com.pxing.label.business.dao.StreamDao;
+import com.pxing.label.business.domain.entity.ImageEntity;
+import com.pxing.label.business.domain.entity.StreamEntity;
 import com.pxing.label.business.domain.vo.LabelStreamVo;
 import com.pxing.label.business.domain.vo.LabelTaskImageVo;
 import com.pxing.label.business.domain.vo.LabelTaskViaVo;
@@ -14,13 +18,16 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @RunWith(SpringRunner.class)
@@ -102,7 +109,7 @@ public class SmartAdminApplicationTests {
 
     @Test
     public void test7(){
-        Query query=Query.query(Criteria.where("stream_id").is("55702336-fffd-11eb-92e8-000c293913c8"));
+        Query query=Query.query(Criteria.where("stream_id").is("4134cf44-ffd4-11eb-92e8-000c293913c8"));
         Update update=new Update();
         update.set("image_status", 0);
         update.set("annotationInfo", "");
@@ -139,6 +146,53 @@ public class SmartAdminApplicationTests {
         System.out.println("aa");
     }
 
+    @Autowired
+    private ImageDao imageDao;
+    @Autowired
+    private StreamDao streamDao;
+    @Test
+    public  void test11(){
+        Query query=Query.query(Criteria.where("image_status").nin(10)).with(Sort.by("stream_id"));
+        List<LabelTaskImageVo> list=mongoTemplate.find(query, LabelTaskImageVo.class);
+        Set<String> set= new HashSet<>();
+
+        String streamId= "";
+        long id=0;
+
+        for(LabelTaskImageVo labelTaskImageVo : list){
+            if(!labelTaskImageVo.getStream_id().equals(streamId)){
+                streamId= labelTaskImageVo.getStream_id();
+
+                StreamEntity streamEntity =new StreamEntity();
+                streamEntity.setCreateBy("admin");
+                streamEntity.setSensorLocation(labelTaskImageVo.getSensor_location());
+                streamEntity.setTopicType(labelTaskImageVo.getTopic_type());
+                streamEntity.setSensorType(labelTaskImageVo.getSensor_type());
+                streamEntity.setWidth(labelTaskImageVo.getWidth());
+                streamEntity.setHeight(labelTaskImageVo.getHeight());
+                streamEntity.setTagStatus(0);
+
+                streamDao.insert(streamEntity);
+                id= streamEntity.getId();
+                System.out.println(streamEntity.getId());
+            };
+            ImageEntity imageEntity= new ImageEntity();
+
+            imageEntity.setStreamId(id);
+            imageEntity.setFrameIndex(labelTaskImageVo.getFrame_index());
+            imageEntity.setSensorLocation(labelTaskImageVo.getSensor_location());
+            imageEntity.setSensorType(labelTaskImageVo.getSensor_type());
+            imageEntity.setTopicType(labelTaskImageVo.getTopic_type());
+            imageEntity.setWidth(labelTaskImageVo.getWidth());
+            imageEntity.setHeight(labelTaskImageVo.getHeight());
+            imageEntity.setJpgUrl(labelTaskImageVo.getJpg_url());
+            imageEntity.setPngUrl(labelTaskImageVo.getPng_url());
+            imageEntity.setThumbnailUrl(labelTaskImageVo.getThumbnail_url());
+            imageEntity.setCreateBy("admin");
+
+            imageDao.insert(imageEntity);
+         }
+    }
 
 
 }
