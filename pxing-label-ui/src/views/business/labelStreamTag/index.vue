@@ -139,10 +139,10 @@
         </el-col>
         <el-col :span="6">
           <div class="app2">
-            <div class="tag1" v-for="(value ,key) in demoTagJson":key="key">
+            <div class="tag1" v-for="(value ,key) in tagJson":key="key">
               <div class= "sence" >{{key}}</div>
               <div class= "tags" v-for=" tag in value" >
-                <el-checkbox @change="handleCheckedTag($event, key, tag)">{{tag}}</el-checkbox>
+                <el-checkbox @change="handleCheckedTag($event, key, tag.id)">{{tag.tagName}}</el-checkbox>
               </div>
             </div>
           </div>
@@ -166,7 +166,7 @@
 <script>
 import { listLabelProject} from "@/api/business/labelProject"
 import { getToken } from "@/utils/auth";
-import { selectUnTaggedImageList ,selectStreamTagList , selectImageListByStreamId} from "@/api/business/labelStreamTag"
+import { selectUnTaggedImageList ,selectStreamTagList , selectImageListByStreamId, selectTagListByProjectId} from "@/api/business/labelStreamTag"
 export default {
   name: "Role",
   data() {
@@ -223,10 +223,8 @@ export default {
         projectId: undefined,
         status: undefined
       },
-      demoTagJson:{
-        "户外":["草坪", "马路"],
-        "户内":["椅子", "桌子", "窗户"]
-      },
+      tagJson: {},
+      tagSet:[],
       // 表单参数
       form: {},
       defaultProps: {
@@ -258,10 +256,11 @@ export default {
         .pageNum*this.queryParams.pageSize)
     },
     handleCheckedTag(value ,key, tag){
-      alert("666");
-      alert(value);
-      alert(key);
-      alert(tag);
+      if(value){
+          this.tagSet.push(tag);
+      }else {
+        this.tagSet.pop(tag);
+      }
     },
     getList() {
       this.loading = true;
@@ -331,8 +330,19 @@ export default {
       },
 
     selectProject(row){
-      selectTagByProjectId(row.id).then(response =>{
-
+      selectTagListByProjectId(row.id).then(response =>{
+           var list= response.rows;
+           for(var row in list){
+             var sceneName= list[row].sceneName;
+             if(this.tagJson.hasOwnProperty(sceneName)){
+               alert(list[row].tagName)
+               var tagList= this.tagJson[sceneName];
+               tagList.push(list[row]);
+               this.tagJson[sceneName]= tagList;
+             }else{
+               this.tagJson[sceneName] = [list[row]];
+             }
+           }
       });
       selectImageListByStreamId(this.streamId).then(response => {
         this.imageList= response.rows;

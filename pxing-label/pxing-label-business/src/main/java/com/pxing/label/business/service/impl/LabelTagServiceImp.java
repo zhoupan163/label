@@ -43,6 +43,6 @@ public class LabelTagServiceImp implements LabelTagService {
 
     @Override
     public List<LabelTagVo> selectTagListByProjectId(Long projectId) {
-        return null;
+        return labelTagDao.selectTagListByProjectId(projectId);
     }
 }

@@ -28,7 +28,7 @@ export function selectImageListByStreamId(streamId) {
 
 export function selectTagListByProjectId(projectId) {
   return request({
-    url: '/business/labelStreamTag/selectImageListByProjectId?projectId='+ projectId,
+    url: '/business/labelStreamTag/selectTagListByProjectId?projectId='+ projectId,
     method: 'get'
   })
 }
