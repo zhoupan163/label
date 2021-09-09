@@ -4,24 +4,6 @@
 
     <resultMap id="LabelTaskVo" type="com.pxing.label.business.domain.vo.LabelTaskVo"></resultMap>
 
-
-
-    <select id="selectLabelTaskList" resultMap="LabelTaskVo">
-        select
-          task_id,
-          task_name,
-          project_id,
-          size,
-          status,
-          create_by,
-          create_time,
-          type,
-          label_by,
-          finished_count,
-          remark
-        from label_task
-    </select>
-
     <update id="updateLabelBy">
       update label_task set label_by=#{labelBy} where task_id=#{taskId}
     </update>

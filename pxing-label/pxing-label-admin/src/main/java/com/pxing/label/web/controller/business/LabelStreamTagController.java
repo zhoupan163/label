@@ -5,10 +5,8 @@ import com.pxing.label.business.domain.entity.LabelTagEntity;
 import com.pxing.label.business.domain.entity.StreamEntity;
 import com.pxing.label.business.domain.vo.LabelTagVo;
 import com.pxing.label.business.domain.vo.LabelTaskImageVo;
-import com.pxing.label.business.service.ImageService;
-import com.pxing.label.business.service.LabelTagService;
-import com.pxing.label.business.service.LabelTaskService;
-import com.pxing.label.business.service.StreamService;
+import com.pxing.label.business.domain.vo.StreamTagVo;
+import com.pxing.label.business.service.*;
 import com.pxing.label.common.annotation.Log;
 import com.pxing.label.common.core.controller.BaseController;
 import com.pxing.label.common.core.domain.AjaxResult;
@@ -22,6 +20,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,6 +44,12 @@ public class LabelStreamTagController extends BaseController
 
     @Autowired
     private LabelTagService labelTagService;
+
+    @Autowired
+    private StreamTagService streamTagService;
+
+    @Autowired
+    private ProjectStreamService projectStreamService;
 
     /**
      * 获取image列表
@@ -93,5 +99,29 @@ public class LabelStreamTagController extends BaseController
         return getDataTable(list);
     }
 
+    /**
+     * tag stream
+     */
+    //@PreAuthorize("@ss.hasPermi('business:labelTag:list')")
+    @PutMapping("/tagStream")
+    public AjaxResult tagStream(Long streamId, Long projectId, Long[] tagIds)
+    {
+        streamTagService.tagStreamList(streamId, Arrays.asList(tagIds));
+        projectStreamService.insertProjectStream(streamId, projectId);
+        return toAjax(streamService.updateTagStatusById(streamId));
+    }
+
+    /**
+     * 获取已经标记的stream记录
+     */
+    //@PreAuthorize("@ss.hasPermi('business:labelTag:list')")
+    @GetMapping("/getTaggedStreamList")
+    @ResponseBody
+    public TableDataInfo getTaggedStreamList(@RequestParam("projectId")Long projectId, @RequestParam("taskId")Long taskId)
+    {
+        startPage();
+        List<StreamTagVo> list = streamTagService.getTaggedStreamList(projectId, taskId);
+        return getDataTable(list);
+    }
 
 }

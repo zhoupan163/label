@@ -56,13 +56,26 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['business:labelProject:add']"
+        >新增</el-button>
+      </el-col>
+    </el-row>
+
+    <el-table v-loading="loading" :data="taskList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="任务编号" prop="taskId" width="120" />
+      <el-table-column label="任务编号" prop="id" width="120" />
       <el-table-column label="任务名称" prop="taskName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="关联项目id" prop="projectId" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="项目编号" prop="projectId" width="120" />
+      <el-table-column label="关联项目名称" prop="projectName" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="任务类型":formatter="typeFormat" prop="type" width="120" />
-      <el-table-column label="图片总数量" prop="size" width="120" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="120">
         <template slot-scope="scope">
@@ -79,6 +92,13 @@
             @click="handleImagesTask(scope.row)"
             v-hasPermi="['business:labelTask:label']"
           >标注</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="filterStream(scope.row)"
+            v-hasPermi="['business:labelTask:']"
+          >筛选</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -93,10 +113,11 @@
 
     <!-- 添加或修改任务配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-table v-loading="loading" :data="taskStreamList">
-        <el-table-column label="stream_id" prop="streamId" width="120" />
-        <el-table-column label="任务名称" prop="taskName" width="120" />
-        <el-table-column label="图片数量" prop="size" width="120" />
+      <el-table v-loading="loading" :data="streamList">
+        <el-table-column label="streamId" prop="streamId" width="120" />
+        <el-table-column label="大小" prop="size" width="120" />
+        <el-table-column label="创建时间" prop="createTime" width="120" />
+        <el-table-column label="备注" prop="remark" width="120" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-button
@@ -113,15 +134,98 @@
         :total="total"
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
-        @pagination="getLabelTaskStream(taskStreamList.get(0).taskName)"
+        @pagination="getStream(streamList.get(0).taskName)"
+      />
+    </el-dialog>
+
+    <!-- 添加task框 -->
+    <el-dialog :title="title1" :visible.sync="open1" width="600px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="项目名称" prop="projectId">
+              <el-select v-model="form.projectId" placeholder="请选择">
+                <el-option
+                  v-for="item in projectOptions"
+                  :key="item.id"
+                  :label="item.projectName"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="任务名称" prop="taskName">
+              <el-input v-model="form.taskName" placeholder="请输入任务名称" maxlength="30" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="任务类型" prop="type">
+              <el-select v-model="form.type" placeholder="请选择">
+                <el-option
+                  v-for="item in typeOptions"
+                  :key="item.dictValue"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="备注">
+              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 添加或修改任务配置对话框 -->
+    <el-dialog :title="title2" :visible.sync="open2" width="500px" append-to-body>
+      <el-table v-loading="loading" :data="taggedStreamList">
+        <el-table-column label="streamId" prop="streamId" width="120" />
+        <el-table-column label="创建时间" prop="createTime" width="120" />
+        <el-table-column label="备注" prop="remark" width="120" />
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="addStreamToTask(scope.row)"
+            >选取添加到任务</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getStream(taggedStreamList.get(0).taskName)"
       />
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { listLabelTask, getLabelTaskUnfinishedStream , getLabelTaskStream, assignLabelTaskStream} from "@/api/business/labelTask"
+import { listLabelTask, getkUnfinishedTaskStream, assignTaskStream, addLabelTask,
+  getTaggedStreamList, addTaskStream, getUnAssignedTaskStream} from "@/api/business/labelTask"
 import { getToken } from "@/utils/auth";
+import {listLabelProject} from "@/api/business/labelProject";
+
+
 
 export default {
   name: "Role",
@@ -142,13 +246,20 @@ export default {
       // 总条数
       total: 0,
       // 任务表格数据
-      roleList: [],
-      taskStreamList: [],
+      taskList: [],
+      streamList: [],
+      taskId: undefined,
+
+      taggedStreamList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
-      // 是否显示弹出层（数据权限）
+      title1: "",
+      open1: false,
+
+      title2: "",
+      open2: false,
       openDataScope: false,
       menuExpand: false,
       menuNodeAll: false,
@@ -158,6 +269,7 @@ export default {
       dateRange: [],
       // 状态数据字典
       typeOptions: [],
+      projectOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -178,7 +290,10 @@ export default {
           { required: true, message: "任务名称不能为空", trigger: "blur" }
         ],
         projectId: [
-          { required: true, message: "权限字符不能为空", trigger: "blur" }
+          { required: true, message: "项目名称不能为空", trigger: "blur" }
+        ],
+        type: [
+          { required: true, message: "任务不能为空", trigger: "blur" }
         ]
       }
     };
@@ -192,21 +307,24 @@ export default {
   methods: {
     /** 查询任务列表 */
     getList() {
+      listLabelProject().then(response => {
+        this.projectOptions= response.rows;
+        this.reset();
+        //this.open = true;
+        this.title = "添加场景";
+      });
       this.loading = true;
       let token=getToken();
       //alert(token)
       listLabelTask(this.addDateRange(this.queryParams, this.dateRange)).then(
         response => {
-          this.roleList = response.rows;
+          this.taskList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
       );
     },
     typeFormat(row, column) {
-      if (row.menuType == "F") {
-        return "";
-      }
       return this.selectDictLabel(this.typeOptions, row.type);
     },
 
@@ -219,6 +337,11 @@ export default {
     cancelDataScope() {
       this.openDataScope = false;
       this.reset();
+    },
+    handleAdd() {
+      this.reset();
+      this.open1 = true;
+      this.title1 = "添加任务";
     },
     // 表单重置
     reset() {
@@ -246,53 +369,76 @@ export default {
       this.resetForm("queryForm");
       this.handleQuery();
     },
+    filterStream(row){
+      this.taskId= row.id;
+      getTaggedStreamList(row.projectId, row.id).then(response =>{
+        this.taggedStreamList= response.rows;
+        this.open2= true;
+        this.title2= "请添加stream";
+      })
+    },
+    addStreamToTask(row){
+      //alert(row.streamId);
+      addTaskStream({streamId: row.streamId,taskId: this.taskId})
+    },
     /** 选取stream_id按钮操作 */
     handleImagesTask(row) {
-      let token=getToken();
-      getLabelTaskUnfinishedStream(row.taskName, token).then(
+      this.taskId= row.id;
+      getkUnfinishedTaskStream(row.id,"label").then(
         response =>{
-          this.taskStreamList = response.rows;
-          if(this.taskStreamList.length>0){
-            //alert(this.taskStreamList[0].stream_id);
-            //alert(this.taskStreamList[0].image_status);
+          let taskStreamList = response.rows;
+          if(taskStreamList.length>0){
             if(row.type==0){
-              if (this.taskStreamList[0].status== 4){
+              if (taskStreamList[0].status== 4){
                 alert("你有审批驳回的任务，即将跳转标注界面")
               }else {
                 alert("你有未完成标注的任务，即将跳转标注界面")
               };
-              window.open('http://10.66.66.121:8082/?token=' + token.toString() + '&taskName=' +row.taskName + '' + '&streamId=' +this.taskStreamList[0].streamId);
+              let token= getToken();
+              window.open('http://10.66.66.121:8083/?token=' + token + '&taskId=' +this.taskId +'&streamId='+ taskStreamList[0].streamId);
             }else{
               alert("图片标注待开发");
               //alert(aa)
             };
-           // window.open('http://10.66.66.121:8082/?token=' + token.toString() + '&taskName=' +row.taskName);
+           // window.open('http://10.66.66.121:8083/?token=' + token.toString() + '&taskName=' +row.taskName);
           }else{
             this.msgInfo("请选定stream标定");
             this.reset();
             this.open = true;
             this.title = row.taskName.toString();
-            getLabelTaskStream(row.taskName).then(
+            getUnAssignedTaskStream(row.id, "label").then(
               response => {
-                this.taskStreamList = response.rows;
-                //alert(response.rows)
+                this.streamList = response.rows;
                 this.total = response.total;
-                //this.loading = false;
               });
           }
         }
       )
     },
     selectStream(row){
-      let token=getToken();
-      //alert(row.streamId);
-      assignLabelTaskStream(row.streamId, row.taskName, token, "label");
-      this.msgSuccess("选定成功，开始标注");
-      this.open = false;
-      window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +row.taskName +'&streamId=' +row.streamId);
+      assignTaskStream({streamId: row.streamId, taskId: this.taskId, type: "label"}).then(response =>{
+        this.msgSuccess("选定成功，开始标注");
+        this.open = false;
+        let token=getToken();
+        window.open('http://10.66.66.121:8083/?token=' + token + '&taskId=' +this.taskId +'&streamId=' +row.streamId);
+      });
+
     },
+    submitForm: function() {
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          if (this.form.id != undefined) {
 
-
+          } else {
+            addLabelTask(this.form).then(response => {
+              this.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+            });
+          }
+        }
+      });
+    }
   }
 };
 </script>

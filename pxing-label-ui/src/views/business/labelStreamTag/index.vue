@@ -62,7 +62,7 @@
       <el-table-column label="传感器位置" prop="sensorLocation" width="120" />
       <el-table-column label="传感器类型" prop="sensorType" width="120" />
       <el-table-column label="topic类型" prop="topicType" width="120" />
-      <el-table-column label="标记状态" prop="tagStatus" width="120" />
+      <el-table-column label="标记状态" prop="tagStatus":formatter="statusFormat" width="120" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="220">
         <template slot-scope="scope">
@@ -101,7 +101,7 @@
     <!-- 选择指定的项目 -->
     <el-dialog :title="title1" :visible.sync="open1" width="500px" append-to-body>
       <el-table v-loading="loading" :data="projectList">
-        <el-table-column label="id" prop="Id" width="120" />
+        <el-table-column label="id" prop="id" width="120" />
         <el-table-column label="项目名称" prop="projectName" width="120" />
         <el-table-column label="备注" prop="remark" width="120" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -165,8 +165,7 @@
 
 <script>
 import { listLabelProject} from "@/api/business/labelProject"
-import { getToken } from "@/utils/auth";
-import { selectUnTaggedImageList ,selectStreamTagList , selectImageListByStreamId, selectTagListByProjectId} from "@/api/business/labelStreamTag"
+import { tagStream ,selectStreamTagList , selectImageListByStreamId, selectTagListByProjectId} from "@/api/business/labelStreamTag"
 export default {
   name: "Role",
   data() {
@@ -189,7 +188,7 @@ export default {
       streamList: [],
 
       streamId: undefined,
-
+      pId: undefined,
       projectTotal: 0,
       projectList: [],
       projectTableList:[],
@@ -200,7 +199,9 @@ export default {
 
       imageTotal: 0,
       imageList: [],
-      imageTableList:[],
+      imageTableList: [],
+      tagStatusDict: {},
+      tagStatusOptions: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -224,7 +225,7 @@ export default {
         status: undefined
       },
       tagJson: {},
-      tagSet:[],
+      tagIdList: [],
       // 表单参数
       form: {},
       defaultProps: {
@@ -245,8 +246,11 @@ export default {
   },
   created() {
     this.getList();
-    this.getDicts("business_labelTask_type").then(response => {
-      this.typeOptions = response.data;
+    this.getDicts("tag_status").then(response => {
+      this.tagStatusOptions = response.data;
+      this.tagStatusOptions.forEach(row =>{
+        this.tagStatusDict[row.dict_value]= row.dict_label;
+      })
     });
   },
   methods: {
@@ -257,12 +261,18 @@ export default {
     },
     handleCheckedTag(value ,key, tag){
       if(value){
-          this.tagSet.push(tag);
+          this.tagIdList.push(tag);
       }else {
-        this.tagSet.pop(tag);
+        this.tagIdList.pop(tag);
       }
     },
     getList() {
+      this.getDicts("tag_status").then(response => {
+        this.tagStatusOptions = response.data;
+        this.tagStatusOptions.forEach(row =>{
+          this.tagStatusDict[row.dictValue]= row.dictLabel;
+        })
+      });
       this.loading = true;
       selectStreamTagList().then(
         response => {
@@ -272,18 +282,17 @@ export default {
         }
       );
     },
-    typeFormat(row, column) {
-      if (row.menuType == "F") {
-        return "";
-      }
-      return this.selectDictLabel(this.typeOptions, row.type);
+    statusFormat(row, column) {
+      return this.tagStatusDict[row.tagStatus];
     },
 
     // 取消按钮
     cancel() {
       this.open = false;
+      this.open1= false;
       this.reset();
     },
+
     // 取消按钮（数据权限）
     cancelDataScope() {
       this.openDataScope = false;
@@ -328,14 +337,13 @@ export default {
         this.title1= "选取项目"
       })
       },
-
     selectProject(row){
+      this.pId= row.id;
       selectTagListByProjectId(row.id).then(response =>{
            var list= response.rows;
            for(var row in list){
              var sceneName= list[row].sceneName;
              if(this.tagJson.hasOwnProperty(sceneName)){
-               alert(list[row].tagName)
                var tagList= this.tagJson[sceneName];
                tagList.push(list[row]);
                this.tagJson[sceneName]= tagList;
@@ -347,12 +355,21 @@ export default {
       selectImageListByStreamId(this.streamId).then(response => {
         this.imageList= response.rows;
         this.imageTotal= response.total;
-        //alert(this.imageTotal);
         this.imageTableList= this.imageList.slice((this.queryParams.pageNum-1)*this.queryParams.pageSize, this.queryParams
           .pageNum*this.queryParams.pageSize)
         this.open = true;
         this.title= "标记stream"
       })
+    },
+    submitForm(){
+      alert(this.tagIdList);
+      const tagIds= this.tagIdList.join(",");
+      alert(tagIds);
+      tagStream({streamId: this.streamId, projectId: this.pId, tagIds: tagIds}).then(response =>{
+         alert("标记成功");
+         this.cancel();
+         this.getList();
+       })
     }
  }
 };

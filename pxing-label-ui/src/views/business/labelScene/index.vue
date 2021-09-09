@@ -109,12 +109,12 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-form-item label="项目名称">
-            <el-select v-model="form.projectId" placeholder="请选择">
+          <el-form-item label="任务名称">
+            <el-select v-model="form.taskId" placeholder="请选择">
               <el-option
-                v-for="item in projectOptions"
+                v-for="item in taskOptions"
                 :key="item.id"
-                :label="item.projectName"
+                :label="item.taskName"
                 :value="item.id"
               ></el-option>
             </el-select>
@@ -139,6 +139,7 @@
 <script>
 import {listLabelScene, addLabelScene} from "@/api/business/labelScene"
 import {listLabelProject} from "@/api/business/labelProject"
+import {listLabelTask} from "@/api/business/labelTask";
 
 
 
@@ -175,6 +176,8 @@ export default {
       menuOptions: [],
       projectIds:[],
       projectOptions: [],
+
+      taskOptions: [],
       projectDict:{},
       // 查询参数
       sceneList: [],
@@ -228,12 +231,14 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      listLabelProject().then(response => {
-        this.projectOptions= response.rows;
+      //listLabelProject().then(response => {
+        //this.projectOptions= response.rows;
+      listLabelTask(this.addDateRange(this.queryParams, this.dateRange)).then(response =>{
+        this.taskOptions= response
         this.reset();
         this.open = true;
         this.title = "添加场景";
-      })
+      });
     },
     // 取消按钮
     cancel() {

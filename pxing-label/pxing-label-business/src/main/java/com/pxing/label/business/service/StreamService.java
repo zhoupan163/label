@@ -8,4 +8,6 @@ import java.util.List;
 public interface StreamService {
 
     List<StreamEntity> selectStreamList();
+
+    int updateTagStatusById(Long streamId);
 }

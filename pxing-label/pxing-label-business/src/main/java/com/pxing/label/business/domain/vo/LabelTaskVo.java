@@ -20,13 +20,16 @@ import java.util.Date;
 public class LabelTaskVo {
 
     @ApiModelProperty("任务Id")
-    private Long taskId;
+    private Long id;
 
     @ApiModelProperty("任务名称")
     private String taskName;
 
     @ApiModelProperty("关联工程id")
-    private Long projectId;
+    private String projectId;
+
+    @ApiModelProperty("关联工程名称")
+    private String projectName;
 
     @ApiModelProperty("图片总数量")
     private Long size;
@@ -58,9 +61,6 @@ public class LabelTaskVo {
 
     @ApiModelProperty("任务创建人")
     private String createBy;
-
-    @ApiModelProperty("任务标注人")
-    private String labelBy;
 
     @ApiModelProperty("任务备注")
     private String remark;

@@ -1,6 +1,7 @@
 package com.pxing.label.business.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.pxing.label.business.dao.StreamDao;
 import com.pxing.label.business.domain.entity.LabelProjectEntity;
 import com.pxing.label.business.domain.entity.StreamEntity;
@@ -22,5 +23,15 @@ public class StreamServiceImp implements StreamService {
         QueryWrapper<StreamEntity> querywrapper = new QueryWrapper<>();
 
         return streamDao.selectList(querywrapper);
+    }
+
+    @Override
+    public int updateTagStatusById(Long streamId) {
+        StreamEntity streamEntity = new StreamEntity();
+        streamEntity.setTagStatus(1);
+        UpdateWrapper<StreamEntity> updateWrapper= new UpdateWrapper<>();
+        updateWrapper.eq("id", streamId);
+        updateWrapper.set("tag_status", 1);
+        return streamDao.update(null , updateWrapper);
     }
 }

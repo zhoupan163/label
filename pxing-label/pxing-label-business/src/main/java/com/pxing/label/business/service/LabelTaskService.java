@@ -3,6 +3,7 @@ package com.pxing.label.business.service;
 
 
 import com.mongodb.client.result.UpdateResult;
+import com.pxing.label.business.domain.entity.LabelTaskEntity;
 import com.pxing.label.business.domain.vo.*;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -35,4 +36,7 @@ public interface LabelTaskService {
     int discardImage(String taskName, String streamId, String imgId);
 
     List<LabelTaskImageVo> selectUnTaggedImageList(String streamId);
+
+    int insertLabelTask(LabelTaskEntity labelTaskEntity);
+
 }

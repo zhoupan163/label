@@ -24,12 +24,20 @@ export function selectImageListByStreamId(streamId) {
   })
 }
 
-//查询 tagw
-
+//查询 tag
 export function selectTagListByProjectId(projectId) {
   return request({
     url: '/business/labelStreamTag/selectTagListByProjectId?projectId='+ projectId,
     method: 'get'
+  })
+}
+
+//绑定tag
+export function tagStream(data) {
+  return request({
+    url: '/business/labelStreamTag/tagStream',
+    method: 'put',
+    params: data
   })
 }
 
