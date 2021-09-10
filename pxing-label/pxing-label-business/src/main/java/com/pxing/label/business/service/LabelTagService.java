@@ -1,17 +1,17 @@
 package com.pxing.label.business.service;
 
 
-import com.pxing.label.business.domain.entity.LabelTagEntity;
+import com.pxing.label.business.domain.entity.TagEntity;
 import com.pxing.label.business.domain.vo.LabelTagVo;
 
 import java.util.List;
 
 public interface LabelTagService {
-    List<LabelTagEntity> selectLabelTagList(LabelTagEntity labelTag);
+    List<TagEntity> selectLabelTagList(TagEntity labelTag);
 
-    int insertLabelTag(LabelTagEntity labelTag);
+    int insertLabelTag(TagEntity labelTag);
 
-    int updateLabelTag(LabelTagEntity labelTag);
+    int updateLabelTag(TagEntity labelTag);
 
     int deleteLabelTagByIds(Long[] projectIds);
 

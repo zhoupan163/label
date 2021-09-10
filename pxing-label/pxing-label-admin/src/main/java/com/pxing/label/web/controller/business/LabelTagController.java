@@ -1,6 +1,6 @@
 package com.pxing.label.web.controller.business;
 
-import com.pxing.label.business.domain.entity.LabelTagEntity;
+import com.pxing.label.business.domain.entity.TagEntity;
 import com.pxing.label.business.service.LabelTagService;
 import com.pxing.label.common.annotation.Log;
 import com.pxing.label.common.core.controller.BaseController;
@@ -37,10 +37,10 @@ public class LabelTagController extends BaseController
      */
     //@PreAuthorize("@ss.hasPermi('business:labelTag:list')")
     @GetMapping("/list")
-    public TableDataInfo list(LabelTagEntity labelTag)
+    public TableDataInfo list(TagEntity labelTag)
     {
         startPage();
-        List<LabelTagEntity> list = labelTagService.selectLabelTagList(labelTag);
+        List<TagEntity> list = labelTagService.selectLabelTagList(labelTag);
         return getDataTable(list);
     }
 
@@ -50,7 +50,7 @@ public class LabelTagController extends BaseController
     //@PreAuthorize("@ss.hasPermi('business:labelTag:add')")
     @Log(title = "项目管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@Validated @RequestBody LabelTagEntity labelTag, HttpServletRequest request)
+    public AjaxResult add(@Validated @RequestBody TagEntity labelTag, HttpServletRequest request)
     {
         LoginUser loginUser= tokenService.getLoginUser(request);
         labelTag.setCreateBy(loginUser.getUsername());
@@ -63,7 +63,7 @@ public class LabelTagController extends BaseController
     @PreAuthorize("@ss.hasPermi('business:labelTag:edit')")
     @Log(title = "项目管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@Validated @RequestBody LabelTagEntity labelTag)
+    public AjaxResult edit(@Validated @RequestBody TagEntity labelTag)
     {
 
         return toAjax(labelTagService.updateLabelTag(labelTag));

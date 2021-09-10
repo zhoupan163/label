@@ -11,6 +11,6 @@ import java.util.List;
 public interface LabelCheckService {
     List<LabelTaskImageVo> getUnFinishedCheckedImage(String taskName, String userName, int qa_level);
 
-    List<UpdateResult> qa(LabelImageCheck labelImageCheck);
+    int qa(LabelImageCheck labelImageCheck);
 
 }

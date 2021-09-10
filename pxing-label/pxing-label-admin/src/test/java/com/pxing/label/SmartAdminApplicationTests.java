@@ -49,7 +49,7 @@ public class SmartAdminApplicationTests {
         JSONObject jsonObject=new JSONObject();
         jsonObject.put("key1","values");
         labelTaskViaVo.setVia_project_info(jsonObject);
-        UpdateResult updateResult=labelTaskService.updateLabelTaskViaInfo(labelTaskViaVo);
+        //UpdateResult updateResult=labelTaskService.updateLabelTaskViaInfo(labelTaskViaVo);
     }
 
     @Test
@@ -69,7 +69,7 @@ public class SmartAdminApplicationTests {
 
     @Test
     public  void test3(){
-        labelTaskService.insertLabelTaskViaInfo(new LabelTaskViaVo());
+        //labelTaskService.insertLabelTaskViaInfo(new LabelTaskViaVo());
     }
 
 
@@ -96,7 +96,7 @@ public class SmartAdminApplicationTests {
     public  void test5(){
         String taskName="pedestrian_reid";
         String streamId="4134cf44-ffd4-11eb-92e8-000c293913c8";
-        labelViaService.insertSreamViaProject(streamId,taskName);
+        //labelViaService.insertSreamViaProject(streamId,taskName);
 
     }
 
@@ -104,7 +104,7 @@ public class SmartAdminApplicationTests {
     public  void test6(){
         String taskName="pedestrian_reid";
 
-        labelViaService.getSreamViaProject(taskName, "","admin", "label");
+        labelViaService.getSreamViaProject((long) 1, (long) 1,"admin", "label");
     }
 
     @Test
@@ -124,19 +124,8 @@ public class SmartAdminApplicationTests {
 
     @Autowired
     private LabelStreamService labelStreamService;
-    @Test
-    public void test8(){
-        List<LabelStreamVo> list= labelStreamService.getLabelTaskUnfinishedStream("pedestrian_reid","admin");
-        System.out.println("succ");
 
-    };
 
-    @Test
-    public void test9(){
-        List<LabelTaskImageVo> list= labelTaskService.selectUnTaggedImageList("f703d1ac-00e8-11ec-92e8-000c293913c8");
-        System.out.println("ok");
-
-    }
 
     @Test
     public void test10(){
@@ -189,7 +178,6 @@ public class SmartAdminApplicationTests {
             imageEntity.setPngUrl(labelTaskImageVo.getPng_url());
             imageEntity.setThumbnailUrl(labelTaskImageVo.getThumbnail_url());
             imageEntity.setCreateBy("admin");
-
             imageDao.insert(imageEntity);
          }
     }

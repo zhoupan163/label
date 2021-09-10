@@ -368,6 +368,8 @@ export default {
       tagStream({streamId: this.streamId, projectId: this.pId, tagIds: tagIds}).then(response =>{
          alert("标记成功");
          this.cancel();
+         this.tagList= [];
+         this.tagJson={};
          this.getList();
        })
     }

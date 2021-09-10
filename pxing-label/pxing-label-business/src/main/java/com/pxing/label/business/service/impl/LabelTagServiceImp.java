@@ -4,8 +4,7 @@ package com.pxing.label.business.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.pxing.label.business.dao.LabelTagDao;
-import com.pxing.label.business.domain.entity.LabelProjectEntity;
-import com.pxing.label.business.domain.entity.LabelTagEntity;
+import com.pxing.label.business.domain.entity.TagEntity;
 import com.pxing.label.business.domain.vo.LabelTagVo;
 import com.pxing.label.business.service.LabelTagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +20,18 @@ public class LabelTagServiceImp implements LabelTagService {
 
 
     @Override
-    public List<LabelTagEntity> selectLabelTagList(LabelTagEntity labelTag) {
-        QueryWrapper<LabelTagEntity> querywrapper = new QueryWrapper<>();
+    public List<TagEntity> selectLabelTagList(TagEntity labelTag) {
+        QueryWrapper<TagEntity> querywrapper = new QueryWrapper<>();
         return labelTagDao.selectList(querywrapper);
     }
 
     @Override
-    public int insertLabelTag(LabelTagEntity labelTag) {
+    public int insertLabelTag(TagEntity labelTag) {
         return labelTagDao.insert(labelTag);
     }
 
     @Override
-    public int updateLabelTag(LabelTagEntity labelTag) {
+    public int updateLabelTag(TagEntity labelTag) {
         return 0;
     }
 

@@ -1,6 +1,7 @@
 package com.pxing.label.business.dataTransformation;
 
 import com.alibaba.fastjson.JSONObject;
+import com.pxing.label.business.domain.entity.TaskImageEntity;
 import com.pxing.label.business.domain.vo.LabelTaskImageVo;
 
 import java.text.DecimalFormat;
@@ -14,15 +15,15 @@ public class LabelAnnotionToMott {
      */
 
 
-    public static List<String> getMott(LabelTaskImageVo labelTaskImageVo){
+    public static List<String> getMott(TaskImageEntity taskImageEntity){
         List<String> list= new ArrayList<>();
         String sep= " ";
         DecimalFormat df = new DecimalFormat("#0.0000");
-        List<JSONObject> annotationInfo= labelTaskImageVo.getAnnotationInfo();
+        List<JSONObject> annotationInfo= taskImageEntity.getAnnotationInfo();
         String motData= "";
         String ids= "";
-        double imgWidth= labelTaskImageVo.getWidth();
-        double imgHeight= labelTaskImageVo.getHeight();
+        double imgWidth= taskImageEntity.getWidth();
+        double imgHeight= taskImageEntity.getHeight();
         for(JSONObject jsonObject: annotationInfo){
             JSONObject shapeAttributes= jsonObject.getJSONObject("shape_attributes");
             double x= shapeAttributes.getDouble("x");
@@ -38,7 +39,7 @@ public class LabelAnnotionToMott {
 
             String id= regionAttributes.getString("id");
             ids+= id+ sep;
-            motData+= labelTaskImageVo.getImage_id()+ sep + id +sep + df.format((x+w/2)/imgWidth)+ sep +df.format((y+h/2)/imgHeight) + sep +
+            motData+= taskImageEntity.getImageId()+ sep + id +sep + df.format((x+w/2)/imgWidth)+ sep +df.format((y+h/2)/imgHeight) + sep +
                     df.format(w/imgWidth)+ sep + df.format(h/imgHeight) + sep + block + sep + fuzzy + sep +side + sep + crop +"\n";
         }
 

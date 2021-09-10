@@ -1,19 +1,18 @@
 package com.pxing.label.business.service;
 
 
-import com.pxing.label.business.domain.entity.LabelProjectEntity;
-import com.pxing.label.business.domain.entity.LabelSceneEntity;
+import com.pxing.label.business.domain.entity.SceneEntity;
 
 import java.util.List;
 
 public interface LabelSceneService {
 
 
-    List<LabelSceneEntity> selectLabelSceneList(LabelSceneEntity labelScene);
+    List<SceneEntity> selectLabelSceneList(SceneEntity labelScene);
 
-    int insertLabelScene(LabelSceneEntity labelScene);
+    int insertLabelScene(SceneEntity labelScene);
 
-    int updateLabelScene(LabelSceneEntity labelScene);
+    int updateLabelScene(SceneEntity labelScene);
 
     int deleteLabelSceneByIds(Long[] projectIds);
 }

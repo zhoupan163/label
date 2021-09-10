@@ -3,7 +3,6 @@ package com.pxing.label.business.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.pxing.label.business.dao.StreamDao;
-import com.pxing.label.business.domain.entity.LabelProjectEntity;
 import com.pxing.label.business.domain.entity.StreamEntity;
 import com.pxing.label.business.service.StreamService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -8,7 +8,7 @@ import lombok.Data;
 
 
 /**
- *  [标注标签]
+ *  [标注项目]
  *
  * @author zhoup
  * @version 1.0
@@ -18,16 +18,11 @@ import lombok.Data;
  * @since JDK1.8
  */
 @Data
-@TableName("label_tag")
-public class LabelTagEntity extends LabelBaseEntity {
+@TableName("label_project")
+public class ProjectEntity extends LabelBaseEntity {
 
-    @ApiModelProperty("场景id")
-    private Long sceneId;
+    @ApiModelProperty("项目名称")
+    private String projectName;
 
-    @ApiModelProperty("标签名称")
-    private String tagName;
-
-    @ApiModelProperty("示例图片链接")
-    private String imageUrl;
 
 }

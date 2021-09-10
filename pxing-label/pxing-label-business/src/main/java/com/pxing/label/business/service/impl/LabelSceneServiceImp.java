@@ -4,8 +4,7 @@ package com.pxing.label.business.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.pxing.label.business.dao.LabelSceneDao;
-import com.pxing.label.business.domain.entity.LabelProjectEntity;
-import com.pxing.label.business.domain.entity.LabelSceneEntity;
+import com.pxing.label.business.domain.entity.SceneEntity;
 import com.pxing.label.business.service.LabelSceneService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,20 +20,20 @@ public class LabelSceneServiceImp implements LabelSceneService {
     private LabelSceneDao labelSceneDao;
 
     @Override
-    public List<LabelSceneEntity> selectLabelSceneList(LabelSceneEntity labelScene) {
-        QueryWrapper<LabelSceneEntity> querywrapper = new QueryWrapper<>();
+    public List<SceneEntity> selectLabelSceneList(SceneEntity labelScene) {
+        QueryWrapper<SceneEntity> querywrapper = new QueryWrapper<>();
 
         return labelSceneDao.selectList(querywrapper);
     }
 
     @Override
-    public int insertLabelScene(LabelSceneEntity labelScene) {
+    public int insertLabelScene(SceneEntity labelScene) {
 
         return labelSceneDao.insert(labelScene);
     }
 
     @Override
-    public int updateLabelScene(LabelSceneEntity labelScene) {
+    public int updateLabelScene(SceneEntity labelScene) {
         return 0;
     }
 

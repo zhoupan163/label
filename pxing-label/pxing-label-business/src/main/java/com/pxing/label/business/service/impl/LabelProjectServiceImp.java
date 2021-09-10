@@ -4,14 +4,12 @@ package com.pxing.label.business.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.pxing.label.business.dao.LabelProjectDao;
-import com.pxing.label.business.domain.entity.LabelProjectEntity;
-import com.pxing.label.business.domain.vo.LabelStreamVo;
+import com.pxing.label.business.domain.entity.ProjectEntity;
 import com.pxing.label.business.service.LabelProjectService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Wrapper;
 import java.util.List;
 
 
@@ -22,19 +20,19 @@ public class LabelProjectServiceImp implements LabelProjectService {
     private LabelProjectDao labelProjectDao;
 
     @Override
-    public List<LabelProjectEntity> selectLabelProjectList(LabelProjectEntity labelProject) {
-        QueryWrapper<LabelProjectEntity> querywrapper = new QueryWrapper<>();
+    public List<ProjectEntity> selectLabelProjectList(ProjectEntity labelProject) {
+        QueryWrapper<ProjectEntity> querywrapper = new QueryWrapper<>();
 
         return labelProjectDao.selectLabelProjectList(querywrapper);
     }
 
     @Override
-    public int insertLabelProject(LabelProjectEntity labelProject) {
+    public int insertLabelProject(ProjectEntity labelProject) {
         return labelProjectDao.insert(labelProject);
     }
 
     @Override
-    public int updateLabelProject(LabelProjectEntity labelProject) {
+    public int updateLabelProject(ProjectEntity labelProject) {
         return 0;
     }
 

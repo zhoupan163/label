@@ -56,19 +56,13 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="taskList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="任务编号" prop="taskId" width="120" />
+      <el-table-column label="任务编号" prop="id" width="120" />
       <el-table-column label="任务名称" prop="taskName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="关联项目id" prop="projectId" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="任务状态" prop="status" width="120" />
-      <el-table-column label="任务类型（0视频 1图片）" prop="type" width="120" />
-      <el-table-column label="图片总数量" prop="size" width="120" />
-      <el-table-column label="待一级审核图片数量" prop="qa1Size" width="120" />
-      <el-table-column label="待二级审核图片数量" prop="qa2Size" width="120" />
-      <el-table-column label="审核驳回图片数量" prop="rejectSize" width="120" />
-      <el-table-column label="废弃图片数量" prop="discardSize" width="120" />
-      <el-table-column label="审核完成图片数量" prop="finishedSize" width="120" />
+      <el-table-column label="项目编号" prop="projectId" width="120" />
+      <el-table-column label="关联项目名称" prop="projectName" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="任务类型":formatter="typeFormat" prop="type" width="120" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="120">
         <template slot-scope="scope">
@@ -125,7 +119,7 @@ export default {
       // 总条数
       total: 0,
       // 任务表格数据
-      roleList: [],
+      taskList: [],
       taskStreamList: [],
       // 弹出层标题
       title: "",
@@ -207,14 +201,14 @@ export default {
       //alert(token)
       listLabelTask(this.addDateRange(this.queryParams, this.dateRange)).then(
         response => {
-          this.roleList = response.rows;
+          this.taskList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
       );
     },
     taskDownload(row){
-      downLoadLabelData(row.taskName).then(
+      downLoadLabelData(row.id).then(
         response =>{
           const aLink =document.createElement('a')
           const blob = new Blob([response], { type: 'application/zip' })
@@ -263,43 +257,6 @@ export default {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    /** 选取stream_id按钮操作 */
-    handleImagesTask(row) {
-      let token=getToken();
-      getLabelTaskUnfinishedStream(row.taskName, token).then(
-        response =>{
-          this.taskStreamList = response.rows;
-          if(this.taskStreamList.length>0){
-            //this.msgInfo("此任务下未你有未完成标注的stream，即将跳转标注界面");
-            alert("此任务下未你有未完成标注的stream，即将跳转标注界面")
-            let taskStream=this.taskStreamList[0];
-            window.open('http://10.66.66.101:8082/?token=' + token.toString() + '&streamId=' + taskStream.stream_id);
-          }else{
-            this.msgInfo("请选定stream标定");
-            this.reset();
-            this.open = true;
-            this.title = row.taskName;
-            getLabelTaskStream(row.taskName).then(
-              response => {
-                this.taskStreamList = response.rows;
-                //alert(response.rows)
-                this.total = response.total;
-                //this.loading = false;
-              });
-          }
-        }
-      )
-    },
-
-    selectStream(row){
-      let token=getToken();
-      alert(row.streamId);
-      assignLabelTaskStream(row.streamId, row.taskName, token);
-      this.msgSuccess("选定成功，开始标注");
-      this.open = false;
-      window.open('http://10.66.66.101:8082/?token=' + token + '&streamId=' + row.streamId);
-    },
-
 
   }
 };

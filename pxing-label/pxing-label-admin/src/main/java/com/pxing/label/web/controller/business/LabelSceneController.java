@@ -1,6 +1,6 @@
 package com.pxing.label.web.controller.business;
 
-import com.pxing.label.business.domain.entity.LabelSceneEntity;
+import com.pxing.label.business.domain.entity.SceneEntity;
 import com.pxing.label.business.service.LabelSceneService;
 import com.pxing.label.common.annotation.Log;
 import com.pxing.label.common.core.controller.BaseController;
@@ -37,10 +37,10 @@ public class LabelSceneController extends BaseController
      */
     //@PreAuthorize("@ss.hasPermi('business:labelScene:list')")
     @GetMapping("/list")
-    public TableDataInfo list(LabelSceneEntity labelScene)
+    public TableDataInfo list(SceneEntity labelScene)
     {
         startPage();
-        List<LabelSceneEntity> list = labelSceneService.selectLabelSceneList(labelScene);
+        List<SceneEntity> list = labelSceneService.selectLabelSceneList(labelScene);
         return getDataTable(list);
     }
 
@@ -50,7 +50,7 @@ public class LabelSceneController extends BaseController
     //@PreAuthorize("@ss.hasPermi('business:labelScene:add')")
     @Log(title = "项目管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@Validated @RequestBody LabelSceneEntity labelScene, HttpServletRequest request)
+    public AjaxResult add(@Validated @RequestBody SceneEntity labelScene, HttpServletRequest request)
     {
         LoginUser loginUser= tokenService.getLoginUser(request);
         labelScene.setCreateBy(loginUser.getUsername());
@@ -63,7 +63,7 @@ public class LabelSceneController extends BaseController
     @PreAuthorize("@ss.hasPermi('business:labelScene:edit')")
     @Log(title = "项目管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@Validated @RequestBody LabelSceneEntity labelScene)
+    public AjaxResult edit(@Validated @RequestBody SceneEntity labelScene)
     {
 
         return toAjax(labelSceneService.updateLabelScene(labelScene));

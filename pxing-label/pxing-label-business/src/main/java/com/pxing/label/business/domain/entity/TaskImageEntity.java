@@ -19,7 +19,7 @@ import java.util.List;
  * @since JDK1.8
  */
 @Data
-@Document("task_image1")
+@Document("task_image")
 public class TaskImageEntity {
 
     @ApiModelProperty("imageId")
@@ -36,6 +36,10 @@ public class TaskImageEntity {
 
     @ApiModelProperty("jpg_url")
     private String jpg_url;
+
+    private Double width;
+
+    private Double height;
 
     @ApiModelProperty("comment")
     private String comment;

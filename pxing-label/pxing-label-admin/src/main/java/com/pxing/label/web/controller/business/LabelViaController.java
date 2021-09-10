@@ -6,6 +6,7 @@ import com.pxing.label.business.domain.vo.LabelStreamVo;
 import com.pxing.label.business.domain.vo.LabelViaProjectVo;
 import com.pxing.label.business.service.LabelTaskService;
 import com.pxing.label.business.service.LabelViaService;
+import com.pxing.label.business.service.TaskImageService;
 import com.pxing.label.common.core.controller.BaseController;
 import com.pxing.label.common.core.domain.AjaxResult;
 import com.pxing.label.common.core.domain.model.LoginUser;
@@ -37,46 +38,45 @@ public class LabelViaController extends BaseController
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private TaskImageService taskImageService;
+
     @GetMapping("/getTaskViaInfo")
     @ResponseBody
-    public TableDataInfo getStreamViaInfo(@RequestParam("taskName")String taskName, HttpServletRequest request,
-                                          @RequestParam("type")String type ,@RequestParam("streamId")String streamId)
+    public TableDataInfo getStreamViaInfo(@RequestParam("taskId")Long taskId, HttpServletRequest request,
+                                          @RequestParam("type")String type ,@RequestParam("streamId")Long streamId)
     {
         startPage();
         LoginUser loginUser= tokenService.getLoginUser(request);
         String  userName=loginUser.getUser().getUserName();
-        List<LabelViaProjectVo> list = labelViaService.getSreamViaProject(taskName, streamId, userName, type);
+        List<LabelViaProjectVo> list = labelViaService.getSreamViaProject(taskId, streamId, userName, type);
         return getDataTable(list);
     }
 
     @PostMapping("/updateViaInfo")
     @ResponseBody
-    public TableDataInfo updateTaskViaInfo(@RequestBody String params, HttpServletRequest request)
+    public AjaxResult updateViaInfo(@RequestBody String params)
     {
         startPage();
-        LoginUser loginUser= tokenService.getLoginUser(request);
         LabelViaProjectVo labelViaProjectVo= JSON.parseObject(params,LabelViaProjectVo.class);
-        List<Update> list= labelTaskService.updateLabelTaskImages(labelViaProjectVo);
-        return getDataTable(new ArrayList<>());
+        return toAjax(labelViaService.updateViaInfo(labelViaProjectVo));
     }
 
     @PostMapping("/commitViaInfo")
     @ResponseBody
     //@RequestBody JSONObject params
-    public TableDataInfo commitTaskImage(@RequestBody String params)
+    public AjaxResult  commitViaInfo(@RequestBody String params)
     {
         startPage();
         LabelViaProjectVo labelViaProjectVo= JSON.parseObject(params,LabelViaProjectVo.class);
-        labelTaskService.commitTaskImage(labelViaProjectVo);
-
-        return getDataTable(new ArrayList<>());
+        return toAjax(labelViaService.commitViaInfo(labelViaProjectVo));
     }
 
-    @PutMapping("discardImg")
+    @GetMapping("discardImg")
     @ResponseBody
-    public  AjaxResult discardImg(@RequestParam("taskName")String taskName, @RequestParam("streamId")String streamId,
-                                  @RequestParam("imageId")String imgId){
-        int res= labelTaskService.discardImage(taskName, streamId, imgId);
+    public  AjaxResult discardImg(@RequestParam("taskId")Long taskId, @RequestParam("streamId")Long streamId,
+                                  @RequestParam("jpgUrl")String jpg_url){
+        int res= taskImageService.discardImage(taskId, streamId, jpg_url);
         return toAjax(res);
 
     }

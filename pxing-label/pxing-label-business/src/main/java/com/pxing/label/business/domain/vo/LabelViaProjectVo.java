@@ -24,13 +24,13 @@ import java.util.List;
 public class LabelViaProjectVo {
 
     @ApiModelProperty("任务名称")
-    private String task_name;
+    private long task_id;
 
     @ApiModelProperty("type")
     private String type;
 
     @ApiModelProperty("streamId")
-    private String streamId;
+    private Long streamId;
 
     @ApiModelProperty("via_settings")
     private JSONObject via_settings;

@@ -40,10 +40,10 @@ public class ImageEntity extends LabelBaseEntity {
     private String topicType;
 
     @ApiModelProperty("width")
-    private Integer width;
+    private Double width;
 
     @ApiModelProperty("height")
-    private Integer height;
+    private Double height;
 
     @ApiModelProperty("png_url")
     private String pngUrl;

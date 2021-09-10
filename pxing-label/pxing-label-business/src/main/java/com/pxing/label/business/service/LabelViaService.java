@@ -7,10 +7,9 @@ import java.util.List;
 
 public interface LabelViaService {
 
-    List<LabelViaProjectVo> insertSreamViaProject(String streamId,String taskName);
+    List<LabelViaProjectVo> getSreamViaProject(Long taskId, Long streamId, String userName, String type);
 
-    List<LabelViaProjectVo> getSreamViaProject(String taskName,String streamId, String userName, String type);
+    int updateViaInfo(LabelViaProjectVo labelViaProjectVo);
 
-    List<LabelViaProjectVo> updateSreamViaProject(LabelViaProjectVo labelViaProjectVo);
-
+    int commitViaInfo(LabelViaProjectVo labelViaProjectVo);
 }

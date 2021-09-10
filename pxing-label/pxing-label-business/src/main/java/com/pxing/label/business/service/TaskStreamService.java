@@ -10,5 +10,11 @@ public interface TaskStreamService {
 
     List<TaskStreamEntity> getTaskStream(Long taskId, String type, String userName);
 
-    int assignTaskStream(String streamId, String taskId, String type, String userName);
+    int assignTaskStream(Long streamId, Long taskId, String type, String userName);
+
+    int commitTaskStream(long task_id, Long streamId);
+
+    List<TaskStreamEntity> getUnFinishedTaskStream(Long taskId, String type, String userName);
+
+    List<TaskStreamEntity> getFinishedTaskStream(Long taskId);
 }

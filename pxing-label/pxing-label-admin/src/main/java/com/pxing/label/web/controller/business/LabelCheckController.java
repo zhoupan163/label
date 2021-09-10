@@ -10,6 +10,7 @@ import com.pxing.label.business.service.LabelCheckService;
 import com.pxing.label.business.service.LabelStreamService;
 import com.pxing.label.business.service.LabelTaskService;
 import com.pxing.label.common.core.controller.BaseController;
+import com.pxing.label.common.core.domain.AjaxResult;
 import com.pxing.label.common.core.domain.model.LoginUser;
 import com.pxing.label.common.core.page.TableDataInfo;
 import com.pxing.label.common.utils.file.ZipUtils;
@@ -51,56 +52,11 @@ public class LabelCheckController extends BaseController
     @Autowired
     private LabelStreamService labelStreamService;
 
-    //获取已分配未审核完成的stream
-    @GetMapping("/getUnFinishedCheckedVideoStream")
-    @ResponseBody
-    public TableDataInfo getUnFinishedCheckedVideoStream(@RequestParam("taskName")String taskName, @RequestParam("token")String token,
-                                                         @RequestParam("qa_level")int qa_level)
-    {
-        startPage();
-        LoginUser loginUser= tokenService.getLoginUser(token);
-        String  userName=loginUser.getUser().getUserName();
-        LabelStreamVo labelStreamVo= new LabelStreamVo();
-        labelStreamVo.setTaskName(taskName);
-        if (qa_level== 1){
-            labelStreamVo.setQa1(userName);
-            labelStreamVo.setStatus(1);
-        }else{
-            labelStreamVo.setQa2(userName);
-            labelStreamVo.setStatus(2);
-        }
-
-        List<LabelStreamVo> labelStreamVoList= labelStreamService.getStreamList(labelStreamVo);
-        return getDataTable(labelStreamVoList);
-    }
-
-    // 查询没有开始审核的stream
-    @GetMapping("/getUnCheckedStream")
-    @ResponseBody
-    public TableDataInfo getUnCheckedStream(@RequestParam("taskName")String taskName, @RequestParam("qa_level")int qa_level)
-    {
-        startPage();
-        LabelStreamVo labelStreamVo= new LabelStreamVo();
-        labelStreamVo.setTaskName(taskName);
-
-        if (qa_level== 1){
-            labelStreamVo.setQa1("");
-            labelStreamVo.setStatus(1);
-        }else{
-            labelStreamVo.setQa2("");
-            labelStreamVo.setStatus(2);
-        }
-        List<LabelStreamVo> labelStreamVoList= labelStreamService.getStreamList(labelStreamVo);
-        return getDataTable(labelStreamVoList);
-    }
-
     // 审核操作
     @PostMapping("/qa")
     @ResponseBody
-    public TableDataInfo qa(@RequestBody LabelImageCheck labelImageCheck)
+    public AjaxResult qa(@RequestBody LabelImageCheck labelImageCheck)
     {
-        startPage();
-        List<UpdateResult> updateResults= labelCheckService.qa(labelImageCheck);
-        return getDataTable(updateResults);
+        return toAjax(labelCheckService.qa(labelImageCheck));
     }
 }

@@ -64,7 +64,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['business:labelProject:add']"
+          v-hasPermi="['business:labelTask:add']"
         >新增</el-button>
       </el-col>
     </el-row>
@@ -97,7 +97,7 @@
             type="text"
             icon="el-icon-edit"
             @click="filterStream(scope.row)"
-            v-hasPermi="['business:labelTask:']"
+            v-hasPermi="['business:labelTask:filterStream']"
           >筛选</el-button>
         </template>
       </el-table-column>
@@ -380,10 +380,12 @@ export default {
     addStreamToTask(row){
       //alert(row.streamId);
       addTaskStream({streamId: row.streamId,taskId: this.taskId})
+      this.open2 = false;
     },
     /** 选取stream_id按钮操作 */
     handleImagesTask(row) {
       this.taskId= row.id;
+      let token= getToken();
       getkUnfinishedTaskStream(row.id,"label").then(
         response =>{
           let taskStreamList = response.rows;
@@ -391,11 +393,12 @@ export default {
             if(row.type==0){
               if (taskStreamList[0].status== 4){
                 alert("你有审批驳回的任务，即将跳转标注界面")
-              }else {
+                window.open('http://10.66.66.121:8083/?token=' + token + '&taskId=' +this.taskId +'&streamId='+ taskStreamList[0].streamId);
+              }else if(taskStreamList[0].status== 0){
                 alert("你有未完成标注的任务，即将跳转标注界面")
-              };
-              let token= getToken();
-              window.open('http://10.66.66.121:8083/?token=' + token + '&taskId=' +this.taskId +'&streamId='+ taskStreamList[0].streamId);
+
+                window.open('http://10.66.66.121:8083/?token=' + token + '&taskId=' +this.taskId +'&streamId='+ taskStreamList[0].streamId);
+              }
             }else{
               alert("图片标注待开发");
               //alert(aa)

@@ -31,10 +31,10 @@ public class StreamEntity extends LabelBaseEntity {
     private String topicType;
 
     @ApiModelProperty("width")
-    private Integer width;
+    private Double width;
 
     @ApiModelProperty("height")
-    private Integer height;
+    private Double height;
 
     @ApiModelProperty("标记状态")
     private Integer tagStatus;

@@ -127,7 +127,13 @@
 </template>
 
 <script>
-import { listLabelTask, getLabelTaskUnfinishedStream , getLabelTaskStream, assignLabelTaskStream} from "@/api/business/labelTask"
+import {
+  listLabelTask,
+  getLabelTaskUnfinishedStream,
+  getLabelTaskStream,
+  assignLabelTaskStream,
+  getkUnfinishedTaskStream, getUnAssignedTaskStream, assignTaskStream
+} from "@/api/business/labelTask"
 import {getUnFinishedCheckedImage, getUnCheckedStream} from "@/api/business/labelCheck"
 import { getToken } from "@/utils/auth";
 
@@ -280,18 +286,20 @@ export default {
     checkTask(row, qa_level) {
       let token=getToken();
       this.qa_type="qa"+qa_level;
-      getUnFinishedCheckedImage(row.taskName, token ,qa_level).then(
+      getkUnfinishedTaskStream(row.id, this.qa_type).then(
         response =>{
+          this.taskId= row.id;
           this.taskStreamList = response.rows;
           if(this.taskStreamList.length>0){
             //this.msgInfo("此任务下未你有未完成审核的stream，即将跳转审核界面");
             alert("此任务下未你有未完成审核的图片，即将跳转审核界面");
-            window.open('http://10.66.66.121:8082/check.html?token=' + token + '&taskName=' + row.taskName + "&qa_type="+ this.qa_type+ '&streamId=' +this.taskStreamList[0].streamId);
+            window.open('http://10.66.66.121:8083/check.html?taskId=' + row.id + "&qa_type="+
+              this.qa_type+ '&streamId=' +this.taskStreamList[0].streamId + "&token="+ token);
           }else{
             this.reset();
             this.open = true;
-            this.title = row.taskName;
-            getUnCheckedStream(row.taskName, qa_level).then(
+            this.title = row.taskId;
+            getUnAssignedTaskStream(row.id, this.qa_type).then(
               response => {
                 this.taskStreamList = response.rows;
                 this.total = response.total;
@@ -301,12 +309,14 @@ export default {
       )
     },
     selectStream(row){
-      let token=getToken();
-      assignLabelTaskStream(row.streamId, row.taskName, token, this.qa_type);
-      this.msgSuccess("选定成功，开始审核");
-      this.open = false;
-      window.open('http://10.66.66.121:8082/check.html?token=' + token + '&taskName=' + row.taskName + "&qa_type="+ this.qa_type +'&streamId=' +row.streamId);
-    },
+      assignTaskStream({streamId: row.streamId, taskId:this.taskId , type: this.qa_type}).then(response =>{
+        this.msgSuccess("选定成功，开始审核");
+        this.open = false;
+        let token=getToken();
+      window.open('http://10.66.66.121:8083/check.html?taskId=' + row.taskId + "&qa_type="+ this.qa_type +'' +
+        '&streamId=' +row.streamId+ "&token="+ token);
+     })
+   }
   }
 };
 </script>
