@@ -293,7 +293,7 @@ export default {
           if(this.taskStreamList.length>0){
             //this.msgInfo("此任务下未你有未完成审核的stream，即将跳转审核界面");
             alert("此任务下未你有未完成审核的图片，即将跳转审核界面");
-            window.open('http://10.66.66.121:8083/check.html?taskId=' + row.id + "&qa_type="+
+            window.open('http://10.66.66.121:8082/check.html?taskId=' + row.id + "&qa_type="+
               this.qa_type+ '&streamId=' +this.taskStreamList[0].streamId + "&token="+ token);
           }else{
             this.reset();
@@ -313,7 +313,7 @@ export default {
         this.msgSuccess("选定成功，开始审核");
         this.open = false;
         let token=getToken();
-      window.open('http://10.66.66.121:8083/check.html?taskId=' + row.taskId + "&qa_type="+ this.qa_type +'' +
+      window.open('http://10.66.66.121:8082/check.html?taskId=' + row.taskId + "&qa_type="+ this.qa_type +'' +
         '&streamId=' +row.streamId+ "&token="+ token);
      })
    }

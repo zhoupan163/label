@@ -46,14 +46,9 @@ public class LabelViaServiceImp implements LabelViaService {
             String imageUrl= taskImageEntity.getJpg_url();
             imageList.add(imageUrl);
             qaCommentList.add(taskImageEntity.getQa_comment());
-            //qa2 的Img_status_list做特殊处理
-            if(type.equals("qa2")){
-                imgStatusList.add(Integer.valueOf(taskImageEntity.getStatus()) - 2);
-            }else if(type.equals("qa1")){
-                imgStatusList.add(Integer.valueOf(taskImageEntity.getStatus()) - 1);
-            }else {
-                imgStatusList.add(Integer.valueOf(taskImageEntity.getStatus()));
-            }
+
+            imgStatusList.add(Integer.valueOf(taskImageEntity.getStatus()));
+
 
             JSONObject jsonObject= new JSONObject();
             jsonObject.put("filename", imageUrl);
@@ -83,7 +78,7 @@ public class LabelViaServiceImp implements LabelViaService {
             JSONArray regions= via_img_metadata.getJSONObject(jpgUrl).getJSONArray("regions");
             Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl));
             Update update= new Update();
-            update.set("status", 0);
+            //update.set("status", 0);
             update.set("annotationInfo", regions);
             count+= mongoTemplate.updateFirst(query, update, TaskImageEntity.class).getModifiedCount();
         }
@@ -97,7 +92,8 @@ public class LabelViaServiceImp implements LabelViaService {
         JSONObject via_img_metadata= labelViaProjectVo.getVia_img_metadata();
         for (String jpgUrl : labelViaProjectVo.getVia_image_id_list()) {
             JSONArray regions= via_img_metadata.getJSONObject(jpgUrl).getJSONArray("regions");
-            Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl));
+            //驳回或者第一次提交操作 已经审批过的数据不再做修改
+            Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl).and("status").in(0, 4));
             Update update= new Update();
             update.set("status", 1);
             update.set("annotationInfo", regions);

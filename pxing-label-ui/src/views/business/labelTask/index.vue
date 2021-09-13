@@ -393,17 +393,17 @@ export default {
             if(row.type==0){
               if (taskStreamList[0].status== 4){
                 alert("你有审批驳回的任务，即将跳转标注界面")
-                window.open('http://10.66.66.121:8083/?token=' + token + '&taskId=' +this.taskId +'&streamId='+ taskStreamList[0].streamId);
+                window.open('http://10.66.66.121:8082/?token=' + token + '&taskId=' +this.taskId +'&streamId='+ taskStreamList[0].streamId);
               }else if(taskStreamList[0].status== 0){
                 alert("你有未完成标注的任务，即将跳转标注界面")
 
-                window.open('http://10.66.66.121:8083/?token=' + token + '&taskId=' +this.taskId +'&streamId='+ taskStreamList[0].streamId);
+                window.open('http://10.66.66.121:8082/?token=' + token + '&taskId=' +this.taskId +'&streamId='+ taskStreamList[0].streamId);
               }
             }else{
               alert("图片标注待开发");
               //alert(aa)
             };
-           // window.open('http://10.66.66.121:8083/?token=' + token.toString() + '&taskName=' +row.taskName);
+           // window.open('http://10.66.66.121:8082/?token=' + token.toString() + '&taskName=' +row.taskName);
           }else{
             this.msgInfo("请选定stream标定");
             this.reset();
@@ -423,7 +423,7 @@ export default {
         this.msgSuccess("选定成功，开始标注");
         this.open = false;
         let token=getToken();
-        window.open('http://10.66.66.121:8083/?token=' + token + '&taskId=' +this.taskId +'&streamId=' +row.streamId);
+        window.open('http://10.66.66.121:8082/?token=' + token + '&taskId=' +this.taskId +'&streamId=' +row.streamId);
       });
 
     },
