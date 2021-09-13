@@ -76,14 +76,14 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="tagStream(scope.row)"
+            @click="tag(scope.row)"
             v-hasPermi="['business:labelTask:label']"
           >标记</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="tagStream(scope.row)"
+            @click="tag(scope.row)"
             v-hasPermi="['business:labelTask:label']"
           >查看标记</el-button>
         </template>
@@ -261,7 +261,9 @@ export default {
     },
     handleCheckedTag(value ,key, tag){
       if(value){
-          this.tagIdList.push(tag);
+         if(this.tagIdList.indexOf(tag)== -1){
+           this.tagIdList.push(tag);
+         }
       }else {
         this.tagIdList.pop(tag);
       }
@@ -325,7 +327,7 @@ export default {
       this.handleQuery();
     },
     /** 选取stream_id按钮操作 */
-    tagStream(row) {
+    tag(row) {
       this.streamId= row.id;
       listLabelProject().then(response =>{
         this.projectList= response.rows;
@@ -362,7 +364,7 @@ export default {
       })
     },
     submitForm(){
-      alert(this.tagIdList);
+      //alert(this.tagIdList);
       const tagIds= this.tagIdList.join(",");
       alert(tagIds);
       tagStream({streamId: this.streamId, projectId: this.pId, tagIds: tagIds}).then(response =>{
