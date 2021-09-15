@@ -81,8 +81,7 @@
     <el-table v-loading="loading" :data="sceneList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="场景id" prop="id" width="120" />
-      <el-table-column label="项目id" prop="projectId" width="120" />
-      <el-table-column label="项目名称" prop="projectId" :formatter ="projectFormat" width="120" />
+      <el-table-column label="项目名称" prop="projectName"  width="120" />
       <el-table-column label="场景名称" prop="sceneName" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
@@ -109,13 +108,13 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-form-item label="任务名称">
-            <el-select v-model="form.taskId" placeholder="请选择">
+          <el-form-item label="项目名称">
+            <el-select v-model="form.projectName" placeholder="请选择">
               <el-option
-                v-for="item in taskOptions"
+                v-for="item in projectOptions"
                 :key="item.id"
-                :label="item.taskName"
-                :value="item.id"
+                :label="item.projectName"
+                :value="item.projectName"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -206,13 +205,6 @@ export default {
   methods: {
     /** 查询任务列表 */
     getList() {
-      listLabelProject().then(response => {
-        this.projectOptions= response.rows;
-        this.reset();
-        //this.open = true;
-        this.title = "添加场景";
-      });
-      this.loading = false;
       listLabelScene(this.addDateRange(this.queryParams, this.dateRange)).then(
         response => {
           this.sceneList= response.rows;
@@ -221,20 +213,10 @@ export default {
         }
       );
     },
-    projectFormat(row,column){
-      //alert(row.id);
-      for(var index in this.projectOptions){
-        var project= this.projectOptions[index];
-        if(project.id== row.projectId)
-             return project.projectName;
-        }
-    },
     /** 新增按钮操作 */
     handleAdd() {
-      //listLabelProject().then(response => {
-        //this.projectOptions= response.rows;
-      listLabelTask(this.addDateRange(this.queryParams, this.dateRange)).then(response =>{
-        this.taskOptions= response
+      listLabelProject(this.addDateRange(this.queryParams, this.dateRange)).then(response =>{
+        this.projectOptions= response.rows;
         this.reset();
         this.open = true;
         this.title = "添加场景";

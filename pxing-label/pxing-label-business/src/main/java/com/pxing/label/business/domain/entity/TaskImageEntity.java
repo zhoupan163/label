@@ -23,19 +23,19 @@ import java.util.List;
 public class TaskImageEntity {
 
     @ApiModelProperty("imageId")
-    private Long imageId;
+    private String imageId;
 
     @ApiModelProperty("streamId")
-    private Long stream_id;
+    private String streamId;
 
     @ApiModelProperty("任务Id")
-    private Long task_id;
+    private String taskName;
 
     @ApiModelProperty("png_url")
-    private String png_url;
+    private String pngUrl;
 
     @ApiModelProperty("jpg_url")
-    private String jpg_url;
+    private String jpgUrl;
 
     private Double width;
 
@@ -48,7 +48,7 @@ public class TaskImageEntity {
     private Integer status;
 
     @ApiModelProperty("image_lock")
-    private Integer image_lock;
+    private Integer imageLock;
 
     @ApiModelProperty("label")
     private String label;
@@ -59,8 +59,8 @@ public class TaskImageEntity {
     @ApiModelProperty("qa2")
     private String qa2;
 
-    @ApiModelProperty("qa_comment")
-    private String qa_comment;
+    @ApiModelProperty("qaComment")
+    private String qaComment;
 
     @ApiModelProperty("标注属性")
     private List<JSONObject> annotationInfo;

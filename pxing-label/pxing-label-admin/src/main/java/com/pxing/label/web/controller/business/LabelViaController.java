@@ -43,13 +43,13 @@ public class LabelViaController extends BaseController
 
     @GetMapping("/getTaskViaInfo")
     @ResponseBody
-    public TableDataInfo getStreamViaInfo(@RequestParam("taskId")Long taskId, HttpServletRequest request,
-                                          @RequestParam("type")String type ,@RequestParam("streamId")Long streamId)
+    public TableDataInfo getStreamViaInfo(@RequestParam("taskName")String taskName, HttpServletRequest request,
+                                          @RequestParam("type")String type ,@RequestParam("streamId")String streamId)
     {
         startPage();
         LoginUser loginUser= tokenService.getLoginUser(request);
         String  userName=loginUser.getUser().getUserName();
-        List<LabelViaProjectVo> list = labelViaService.getSreamViaProject(taskId, streamId, userName, type);
+        List<LabelViaProjectVo> list = labelViaService.getSreamViaProject(taskName, streamId, userName, type);
         return getDataTable(list);
     }
 
@@ -74,9 +74,9 @@ public class LabelViaController extends BaseController
 
     @GetMapping("discardImg")
     @ResponseBody
-    public  AjaxResult discardImg(@RequestParam("taskId")Long taskId, @RequestParam("streamId")Long streamId,
+    public  AjaxResult discardImg(@RequestParam("taskName")String taskName, @RequestParam("streamId")String streamId,
                                   @RequestParam("jpgUrl")String jpg_url){
-        int res= taskImageService.discardImage(taskId, streamId, jpg_url);
+        int res= taskImageService.discardImage(taskName, streamId, jpg_url);
         return toAjax(res);
 
     }

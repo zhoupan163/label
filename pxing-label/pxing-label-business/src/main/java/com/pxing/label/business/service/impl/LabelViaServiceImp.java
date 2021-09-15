@@ -30,11 +30,11 @@ public class LabelViaServiceImp implements LabelViaService {
 
 
     @Override
-    public List<LabelViaProjectVo> getSreamViaProject(Long taskId, Long streamId, String userName, String type) {
-        Query query=Query.query(Criteria.where("task_id").is(taskId).and("type").is("template"));
+    public List<LabelViaProjectVo> getSreamViaProject(String taskName, String streamId, String userName, String type) {
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("type").is("template"));
         LabelViaProjectVo labelViaProjectVo= mongoTemplate.findOne(query ,LabelViaProjectVo.class);
 
-        Query query1=Query.query(Criteria.where("task_id").is(taskId).and("stream_id").is(streamId).and(type).is(userName).and("status").nin(5));
+        Query query1=Query.query(Criteria.where("task_name").is(taskName).and("stream_id").is(streamId).and(type).is(userName).and("status").nin(5));
         List<TaskImageEntity> taskImageEntityList= mongoTemplate.find(query1 , TaskImageEntity.class);
 
         JSONObject via_img_metadata= new JSONObject();
@@ -43,9 +43,9 @@ public class LabelViaServiceImp implements LabelViaService {
         List<String> qaCommentList= new ArrayList<>();
         List<Integer> imgStatusList= new ArrayList<>();
         for(TaskImageEntity taskImageEntity : taskImageEntityList){
-            String imageUrl= taskImageEntity.getJpg_url();
+            String imageUrl= taskImageEntity.getJpgUrl();
             imageList.add(imageUrl);
-            qaCommentList.add(taskImageEntity.getQa_comment());
+            qaCommentList.add(taskImageEntity.getQaComment());
 
             imgStatusList.add(Integer.valueOf(taskImageEntity.getStatus()));
 
@@ -76,11 +76,11 @@ public class LabelViaServiceImp implements LabelViaService {
         JSONObject via_img_metadata= labelViaProjectVo.getVia_img_metadata();
         for (String jpgUrl : labelViaProjectVo.getVia_image_id_list()) {
             JSONArray regions= via_img_metadata.getJSONObject(jpgUrl).getJSONArray("regions");
-            Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl));
+            Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl).and("stream_id").is(labelViaProjectVo.getStreamId()));
             Update update= new Update();
             //update.set("status", 0);
             update.set("annotationInfo", regions);
-            count+= mongoTemplate.updateFirst(query, update, TaskImageEntity.class).getModifiedCount();
+            count+= mongoTemplate.updateMulti(query, update, TaskImageEntity.class).getModifiedCount();
         }
         return count;
     }
@@ -99,7 +99,7 @@ public class LabelViaServiceImp implements LabelViaService {
             update.set("annotationInfo", regions);
             count+= mongoTemplate.updateFirst(query, update, TaskImageEntity.class).getModifiedCount();
         };
-        taskStreamService.commitTaskStream(labelViaProjectVo.getTask_id(), labelViaProjectVo.getStreamId());
+        taskStreamService.commitTaskStream(labelViaProjectVo.getTaskName(), labelViaProjectVo.getStreamId());
 
         return count;
     }

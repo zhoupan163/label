@@ -21,11 +21,14 @@ import lombok.Data;
 @TableName("label_tag")
 public class TagEntity extends LabelBaseEntity {
 
-    @ApiModelProperty("场景id")
-    private Long sceneId;
+    @ApiModelProperty("场景名称")
+    private String sceneName;
 
     @ApiModelProperty("标签名称")
     private String tagName;
+
+    @ApiModelProperty("项目名称")
+    private String projectName;
 
     @ApiModelProperty("示例图片链接")
     private String imageUrl;

@@ -23,7 +23,7 @@ import java.util.Date;
 public class LabelTaskViaVo {
 
     @ApiModelProperty("属性Id")
-    private String taskId;
+    private String taskName;
 
     @ApiModelProperty("属性名称")
     private JSONObject via_project_info;

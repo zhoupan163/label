@@ -10,17 +10,17 @@ export function listLabelTask(query) {
 }
 
 // 查询分配给自己却没有标注完成的stream
-export function getkUnfinishedTaskStream(taskId, type ) {
+export function getkUnfinishedTaskStream(taskName, type ) {
   return request({
-    url: '/business/taskStream/getkUnfinishedTaskStreamList'+'?taskId='+ taskId + "&type="+ type,
+    url: '/business/taskStream/getkUnfinishedTaskStreamList'+'?taskName='+ taskName + "&type="+ type,
     method: 'get'
   })
 }
 
 // 查询未分配的stream
-export function getUnAssignedTaskStream(taskId, type) {
+export function getUnAssignedTaskStream(taskName, type) {
   return request({
-    url: '/business/taskStream/getUnAssignedTaskStreamList'+'?taskId='+ taskId+ "&type="+ type,
+    url: '/business/taskStream/getUnAssignedTaskStreamList'+'?taskName='+ taskName+ "&type="+ type,
     method: 'get'
   })
 }
@@ -44,9 +44,9 @@ export function addLabelTask(data) {
   })
 }
 //获取已经标记的未添加到此task的stream
-export function getTaggedStreamList(projectId, taskId) {
+export function getTaggedStreamList(projectName, taskName) {
   return request({
-    url: '/business/labelStreamTag/getTaggedStreamList?projectId=' + projectId +'&taskId=' +taskId,
+    url: '/business/labelStreamTag/getTaggedStreamList?projectName=' + projectName + '&taskName='+ taskName,
     method: 'get'
   })
 }

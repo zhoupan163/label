@@ -46,12 +46,13 @@ public class LabelDataController extends BaseController
 
     @GetMapping("/getLabelTaskZip/")
     @ApiOperation(value = "下载压缩包")
-    public void getZip(@RequestParam("taskId") Long taskId, HttpServletResponse response) throws Exception {
+    public void getZip(@RequestParam("taskName") String taskName, HttpServletResponse response) throws Exception {
 
-        List<TaskStreamEntity> taskStreamEntityList= taskStreamService.getFinishedTaskStream(taskId);
-        List<Long> streamIdList= taskStreamEntityList.stream().map(TaskStreamEntity::getStreamId).collect(Collectors.toList());
+        List<TaskStreamEntity> taskStreamEntityList= taskStreamService.getFinishedTaskStream(taskName);
+        //List<Long> streamIdList= taskStreamEntityList.stream().map(TaskStreamEntity::getStreamId).collect(Collectors.toList());
+        List<String> streamIdList= new ArrayList<>();
          //图片
-        List<TaskImageEntity> list= taskImageService.getFinishedImageList(taskId, streamIdList);
+        List<TaskImageEntity> list= taskImageService.getFinishedImageList(taskName, streamIdList);
         Map<String, InputStream> map=new HashMap<>();
         Map<String,Set<String>> streamMap= new HashMap<>();
         Set<String> result = new HashSet<>();
@@ -60,7 +61,7 @@ public class LabelDataController extends BaseController
              List<String> list1= LabelAnnotionToMott.getMott(taskImageEntity);
              String ids= list1.get(1);
              List<String> idList= Arrays.asList(ids.split(" "));
-             String streamId= String.valueOf(taskImageEntity.getStream_id());
+             String streamId= String.valueOf(taskImageEntity.getStreamId());
              Set<String> idSet= idList.stream().collect(Collectors.toSet());
 
              if (!streamMap.containsKey(streamId)){
@@ -74,10 +75,10 @@ public class LabelDataController extends BaseController
                  streamMap.put(streamId, result);
              };
              InputStream txt= new ByteArrayInputStream(list1.get(0).getBytes(StandardCharsets.UTF_8));
-             InputStream png= HttpUtils.getInputStream(taskImageEntity.getPng_url());
+             InputStream png= HttpUtils.getInputStream(taskImageEntity.getPngUrl());
 
-             map.put("motTxt/"+ taskImageEntity.getStream_id()+ "/"+ taskImageEntity.getImageId()+".txt",  txt);
-             map.put("png/"+ taskImageEntity.getStream_id() +"/" + taskImageEntity.getImageId()+ ".png", png);
+             //map.put("motTxt/"+ taskImageEntity.getStream_id()+ "/"+ taskImageEntity.getImageId()+".txt",  txt);
+             //map.put("png/"+ taskImageEntity.getStream_id() +"/" + taskImageEntity.getImageId()+ ".png", png);
         };
         for(String streamId : streamMap.keySet()){
             map.put("motTxt/"+ streamId+ "/"+ "idCount.txt",  new ByteArrayInputStream(String.valueOf(streamMap.get(streamId).size())

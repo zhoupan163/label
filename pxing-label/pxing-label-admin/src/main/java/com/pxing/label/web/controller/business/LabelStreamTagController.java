@@ -1,7 +1,9 @@
 package com.pxing.label.web.controller.business;
 
 import com.pxing.label.business.domain.entity.ImageEntity;
+import com.pxing.label.business.domain.entity.ProjectStreamEntity;
 import com.pxing.label.business.domain.entity.StreamEntity;
+import com.pxing.label.business.domain.entity.TagEntity;
 import com.pxing.label.business.domain.vo.LabelTagVo;
 import com.pxing.label.business.domain.vo.StreamTagVo;
 import com.pxing.label.business.service.*;
@@ -62,7 +64,7 @@ public class LabelStreamTagController extends BaseController
     public TableDataInfo selectStreamList()
     {
         startPage();
-        List<StreamEntity> list = streamService.selectStreamList();
+        List<ProjectStreamEntity> list = streamService.selectStreamList();
         return getDataTable(list);
     }
 
@@ -71,7 +73,7 @@ public class LabelStreamTagController extends BaseController
      */
     //@PreAuthorize("@ss.hasPermi('business:labelTag:list')")
     @GetMapping("/selectImageListByStreamId")
-    public TableDataInfo selectImageListByStreamId(@RequestParam("streamId")Long streamId)
+    public TableDataInfo selectImageListByStreamId(@RequestParam("streamId")String streamId)
     {
         startPage();
         List<ImageEntity> list =  imageService.selectImageListByStreamId(streamId);
@@ -82,11 +84,11 @@ public class LabelStreamTagController extends BaseController
      * 获取 project对应 的tag标记列表
      */
     //@PreAuthorize("@ss.hasPermi('business:labelTag:list')")
-    @GetMapping("/selectTagListByProjectId")
-    public TableDataInfo selectTagListByProjectId(@RequestParam("projectId")Long projectId)
+    @GetMapping("/selectTagListByProjectName")
+    public TableDataInfo selectTagListByProjectId(@RequestParam("projectName")String projectName)
     {
         startPage();
-        List<LabelTagVo> list = labelTagService.selectTagListByProjectId(projectId);
+        List<TagEntity> list = labelTagService.selectTagListByProjectName(projectName);
         return getDataTable(list);
     }
 
@@ -95,23 +97,22 @@ public class LabelStreamTagController extends BaseController
      */
     //@PreAuthorize("@ss.hasPermi('business:labelTag:list')")
     @PutMapping("/tagStream")
-    public AjaxResult tagStream(Long streamId, Long projectId, Long[] tagIds)
+    public AjaxResult tagStream(String streamId, Long[] tagIds)
     {
         streamTagService.tagStreamList(streamId, Arrays.asList(tagIds));
-        projectStreamService.insertProjectStream(streamId, projectId);
         return toAjax(streamService.updateTagStatusById(streamId));
     }
 
     /**
-     * 获取已经标记的stream记录
+     * 获取已经标记的stream 而未筛选的 记录
      */
     //@PreAuthorize("@ss.hasPermi('business:labelTag:list')")
     @GetMapping("/getTaggedStreamList")
     @ResponseBody
-    public TableDataInfo getTaggedStreamList(@RequestParam("projectId")Long projectId, @RequestParam("taskId")Long taskId)
+    public TableDataInfo getTaggedStreamList(@RequestParam("projectName")String projectName, @RequestParam("taskName")String taskName)
     {
         startPage();
-        List<StreamTagVo> list = streamTagService.getTaggedStreamList(projectId, taskId);
+        List<ProjectStreamEntity> list = streamTagService.getTaggedStreamList(projectName, taskName);
         return getDataTable(list);
     }
 

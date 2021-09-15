@@ -21,8 +21,8 @@ import lombok.Data;
 @TableName("label_task")
 public class TaskEntity extends LabelBaseEntity {
 
-    @ApiModelProperty("项目id")
-    private Long projectId;
+    @ApiModelProperty("项目名称")
+    private String projectName;
 
     @ApiModelProperty("任务名称")
     private String taskName;

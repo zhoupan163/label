@@ -21,8 +21,8 @@ import lombok.Data;
 @TableName("label_scene")
 public class SceneEntity extends LabelBaseEntity {
 
-    @ApiModelProperty("项目Id")
-    private String projectId;
+    @ApiModelProperty("项目名称")
+    private String projectName;
 
     @ApiModelProperty("场景名称")
     private String sceneName;

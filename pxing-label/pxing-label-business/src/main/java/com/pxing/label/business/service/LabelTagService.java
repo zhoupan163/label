@@ -15,5 +15,5 @@ public interface LabelTagService {
 
     int deleteLabelTagByIds(Long[] projectIds);
 
-    List<LabelTagVo> selectTagListByProjectId(Long projectId);
+    List<TagEntity> selectTagListByProjectName(String projectName);
 }

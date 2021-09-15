@@ -80,7 +80,9 @@
 
     <el-table v-loading="loading" :data="sceneList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="场景id" prop="id" width="120" />
+      <el-table-column label="标签id" prop="id" width="120" />
+      <el-table-column label="工程名称" prop="projectName" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="场景名称" prop="sceneName" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="标签名称" prop="tagName" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
@@ -101,18 +103,29 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="标签名称" prop="tagName">
+            <el-form-item label="tag名称" prop="sceneName">
               <el-input v-model="form.tagName" placeholder="请输入标签名称" maxlength="30" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
+          <el-form-item label="项目名称">
+            <el-select v-model="form.projectName" placeholder="请选择" @change="getSenceName">
+              <el-option
+                v-for="item in projectOptions"
+                :key="item.id"
+                :label="item.label"
+                :value="item.label"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-row>
+        <el-row>
           <el-form-item label="场景名称">
-            <el-select v-model="form.sceneId" placeholder="请选择">
+            <el-select v-model="form.sceneName" placeholder="请选择" @change="change">
               <el-option
                 v-for="item in sceneOptions"
-                :key="item.id"
-                :label="item.sceneName"
+                :label="item.label"
                 :value="item.id"
               ></el-option>
             </el-select>
@@ -131,12 +144,12 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
   </div>
 </template>
 
 <script>
 import {listLabelScene} from "@/api/business/labelScene"
-import {listLabelProject} from "@/api/business/labelProject"
 import {listLabelTag, addLabelTag} from "@/api/business/labelTag";
 
 
@@ -145,6 +158,8 @@ export default {
   name: "Tag",
   data() {
     return {
+      columns:[],
+      sceneList: [],
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -173,6 +188,8 @@ export default {
       dateRange: [],
       menuOptions: [],
       sceneOptions: [],
+      projectOptions:[],
+      projectSceneDict: {},
       // 查询参数
       tagList: [],
       queryParams: {
@@ -198,6 +215,15 @@ export default {
     this.getList();
   },
   methods: {
+    handleUpdate(){
+
+},
+    handleSelectionChange(){
+
+    },
+    handleDelete(){
+
+    },
     /** 查询任务列表 */
     getList() {
       this.loading = true;
@@ -212,11 +238,39 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       listLabelScene().then(response => {
-        this.sceneOptions= response.rows;
+        var projectSceneList= response.rows;
+        for(var i in projectSceneList){
+          var projectScene= projectSceneList[i];
+          var projectName= projectScene["projectName"];
+          var sceneName= projectScene["sceneName"];
+          if(this.projectOptions.indexOf(projectName)== -1){
+            this.projectOptions.push({label: projectName, id: projectScene['id']})
+          };
+          if(this.projectSceneDict.hasOwnProperty(projectName)){
+            //alert(this.projectSceneDict[projectName]);
+            var sceneList= this.projectSceneDict[projectName];
+            if(sceneList.indexOf(sceneName)== -1){
+               sceneList.push(sceneName);
+            }
+            this.projectSceneDict[projectName]= sceneList;
+          }else {
+            this.projectSceneDict[projectName]= []
+            this.projectSceneDict[projectName].push(sceneName);
+          }
+        };
         this.reset();
         this.open = true;
         this.title = "添加标签";
       })
+    },
+    getSenceName(){
+      //this.form.sceneName= "";
+      this.sceneOptions= this.projectSceneDict[this.form.projectName].map((d,i) => ({id: i, label: d}));
+      console.log(this.sceneOptions, this.projectSceneDict)
+      console.log(this.sceneOptions)
+    },
+    change(){
+      console.log(1212)
     },
     // 取消按钮
     cancel() {

@@ -86,6 +86,7 @@ spring:
       password: 5%Trv3
       database: px_pca
       authentication-database: admin
+      field-naming-strategy: org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy
 
 
 

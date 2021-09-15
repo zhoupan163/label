@@ -22,7 +22,7 @@ import lombok.Data;
 public class StreamTagEntity extends LabelBaseEntity {
 
     @ApiModelProperty("streamId")
-    private Long streamId;
+    private String streamId;
 
     @ApiModelProperty("tagId")
     private Long tagId;

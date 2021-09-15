@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface TaskImageService {
 
-    void addTaskImages(Long streamId, Long taskId);
+    void addTaskImages(String streamId, String taskName);
 
-    int discardImage(Long taskId, Long streamId, String jpgUrl);
+    int discardImage(String taskName, String streamId, String jpgUrl);
 
-    List<TaskImageEntity> getFinishedImageList(Long taskId, List<Long> streamIdList);
+    List<TaskImageEntity> getFinishedImageList(String taskName, List<String> streamIdList);
 }

@@ -41,7 +41,9 @@ public class LabelTagServiceImp implements LabelTagService {
     }
 
     @Override
-    public List<LabelTagVo> selectTagListByProjectId(Long projectId) {
-        return labelTagDao.selectTagListByProjectId(projectId);
+    public List<TagEntity> selectTagListByProjectName(String projectName) {
+        QueryWrapper<TagEntity> querywrapper = new QueryWrapper<>();
+        querywrapper.eq("project_name", projectName);
+        return  labelTagDao.selectList(querywrapper);
     }
 }

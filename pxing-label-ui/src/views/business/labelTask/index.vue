@@ -73,7 +73,6 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="任务编号" prop="id" width="120" />
       <el-table-column label="任务名称" prop="taskName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="项目编号" prop="projectId" width="120" />
       <el-table-column label="关联项目名称" prop="projectName" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="任务类型":formatter="typeFormat" prop="type" width="120" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
@@ -143,13 +142,13 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="项目名称" prop="projectId">
-              <el-select v-model="form.projectId" placeholder="请选择">
+            <el-form-item label="项目名称" prop="projectName">
+              <el-select v-model="form.projectName" placeholder="请选择">
                 <el-option
                   v-for="item in projectOptions"
                   :key="item.id"
                   :label="item.projectName"
-                  :value="item.id"
+                  :value="item.projectName"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -195,7 +194,7 @@
     <el-dialog :title="title2" :visible.sync="open2" width="500px" append-to-body>
       <el-table v-loading="loading" :data="taggedStreamList">
         <el-table-column label="streamId" prop="streamId" width="120" />
-        <el-table-column label="创建时间" prop="createTime" width="120" />
+        <el-table-column label="大小" prop="frameSize" width="120" />
         <el-table-column label="备注" prop="remark" width="120" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
@@ -248,7 +247,7 @@ export default {
       // 任务表格数据
       taskList: [],
       streamList: [],
-      taskId: undefined,
+      taskName: undefined,
 
       taggedStreamList: [],
       // 弹出层标题
@@ -370,8 +369,8 @@ export default {
       this.handleQuery();
     },
     filterStream(row){
-      this.taskId= row.id;
-      getTaggedStreamList(row.projectId, row.id).then(response =>{
+      this.taskName= row.taskName;
+      getTaggedStreamList(row.projectName, row.taskName).then(response =>{
         this.taggedStreamList= response.rows;
         this.open2= true;
         this.title2= "请添加stream";
@@ -379,25 +378,25 @@ export default {
     },
     addStreamToTask(row){
       //alert(row.streamId);
-      addTaskStream({streamId: row.streamId,taskId: this.taskId})
+      addTaskStream({streamId: row.streamId,taskName: this.taskName, size:row.frameSize})
       this.open2 = false;
     },
     /** 选取stream_id按钮操作 */
     handleImagesTask(row) {
-      this.taskId= row.id;
+      this.taskName= row.taskName;
       let token= getToken();
-      getkUnfinishedTaskStream(row.id,"label").then(
+      getkUnfinishedTaskStream(row.taskName,"label").then(
         response =>{
           let taskStreamList = response.rows;
           if(taskStreamList.length>0){
             if(row.type==0){
               if (taskStreamList[0].status== 4){
                 alert("你有审批驳回的任务，即将跳转标注界面")
-                window.open('http://10.66.66.121:8082/?token=' + token + '&taskId=' +this.taskId +'&streamId='+ taskStreamList[0].streamId);
+                window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +this.taskName +'&streamId='+ taskStreamList[0].streamId);
               }else if(taskStreamList[0].status== 0){
                 alert("你有未完成标注的任务，即将跳转标注界面")
 
-                window.open('http://10.66.66.121:8082/?token=' + token + '&taskId=' +this.taskId +'&streamId='+ taskStreamList[0].streamId);
+                window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +this.taskName +'&streamId='+ taskStreamList[0].streamId);
               }
             }else{
               alert("图片标注待开发");
@@ -409,7 +408,7 @@ export default {
             this.reset();
             this.open = true;
             this.title = row.taskName.toString();
-            getUnAssignedTaskStream(row.id, "label").then(
+            getUnAssignedTaskStream(row.taskName, "label").then(
               response => {
                 this.streamList = response.rows;
                 this.total = response.total;
@@ -419,11 +418,11 @@ export default {
       )
     },
     selectStream(row){
-      assignTaskStream({streamId: row.streamId, taskId: this.taskId, type: "label"}).then(response =>{
+      assignTaskStream({streamId: row.streamId, taskName: this.taskName, type: "label"}).then(response =>{
         this.msgSuccess("选定成功，开始标注");
         this.open = false;
         let token=getToken();
-        window.open('http://10.66.66.121:8082/?token=' + token + '&taskId=' +this.taskId +'&streamId=' +row.streamId);
+        window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +this.taskName +'&streamId=' +row.streamId);
       });
 
     },

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.pxing.label.common.core.domain.entity.business.LabelBaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
@@ -21,13 +22,16 @@ import java.util.List;
  * @since JDK1.8
  */
 @Data
-@TableName("image")
-public class ImageEntity extends LabelBaseEntity {
+@Document("image")
+public class ImageEntity {
+
+    @ApiModelProperty("imageId")
+    private String imageId;
 
     @ApiModelProperty("streamId")
-    private Long streamId;
+    private String streamId;
 
-    @ApiModelProperty("frame_index")
+    @ApiModelProperty("frameIndex")
     private String frameIndex;
 
     @ApiModelProperty("传感器类型")
@@ -38,6 +42,9 @@ public class ImageEntity extends LabelBaseEntity {
 
     @ApiModelProperty("topic类型")
     private String topicType;
+
+    @ApiModelProperty("日期")
+    private String fileDate;
 
     @ApiModelProperty("width")
     private Double width;
@@ -53,6 +60,12 @@ public class ImageEntity extends LabelBaseEntity {
 
     @ApiModelProperty("thumbnail_url")
     private String thumbnailUrl;
+
+    @ApiModelProperty("时间戳")
+    private String timestamp;
+
+    @ApiModelProperty("备注")
+    private String comment;
 
 
 }

@@ -9,7 +9,7 @@ export function selectUnTaggedImageList(streamId) {
 }
 
 // 查询stream
-export function selectStreamTagList() {
+export function selectStreamList() {
   return request({
     url: '/business/labelStreamTag/selectStreamList',
     method: 'get'
@@ -25,9 +25,9 @@ export function selectImageListByStreamId(streamId) {
 }
 
 //查询 tag
-export function selectTagListByProjectId(projectId) {
+export function selectTagListByProjectName(projectName) {
   return request({
-    url: '/business/labelStreamTag/selectTagListByProjectId?projectId='+ projectId,
+    url: '/business/labelStreamTag/selectTagListByProjectName?projectName='+ projectName,
     method: 'get'
   })
 }

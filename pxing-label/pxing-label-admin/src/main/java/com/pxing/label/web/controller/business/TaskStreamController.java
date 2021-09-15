@@ -39,41 +39,41 @@ public class TaskStreamController extends BaseController{
         LoginUser loginUser= tokenService.getLoginUser(request);
         taskStreamEntity.setCreateBy(loginUser.getUsername());
 
-        taskImageService.addTaskImages(taskStreamEntity.getStreamId(), taskStreamEntity.getTaskId());
+        taskImageService.addTaskImages(taskStreamEntity.getStreamId(), taskStreamEntity.getTaskName());
         return toAjax(taskStreamService.insertTaskStream(taskStreamEntity));
     }
 
     //获取已分配未标注完成或者被驳回的stream
     @GetMapping("/getkUnfinishedTaskStreamList")
     @ResponseBody
-    public TableDataInfo getLabelTaskUnfinishedStream(@RequestParam("taskId")Long taskId, @RequestParam("type")String type,
+    public TableDataInfo getLabelTaskUnfinishedStream(@RequestParam("taskName")String taskName, @RequestParam("type")String type,
                                                       HttpServletRequest request)
     {
         startPage();
         LoginUser loginUser= tokenService.getLoginUser(request);
         String  userName=loginUser.getUser().getUserName();
-        List<TaskStreamEntity> list= taskStreamService.getUnFinishedTaskStream(taskId, type, userName);
+        List<TaskStreamEntity> list= taskStreamService.getUnFinishedTaskStream(taskName, type, userName);
         return getDataTable(list);
     }
 
     //获取未分配stream
     @GetMapping("/getUnAssignedTaskStreamList")
     @ResponseBody
-    public TableDataInfo getUnAssignedTaskStream(@RequestParam("taskId")Long taskId, @RequestParam("type")String type)
+    public TableDataInfo getUnAssignedTaskStream(@RequestParam("taskName")String taskName, @RequestParam("type")String type)
     {
         startPage();
-        List<TaskStreamEntity> list= taskStreamService.getTaskStream(taskId, type, "");
+        List<TaskStreamEntity> list= taskStreamService.getTaskStream(taskName, type, "");
         return getDataTable(list);
     }
 
 
     @PutMapping("assignTaskStream")
-    public AjaxResult assignTaskStream(Long streamId, Long taskId, String type, HttpServletRequest request)
+    public AjaxResult assignTaskStream(String streamId, String taskName, String type, HttpServletRequest request)
     {
         LoginUser loginUser= tokenService.getLoginUser(request);
         String  userName=loginUser.getUser().getUserName();
 
-        return toAjax(taskStreamService.assignTaskStream(streamId, taskId, type, userName));
+        return toAjax(taskStreamService.assignTaskStream(streamId, taskName, type, userName));
     }
 
 

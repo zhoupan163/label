@@ -56,12 +56,12 @@ public class LabelCheckServiceImp implements LabelCheckService {
         List<String> imgList = labelImageCheck.getImgList();
         List<String> imgStatusList = labelImageCheck.getImgStatusList();
         List<String> imgQaCommentList = labelImageCheck.getImgQaCommentList();
-        long taskId = labelImageCheck.getTaskId();
-        long streamId= labelImageCheck.getStreamId();
+        String taskName = labelImageCheck.getTaskName();
+        String streamId= labelImageCheck.getStreamId();
         String qaType = labelImageCheck.getQaType();
 
         for (int i = 0; i < imgList.size(); i++) {
-            Query query = Query.query(Criteria.where("task_id").is(taskId).and("jpg_url").is(imgList.get(i)));
+            Query query = Query.query(Criteria.where("task_name").is(taskName).and("jpg_url").is(imgList.get(i)));
 
             Update update = new Update();
             update.set("qa_comment", imgQaCommentList.get(i));
@@ -84,7 +84,7 @@ public class LabelCheckServiceImp implements LabelCheckService {
         BulkWriteResult result = operations.execute();
 
         UpdateWrapper<TaskStreamEntity> updateWrapper= new UpdateWrapper<>();
-        updateWrapper.eq("task_id", taskId).eq("stream_id", streamId);
+        updateWrapper.eq("task_name", taskName).eq("stream_id", streamId);
         if (imgStatusList.contains("4")) {
             updateWrapper.set("status", 4);
         } else {

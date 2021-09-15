@@ -11,9 +11,5 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 
-public interface LabelTagDao extends BaseMapper<TagEntity> {
-
-    @Select("select t.id, t.tag_name, s.scene_name, t.scene_id from label_tag t join label_scene s on s.id= t.scene_id " +
-            "where s.project_id= #{projectId}")
-    List<LabelTagVo> selectTagListByProjectId(Long projectId);
+public interface LabelTagDao extends BaseMapper<TagEntity> { ;
 }

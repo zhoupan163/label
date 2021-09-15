@@ -22,10 +22,10 @@ import lombok.Data;
 public class TaskStreamEntity extends LabelBaseEntity {
 
     @ApiModelProperty("视频流id")
-    private Long streamId;
+    private String streamId;
 
     @ApiModelProperty("任务id")
-    private Long taskId;
+    private String taskName;
 
     @ApiModelProperty("图片大小")
     private Integer size;

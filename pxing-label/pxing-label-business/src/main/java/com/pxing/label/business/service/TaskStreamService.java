@@ -8,13 +8,15 @@ import java.util.List;
 public interface TaskStreamService {
     int insertTaskStream(TaskStreamEntity taskStreamEntity);
 
-    List<TaskStreamEntity> getTaskStream(Long taskId, String type, String userName);
+    List<TaskStreamEntity> getTaskStream(String taskName, String type, String userName);
 
-    int assignTaskStream(Long streamId, Long taskId, String type, String userName);
+    int assignTaskStream(String streamId, String taskName, String type, String userName);
 
-    int commitTaskStream(long task_id, Long streamId);
+    int commitTaskStream(String taskName, String streamId);
 
-    List<TaskStreamEntity> getUnFinishedTaskStream(Long taskId, String type, String userName);
+    List<TaskStreamEntity> getUnFinishedTaskStream(String taskName, String type, String userName);
 
-    List<TaskStreamEntity> getFinishedTaskStream(Long taskId);
+    List<TaskStreamEntity> getFinishedTaskStream(String taskName);
+
+    List<TaskStreamEntity> getTaskStreamList(String taskName);
 }

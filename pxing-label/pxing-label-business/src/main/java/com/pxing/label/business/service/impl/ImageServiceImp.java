@@ -7,6 +7,9 @@ import com.pxing.label.business.domain.entity.ImageEntity;
 import com.pxing.label.business.domain.entity.StreamEntity;
 import com.pxing.label.business.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,12 +21,13 @@ public class ImageServiceImp implements ImageService {
     @Autowired
     private ImageDao imageDao;
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+
     @Override
-    public List<ImageEntity> selectImageListByStreamId(Long streamId) {
-        QueryWrapper<ImageEntity> querywrapper = new QueryWrapper<>();
-        ImageEntity imageEntity= new ImageEntity();
-        imageEntity.setStreamId(streamId);
-        querywrapper.setEntity(imageEntity);
-        return imageDao.selectList(querywrapper);
+    public List<ImageEntity> selectImageListByStreamId(String streamId) {
+        Query query= new Query(Criteria.where("stream_id").is(streamId));
+        return mongoTemplate.find(query, ImageEntity.class);
     }
 }

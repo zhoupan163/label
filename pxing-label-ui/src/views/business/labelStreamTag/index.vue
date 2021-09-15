@@ -58,34 +58,35 @@
 
     <el-table v-loading="loading" :data="streamList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" prop="id" width="120" />
+      <el-table-column label="streamId" prop="streamId" width="120" />
+      <el-table-column label="工程名称" prop="projectName" width="120" />
+      <el-table-column label="size" prop="frameSize" width="120" />
       <el-table-column label="传感器位置" prop="sensorLocation" width="120" />
       <el-table-column label="传感器类型" prop="sensorType" width="120" />
       <el-table-column label="topic类型" prop="topicType" width="120" />
       <el-table-column label="标记状态" prop="tagStatus":formatter="statusFormat" width="120" />
-      <el-table-column label="任务创建人" prop="createBy" width="120" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="220">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
+          <span>{{ parseTime(scope.row.updateTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注信息" prop="remark" width="120" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope" v-if="scope.row.tagStatus== 0">
+        <template slot-scope="scope" v-if="scope.row.tagStatus== null">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="tag(scope.row)"
-            v-hasPermi="['business:labelTask:label']"
+            v-hasPermi="['business:labelStreamTag:tag']"
           >标记</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="tag(scope.row)"
-            v-hasPermi="['business:labelTask:label']"
-          >查看标记</el-button>
+            v-hasPermi="['business:labelStreamTag:tagUpdate']"
+          >修改标记</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -164,10 +165,10 @@
 </template>
 
 <script>
-import { listLabelProject} from "@/api/business/labelProject"
-import { tagStream ,selectStreamTagList , selectImageListByStreamId, selectTagListByProjectId} from "@/api/business/labelStreamTag"
+
+import { tagStream ,selectStreamList , selectImageListByStreamId, selectTagListByProjectName} from "@/api/business/labelStreamTag"
 export default {
-  name: "Role",
+  name: "labelStreamTag",
   data() {
     return {
       // 遮罩层
@@ -187,7 +188,6 @@ export default {
       // 任务表格数据
       streamList: [],
 
-      streamId: undefined,
       pId: undefined,
       projectTotal: 0,
       projectList: [],
@@ -224,6 +224,7 @@ export default {
         projectId: undefined,
         status: undefined
       },
+      streamId: undefined,
       tagJson: {},
       tagIdList: [],
       // 表单参数
@@ -276,7 +277,7 @@ export default {
         })
       });
       this.loading = true;
-      selectStreamTagList().then(
+      selectStreamList().then(
         response => {
           this.streamList = response.rows;
           this.total = response.total;
@@ -285,6 +286,10 @@ export default {
       );
     },
     statusFormat(row, column) {
+      //alert(row.tagStatus);
+      if(row.tagStatus== null){
+        return "未标记";
+      }
       return this.tagStatusDict[row.tagStatus];
     },
 
@@ -328,20 +333,8 @@ export default {
     },
     /** 选取stream_id按钮操作 */
     tag(row) {
-      this.streamId= row.id;
-      listLabelProject().then(response =>{
-        this.projectList= response.rows;
-        this.projectTotal= response.total;
-        //alert(this.imageTotal);
-        this.projectTableList= this.projectList.slice((this.queryParams.pageNum-1)*this.queryParams.pageSize, this.queryParams
-          .pageNum*this.queryParams.pageSize)
-        this.open1 = true;
-        this.title1= "选取项目"
-      })
-      },
-    selectProject(row){
-      this.pId= row.id;
-      selectTagListByProjectId(row.id).then(response =>{
+      this.streamId= row.streamId;
+      selectTagListByProjectName(row.projectName).then(response =>{
            var list= response.rows;
            for(var row in list){
              var sceneName= list[row].sceneName;
@@ -354,7 +347,7 @@ export default {
              }
            }
       });
-      selectImageListByStreamId(this.streamId).then(response => {
+      selectImageListByStreamId(row.streamId).then(response => {
         this.imageList= response.rows;
         this.imageTotal= response.total;
         this.imageTableList= this.imageList.slice((this.queryParams.pageNum-1)*this.queryParams.pageSize, this.queryParams
@@ -367,7 +360,7 @@ export default {
       //alert(this.tagIdList);
       const tagIds= this.tagIdList.join(",");
       alert(tagIds);
-      tagStream({streamId: this.streamId, projectId: this.pId, tagIds: tagIds}).then(response =>{
+      tagStream({streamId: this.streamId, tagIds: tagIds}).then(response =>{
          alert("标记成功");
          this.cancel();
          this.tagList= [];

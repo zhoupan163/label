@@ -31,21 +31,21 @@ public class TaskImageServiceImp implements TaskImageService {
     private MongoTemplate mongoTemplate;
 
     @Override
-    public void addTaskImages(Long streamId, Long taskId) {
+    public void addTaskImages(String streamId, String taskName) {
           List<ImageEntity> imageEntityList= imageService.selectImageListByStreamId(streamId);
           List<TaskImageEntity> taskImageEntityList =new ArrayList<>();
 
           for(ImageEntity imageEntity: imageEntityList){
               TaskImageEntity taskImageEntity=new TaskImageEntity();
-              taskImageEntity.setTask_id(taskId);
-              taskImageEntity.setStream_id(streamId);
-              taskImageEntity.setImageId(imageEntity.getId());
-              taskImageEntity.setJpg_url(imageEntity.getJpgUrl());
-              taskImageEntity.setPng_url(imageEntity.getPngUrl());
+              taskImageEntity.setTaskName(taskName);
+              taskImageEntity.setStreamId(streamId);
+              taskImageEntity.setImageId(imageEntity.getImageId());
+              taskImageEntity.setJpgUrl(imageEntity.getJpgUrl());
+              taskImageEntity.setPngUrl(imageEntity.getPngUrl());
               taskImageEntity.setHeight(imageEntity.getHeight());
               taskImageEntity.setWidth(imageEntity.getWidth());
               taskImageEntity.setStatus(0);
-              taskImageEntity.setImage_lock(0);
+              taskImageEntity.setImageLock(0);
               taskImageEntity.setLabel("");
               taskImageEntity.setQa1("");
               taskImageEntity.setQa2("");
@@ -56,16 +56,16 @@ public class TaskImageServiceImp implements TaskImageService {
     }
 
     @Override
-    public int discardImage(Long taskId, Long streamId, String jpgUrl) {
-        Query query=Query.query(Criteria.where("task_id").is(taskId).and("status").is(0).and("stream_id").is(streamId).and("jpg_url").is(jpgUrl));
+    public int discardImage(String taskName, String streamId, String jpgUrl) {
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("status").is(0).and("stream_id").is(streamId).and("jpg_url").is(jpgUrl));
         Update update= new Update();
         update.set("status", 5);
         return (int)mongoTemplate.updateFirst(query,update, TaskImageEntity.class).getModifiedCount();
     }
 
     @Override
-    public List<TaskImageEntity> getFinishedImageList(Long taskId, List<Long> streamIdList) {
-        Query query=Query.query(Criteria.where("task_id").is(taskId).and("status").is(3).and("stream_id").in(streamIdList));
+    public List<TaskImageEntity> getFinishedImageList(String taskName, List<String> streamIdList) {
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("status").is(3).and("stream_id").in(streamIdList));
         return mongoTemplate.find(query, TaskImageEntity.class);
     }
 }

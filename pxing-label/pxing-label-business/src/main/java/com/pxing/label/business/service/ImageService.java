@@ -8,5 +8,5 @@ import java.util.List;
 public interface ImageService {
 
 
-    List<ImageEntity> selectImageListByStreamId(Long streamId);
+    List<ImageEntity> selectImageListByStreamId(String streamId);
 }

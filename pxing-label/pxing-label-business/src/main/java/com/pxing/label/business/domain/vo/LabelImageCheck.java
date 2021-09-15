@@ -21,11 +21,11 @@ import java.util.List;
 @Data
 public class LabelImageCheck {
 
-    @ApiModelProperty("taskId")
-    private Long taskId;
+    @ApiModelProperty("taskName")
+    private String taskName;
 
     @ApiModelProperty("streamId")
-    private Long streamId;
+    private String streamId;
 
     @ApiModelProperty("qaType")
     private String qaType;

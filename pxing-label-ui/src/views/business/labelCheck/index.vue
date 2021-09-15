@@ -58,16 +58,11 @@
 
     <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="任务编号" prop="taskId" width="120" />
+      <el-table-column label="任务编号" prop="id" width="120" />
       <el-table-column label="任务名称" prop="taskName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="关联项目id" prop="projectId" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="任务状态" prop="status" width="120" />
-      <el-table-column label="任务类型（0视频 1图片）" prop="type" width="120" />
-      <el-table-column label="图片总数量" prop="size" width="120" />
-      <el-table-column label="待一级审核图片数量" prop="qa1Size" width="120" />
-      <el-table-column label="待二级审核图片数量" prop="qa2Size" width="120" />
-      <el-table-column label="审核完成图片数量" prop="rejectSize" width="120" />
-      <el-table-column label="审核完成图片数量" prop="finishedSize" width="120" />
+      <el-table-column label="关联项目名称" prop="projectName" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="任务类型":formatter="typeFormat" prop="type" width="120" />
+      <el-table-column label="任务创建人" prop="createBy" width="120" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="120">
       </el-table-column>
@@ -286,19 +281,19 @@ export default {
     checkTask(row, qa_level) {
       let token=getToken();
       this.qa_type="qa"+qa_level;
-      getkUnfinishedTaskStream(row.id, this.qa_type).then(
+      getkUnfinishedTaskStream(row.taskName, this.qa_type).then(
         response =>{
-          this.taskId= row.id;
+          this.taskName= row.taskName;
           this.taskStreamList = response.rows;
           if(this.taskStreamList.length>0){
             //this.msgInfo("此任务下未你有未完成审核的stream，即将跳转审核界面");
             alert("此任务下未你有未完成审核的图片，即将跳转审核界面");
-            window.open('http://10.66.66.121:8082/check.html?taskId=' + row.id + "&qa_type="+
+            window.open('http://10.66.66.121:8082/check.html?taskName=' + row.taskName + "&qa_type="+
               this.qa_type+ '&streamId=' +this.taskStreamList[0].streamId + "&token="+ token);
           }else{
             this.reset();
             this.open = true;
-            this.title = row.taskId;
+            this.title = row.taskName;
             getUnAssignedTaskStream(row.id, this.qa_type).then(
               response => {
                 this.taskStreamList = response.rows;
@@ -309,11 +304,11 @@ export default {
       )
     },
     selectStream(row){
-      assignTaskStream({streamId: row.streamId, taskId:this.taskId , type: this.qa_type}).then(response =>{
+      assignTaskStream({streamId: row.streamId, taskName:this.taskName , type: this.qa_type}).then(response =>{
         this.msgSuccess("选定成功，开始审核");
         this.open = false;
         let token=getToken();
-      window.open('http://10.66.66.121:8082/check.html?taskId=' + row.taskId + "&qa_type="+ this.qa_type +'' +
+      window.open('http://10.66.66.121:8082/check.html?taskName=' + row.taskName + "&qa_type="+ this.qa_type +'' +
         '&streamId=' +row.streamId+ "&token="+ token);
      })
    }

@@ -2,12 +2,12 @@ package com.pxing.label;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.mongodb.client.result.UpdateResult;
 import com.pxing.label.business.dao.ImageDao;
 import com.pxing.label.business.dao.StreamDao;
-import com.pxing.label.business.domain.entity.ImageEntity;
-import com.pxing.label.business.domain.entity.StreamEntity;
-import com.pxing.label.business.domain.vo.LabelStreamVo;
+import com.pxing.label.business.dao.TaskStreamDao;
+import com.pxing.label.business.domain.entity.*;
 import com.pxing.label.business.domain.vo.LabelTaskImageVo;
 import com.pxing.label.business.domain.vo.LabelTaskViaVo;
 import com.pxing.label.business.service.LabelStreamService;
@@ -42,10 +42,13 @@ public class SmartAdminApplicationTests {
 
     @Autowired
     private LabelViaService labelViaService;
+
+    @Autowired
+    private TaskStreamDao taskStreamDao;
     @Test
     public  void test1(){
         LabelTaskViaVo labelTaskViaVo= new LabelTaskViaVo();
-        labelTaskViaVo.setTaskId("1001");
+       // labelTaskViaVo.settaskName("1001");
         JSONObject jsonObject=new JSONObject();
         jsonObject.put("key1","values");
         labelTaskViaVo.setVia_project_info(jsonObject);
@@ -55,7 +58,7 @@ public class SmartAdminApplicationTests {
     @Test
     public  void test2(){
         LabelTaskViaVo labelTaskViaVo= new LabelTaskViaVo();
-        labelTaskViaVo.setTaskId("888");
+        //labelTaskViaVo.settaskName("888");
         JSONObject jsonObject=new JSONObject();
         jsonObject.put("key2","values2");
         labelTaskViaVo.setVia_project_info(jsonObject);
@@ -75,21 +78,15 @@ public class SmartAdminApplicationTests {
 
     @Test
     public  void test4(){
-        // 查询条件
-        Query query=Query.query(Criteria.where("taskId").is("taskId"));
-        LabelTaskViaVo labelTaskViaVo= mongoTemplate.findOne(query,LabelTaskViaVo.class);
-       // Criteria query1= Criteria.where("task_name").is("pedestrian_reid");
+        Query query1=Query.query(Criteria.where("jpg_url").is
+                ("http://10.66.33.113:8080/pl/dataset/jpg/camera_body_front_up_rgb/20210804/9ec51a6e-0994-11ec-92e8-000c293913c8/a076fb18-0994-11ec-92e8-000c293913c8.jpg"));
+        List<TaskImageEntity> taskImageEntityList= mongoTemplate.find(query1 , TaskImageEntity.class);
+        System.out.println("ok");
 
-        Query query1=Query.query(Criteria.where("task_name").is("pedestrian_reid"));
-        List<LabelTaskImageVo> list=mongoTemplate.find(query1, LabelTaskImageVo.class);
-        System.out.println(list.toString());
-        for(LabelTaskImageVo labelTaskImageVo : list){
-            Query query2=Query.query(Criteria.where("image_id").is(labelTaskImageVo.getImage_id()).and("task_name").is(labelTaskImageVo.getTask_name()));
-            Update update=new Update();
-            update.set("annotationInfo", labelTaskImageVo.getAnnotationInfo());
-            UpdateResult updateResult= mongoTemplate.updateFirst(query2, update ,LabelTaskImageVo.class);
-            System.out.println(updateResult);
-        }
+        //UpdateWrapper<TaskStreamEntity> updateWrapper= new UpdateWrapper<>();
+        //updateWrapper.eq("task_name", "行人跟踪").eq("stream_id", "9ec51a6e-0994-11ec-92e8-000c293913c8").set("label", "admin");
+        //int a= taskStreamDao.update(null, updateWrapper);
+       // System.out.println("ok");
     }
 
     @Test
@@ -104,7 +101,7 @@ public class SmartAdminApplicationTests {
     public  void test6(){
         String taskName="pedestrian_reid";
 
-        labelViaService.getSreamViaProject((long) 1, (long) 1,"admin", "label");
+       // labelViaService.getSreamViaProject((long) 1, (long) 1,"admin", "label");
     }
 
     @Test
@@ -130,8 +127,8 @@ public class SmartAdminApplicationTests {
     @Test
     public void test10(){
         //pedestrian_reid
-        Query query=Query.query(Criteria.where("image_status").is(0).and("task_name").is("pedestrian_reid").and("label").is("admin"));
-        List<LabelTaskImageVo> list=mongoTemplate.find(query, LabelTaskImageVo.class);
+        Query query=Query.query(Criteria.where("frame_size").is(113));
+        List<ProjectStreamEntity> list= mongoTemplate.find(query, ProjectStreamEntity.class);
         System.out.println("aa");
     }
 
@@ -167,7 +164,7 @@ public class SmartAdminApplicationTests {
             };
             ImageEntity imageEntity= new ImageEntity();
 
-            imageEntity.setStreamId(id);
+           // imageEntity.setStreamId(id);
             imageEntity.setFrameIndex(labelTaskImageVo.getFrame_index());
             imageEntity.setSensorLocation(labelTaskImageVo.getSensor_location());
             imageEntity.setSensorType(labelTaskImageVo.getSensor_type());
@@ -177,7 +174,7 @@ public class SmartAdminApplicationTests {
             imageEntity.setJpgUrl(labelTaskImageVo.getJpg_url());
             imageEntity.setPngUrl(labelTaskImageVo.getPng_url());
             imageEntity.setThumbnailUrl(labelTaskImageVo.getThumbnail_url());
-            imageEntity.setCreateBy("admin");
+            //imageEntity.setCreateBy("admin");
             imageDao.insert(imageEntity);
          }
     }

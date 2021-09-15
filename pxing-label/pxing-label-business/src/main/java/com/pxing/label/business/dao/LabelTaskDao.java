@@ -15,5 +15,5 @@ public interface LabelTaskDao extends BaseMapper<TaskEntity> {
     @Select("select t.*, p.* from label_task t left join label_project p on t.project_id= p.id ")
     List<LabelTaskVo> selectLabelTaskList(LabelTaskVo labelTaskVo);
 
-    void updateLabelBy(@Param("taskId") String taskId,@Param("labelBy")String labelBy);
+    void updateLabelBy(@Param("taskName") String taskName,@Param("labelBy")String labelBy);
 }
