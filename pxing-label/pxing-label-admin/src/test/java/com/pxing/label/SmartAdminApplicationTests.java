@@ -78,9 +78,8 @@ public class SmartAdminApplicationTests {
 
     @Test
     public  void test4(){
-        Query query1=Query.query(Criteria.where("jpg_url").is
-                ("http://10.66.33.113:8080/pl/dataset/jpg/camera_body_front_up_rgb/20210804/9ec51a6e-0994-11ec-92e8-000c293913c8/a076fb18-0994-11ec-92e8-000c293913c8.jpg"));
-        List<TaskImageEntity> taskImageEntityList= mongoTemplate.find(query1 , TaskImageEntity.class);
+        Query query1=Query.query(Criteria.where("stream_id").is("e6771376-14f7-11ec-92e8-000c293913c8"));
+        List<ImageEntity> taskImageEntityList= mongoTemplate.find(query1 , ImageEntity.class);
         System.out.println("ok");
 
         //UpdateWrapper<TaskStreamEntity> updateWrapper= new UpdateWrapper<>();

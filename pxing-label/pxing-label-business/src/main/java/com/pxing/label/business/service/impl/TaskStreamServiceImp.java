@@ -37,7 +37,7 @@ public class TaskStreamServiceImp implements TaskStreamService {
     }
 
     @Override
-    public List<TaskStreamEntity> getTaskStream(String taskName, String type, String userName) {
+    public List<TaskStreamEntity> getTaskStream(String taskName,String groupName, String type, String userName) {
         QueryWrapper<TaskStreamEntity> querywrapper = new QueryWrapper<>();
         if(type.equals("label")){
             querywrapper.eq(type, userName).eq("status", 0);
@@ -70,9 +70,9 @@ public class TaskStreamServiceImp implements TaskStreamService {
     }
 
     @Override
-    public List<TaskStreamEntity> getUnFinishedTaskStream(String taskName, String type, String userName) {
+    public List<TaskStreamEntity> getUnFinishedTaskStream(String taskName,String  groupName, String type, String userName) {
         QueryWrapper<TaskStreamEntity> querywrapper = new QueryWrapper<>();
-        querywrapper.eq("task_name", taskName);
+        querywrapper.eq("task_name", taskName).eq("group_name", groupName);
         if(type.equals("label")){
             querywrapper.eq(type, userName).in("status", 0,4);
         }else if (type.equals("qa1")){
@@ -84,9 +84,9 @@ public class TaskStreamServiceImp implements TaskStreamService {
     }
 
     @Override
-    public List<TaskStreamEntity> getFinishedTaskStream(String taskName) {
+    public List<TaskStreamEntity> getFinishedTaskStream(String taskName, String  groupName) {
         QueryWrapper<TaskStreamEntity> querywrapper = new QueryWrapper<>();
-        querywrapper.eq("task_name", taskName).eq("status", 3);
+        querywrapper.eq("task_name", taskName).eq("group_name", groupName).eq("status", 3);
         return taskStreamDao.selectList(querywrapper);
     }
 

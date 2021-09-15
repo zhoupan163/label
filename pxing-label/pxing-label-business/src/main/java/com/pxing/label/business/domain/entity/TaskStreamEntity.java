@@ -27,6 +27,9 @@ public class TaskStreamEntity extends LabelBaseEntity {
     @ApiModelProperty("任务id")
     private String taskName;
 
+    @ApiModelProperty("组名")
+    private String groupName;
+
     @ApiModelProperty("图片大小")
     private Integer size;
 

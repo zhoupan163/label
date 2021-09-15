@@ -46,23 +46,24 @@ public class TaskStreamController extends BaseController{
     //获取已分配未标注完成或者被驳回的stream
     @GetMapping("/getkUnfinishedTaskStreamList")
     @ResponseBody
-    public TableDataInfo getLabelTaskUnfinishedStream(@RequestParam("taskName")String taskName, @RequestParam("type")String type,
-                                                      HttpServletRequest request)
+    public TableDataInfo getLabelTaskUnfinishedStream(@RequestParam("taskName")String taskName,@RequestParam("taskName")String groupName,
+                                                      @RequestParam("type")String type, HttpServletRequest request)
     {
         startPage();
         LoginUser loginUser= tokenService.getLoginUser(request);
         String  userName=loginUser.getUser().getUserName();
-        List<TaskStreamEntity> list= taskStreamService.getUnFinishedTaskStream(taskName, type, userName);
+        List<TaskStreamEntity> list= taskStreamService.getUnFinishedTaskStream(taskName, groupName, type, userName);
         return getDataTable(list);
     }
 
     //获取未分配stream
     @GetMapping("/getUnAssignedTaskStreamList")
     @ResponseBody
-    public TableDataInfo getUnAssignedTaskStream(@RequestParam("taskName")String taskName, @RequestParam("type")String type)
+    public TableDataInfo getUnAssignedTaskStream(@RequestParam("taskName")String taskName,@RequestParam("taskName")String groupName,
+                                                 @RequestParam("type")String type)
     {
         startPage();
-        List<TaskStreamEntity> list= taskStreamService.getTaskStream(taskName, type, "");
+        List<TaskStreamEntity> list= taskStreamService.getTaskStream(taskName, groupName, type, "");
         return getDataTable(list);
     }
 

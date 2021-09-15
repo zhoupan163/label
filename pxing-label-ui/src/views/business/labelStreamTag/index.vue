@@ -335,12 +335,15 @@ export default {
     tag(row) {
       this.streamId= row.streamId;
       selectTagListByProjectName(row.projectName).then(response =>{
+        this.tagJson= {};
            var list= response.rows;
            for(var row in list){
              var sceneName= list[row].sceneName;
              if(this.tagJson.hasOwnProperty(sceneName)){
                var tagList= this.tagJson[sceneName];
-               tagList.push(list[row]);
+               if(tagList.indexOf(list[row])== -1){
+                 tagList.push(list[row]);
+               }
                this.tagJson[sceneName]= tagList;
              }else{
                this.tagJson[sceneName] = [list[row]];

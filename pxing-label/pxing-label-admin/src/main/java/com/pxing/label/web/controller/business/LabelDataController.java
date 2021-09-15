@@ -48,7 +48,7 @@ public class LabelDataController extends BaseController
     @ApiOperation(value = "下载压缩包")
     public void getZip(@RequestParam("taskName") String taskName, HttpServletResponse response) throws Exception {
 
-        List<TaskStreamEntity> taskStreamEntityList= taskStreamService.getFinishedTaskStream(taskName);
+        List<TaskStreamEntity> taskStreamEntityList= taskStreamService.getFinishedTaskStream(taskName, "");
         //List<Long> streamIdList= taskStreamEntityList.stream().map(TaskStreamEntity::getStreamId).collect(Collectors.toList());
         List<String> streamIdList= new ArrayList<>();
          //图片

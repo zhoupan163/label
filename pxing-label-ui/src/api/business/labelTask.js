@@ -10,17 +10,17 @@ export function listLabelTask(query) {
 }
 
 // 查询分配给自己却没有标注完成的stream
-export function getkUnfinishedTaskStream(taskName, type ) {
+export function getkUnfinishedTaskStream(taskName,groupName, type ) {
   return request({
-    url: '/business/taskStream/getkUnfinishedTaskStreamList'+'?taskName='+ taskName + "&type="+ type,
+    url: '/business/taskStream/getkUnfinishedTaskStreamList'+'?taskName='+ taskName + "&type="+ type+ "&groupName="+ groupName,
     method: 'get'
   })
 }
 
 // 查询未分配的stream
-export function getUnAssignedTaskStream(taskName, type) {
+export function getUnAssignedTaskStream(taskName, groupName, type) {
   return request({
-    url: '/business/taskStream/getUnAssignedTaskStreamList'+'?taskName='+ taskName+ "&type="+ type,
+    url: '/business/taskStream/getUnAssignedTaskStreamList'+'?taskName='+ taskName+ "&type="+ type+ "&groupName="+ groupName,
     method: 'get'
   })
 }
