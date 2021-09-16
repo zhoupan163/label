@@ -5,6 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.pxing.label.common.core.domain.entity.business.LabelBaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.data.annotation.Transient;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 
 /**
@@ -32,5 +36,9 @@ public class VideoGroupIdEntity extends LabelBaseEntity {
 
     @ApiModelProperty("图片链接")
     private String imgUrl;
+
+    //@ApiModelProperty("图片信息")
+    @Transient
+    private transient MultipartFile file;
 
 }

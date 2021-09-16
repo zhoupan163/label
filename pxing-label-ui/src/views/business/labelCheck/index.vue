@@ -281,7 +281,7 @@ export default {
     checkTask(row, qa_level) {
       let token=getToken();
       this.qa_type="qa"+qa_level;
-      getkUnfinishedTaskStream(row.taskName, this.qa_type).then(
+      getkUnfinishedTaskStream(row.taskName,"", this.qa_type).then(
         response =>{
           this.taskName= row.taskName;
           this.taskStreamList = response.rows;
@@ -294,7 +294,7 @@ export default {
             this.reset();
             this.open = true;
             this.title = row.taskName;
-            getUnAssignedTaskStream(row.id, this.qa_type).then(
+            getUnAssignedTaskStream(row.taskName,"", this.qa_type).then(
               response => {
                 this.taskStreamList = response.rows;
                 this.total = response.total;

@@ -20,11 +20,11 @@ export function addLabelVideoGroup(data) {
 
 
 // 查询id
-export function listVideoGroupId(query) {
+export function listVideoGroupId(groupName) {
   return request({
-    url: '/business/labelVideoGroupId/list',
+    url: '/business/labelVideoGroupId/list?groupName='+groupName,
     method: 'get',
-    params: query
+
   })
 }
 
@@ -33,6 +33,7 @@ export function addLabelVideoGroupId(data) {
   return request({
     url: '/business/labelVideoGroupId/',
     method: 'post',
+    header: {'Content type': 'multipart/form-data'},
     data: data
   })
 }

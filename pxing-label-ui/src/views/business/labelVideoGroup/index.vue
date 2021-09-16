@@ -64,7 +64,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['business:labelTask:add']"
+          v-hasPermi="['business:labelVideGroup:add']"
         >新增</el-button>
       </el-col>
     </el-row>
@@ -88,21 +88,21 @@
             type="text"
             icon="el-icon-edit"
             @click="listId(scope.row)"
-            v-hasPermi="['business:labelTask:filterStream']"
+            v-hasPermi="['business:labelVideGroup:idList']"
           >id列表</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleImagesTask(scope.row)"
-            v-hasPermi="['business:labelTask:label']"
+            v-hasPermi="['business:labelVideGroup:label']"
           >标注</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="filterStream(scope.row)"
-            v-hasPermi="['business:labelTask:filterStream']"
+            v-hasPermi="['business:labelVideGroup:filterStream']"
           >筛选</el-button>
         </template>
       </el-table-column>
@@ -219,7 +219,7 @@
             icon="el-icon-plus"
             size="mini"
             @click="addGroupId"
-            v-hasPermi="['business:labelTask:add']"
+            v-hasPermi="['business:labelVideGroupId::add']"
           >新增</el-button>
         </el-col>
       </el-row>
@@ -234,16 +234,6 @@
         </el-table-column>
         <el-table-column label="备注" prop="remark" width="120" />
 
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-edit"
-              @click="editGroupId(scope.row)"
-            >修改</el-button>
-          </template>
-        </el-table-column>
       </el-table>
       <pagination
         v-show="total>0"
@@ -255,7 +245,7 @@
     </el-dialog>
 
     <!-- 添加group框 -->
-    <el-dialog :title="title4" :visible.sync="open4" width="600px" append-to-body>
+    <el-dialog :title="title4" :visible.sync="open4" width="400px" append-to-body>
       <el-form ref="form4" :model="form4" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="24">
@@ -273,11 +263,25 @@
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="图片链接">
-              <el-input v-model="form4.imgUrl" type="textarea" placeholder="请输入图片连接地址"></el-input>
+            <el-form-item label="图片">
+              <el-upload
+                limit=limitNum
+                :auto-upload="false"
+                accept=".jpg"
+                :before-upload="beforeUploadFile"
+                :on-change="fileChange"
+                :on-exceed="exceedFile"
+                :on-success="handleSuccess"
+                :on-error="handleError"
+                :file-list="fileList"
+               >
+                <el-button size="small" plain>选择文件</el-button>
+                <div slot="tip" class="el-upload__tip">只能上传jpg文件，且不超过10M</div>
+              </el-upload>
             </el-form-item>
           </el-col>
         </el-row>
+
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注">
@@ -373,6 +377,13 @@ export default {
       // 表单参数
       form: {},
       form4: {},
+
+      //图片
+      limitNum: 1,
+      formLabelWidth: '80px',
+
+      fileList: [],
+
       defaultProps: {
         children: "children",
         label: "label"
@@ -481,6 +492,55 @@ export default {
       addTaskStream({streamId: row.streamId,taskName: this.taskName, size:row.frameSize, groupName: this.groupName})
       this.open2 = false;
     },
+
+    // 文件超出个数限制时的钩子
+    exceedFile(files, fileList) {
+      this.$notify.warning({
+        title: '警告',
+        message: `只能选择 ${this.limitNum} 个文件，当前共选择了 ${files.length + fileList.length} 个`
+      });
+    },
+    // 文件状态改变时的钩子
+    fileChange(file, fileList) {
+      console.log('change')
+      console.log(file)
+      this.form4.file = file.raw
+      console.log(this.form4.file)
+      console.log(fileList)
+    },
+    // 上传文件之前的钩子, 参数为上传的文件,若返回 false 或者返回 Promise 且被 reject，则停止上传
+    beforeUploadFile(file) {
+      console.log('before upload')
+      console.log(file)
+      let extension = file.name.substring(file.name.lastIndexOf('.')+1)
+      let size = file.size / 1024 / 1024
+      if(extension !== 'xlsx') {
+        this.$notify.warning({
+          title: '警告',
+          message: `只能上传后缀jpg的文件`
+        });
+      }
+      if(size > 10) {
+        this.$notify.warning({
+          title: '警告',
+          message: `文件大小不得超过10M`
+        });
+      }
+    },
+    // 文件上传成功时的钩子
+    handleSuccess(res, file, fileList) {
+      this.$notify.success({
+        title: '成功',
+        message: `文件上传成功`
+      });
+    },
+    // 文件上传失败时的钩子
+    handleError(err, file, fileList) {
+      this.$notify.error({
+        title: '错误',
+        message: `文件上传失败`
+      });
+    },
     /** 选取stream_id按钮操作 */
     handleImagesTask(row) {
       this.taskName= row.taskName;
@@ -544,8 +604,17 @@ export default {
         if (valid) {
           if (this.form4.id != undefined) {
           } else {
-            this.form4.groupName= this.groupName
-            addLabelVideoGroupId(this.form4).then(response => {
+            this.form4.groupName= this.groupName;
+           // this.form4.file= this.fileList[0];
+            alert(typeof (this.form4.file))
+            let formData = new FormData();
+            formData.append("personId", this.form4.personId);
+            formData.append("personName", this.form4.personName);
+            formData.append("reamark", this.form4.reamark);
+            formData.append("groupName", this.groupName);
+            formData.append('file', this.form4.file);
+
+            addLabelVideoGroupId(formData).then(response => {
               this.msgSuccess("新增成功");
               this.open = false;
               this.getList();

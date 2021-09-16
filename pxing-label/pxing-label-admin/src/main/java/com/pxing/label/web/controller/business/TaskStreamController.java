@@ -46,7 +46,7 @@ public class TaskStreamController extends BaseController{
     //获取已分配未标注完成或者被驳回的stream
     @GetMapping("/getkUnfinishedTaskStreamList")
     @ResponseBody
-    public TableDataInfo getLabelTaskUnfinishedStream(@RequestParam("taskName")String taskName,@RequestParam("taskName")String groupName,
+    public TableDataInfo getLabelTaskUnfinishedStream(@RequestParam("taskName")String taskName,@RequestParam("groupName")String groupName,
                                                       @RequestParam("type")String type, HttpServletRequest request)
     {
         startPage();
@@ -59,7 +59,7 @@ public class TaskStreamController extends BaseController{
     //获取未分配stream
     @GetMapping("/getUnAssignedTaskStreamList")
     @ResponseBody
-    public TableDataInfo getUnAssignedTaskStream(@RequestParam("taskName")String taskName,@RequestParam("taskName")String groupName,
+    public TableDataInfo getUnAssignedTaskStream(@RequestParam("taskName")String taskName,@RequestParam("groupName")String groupName,
                                                  @RequestParam("type")String type)
     {
         startPage();

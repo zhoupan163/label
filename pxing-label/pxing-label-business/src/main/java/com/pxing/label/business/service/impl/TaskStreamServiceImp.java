@@ -39,6 +39,7 @@ public class TaskStreamServiceImp implements TaskStreamService {
     @Override
     public List<TaskStreamEntity> getTaskStream(String taskName,String groupName, String type, String userName) {
         QueryWrapper<TaskStreamEntity> querywrapper = new QueryWrapper<>();
+        querywrapper.eq("group_name", groupName).eq("task_name", taskName);
         if(type.equals("label")){
             querywrapper.eq(type, userName).eq("status", 0);
         }else if (type.equals("qa1")){
