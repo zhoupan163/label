@@ -184,7 +184,7 @@
 
     <!-- 添加或修改任务配置对话框 -->
     <el-dialog :title="title2" :visible.sync="open2" width="500px" append-to-body>
-      <el-table v-loading="loading" :data="taggedStreamList">
+      <el-table v-loading="loading" :data="taggedStreamList" >
         <el-table-column label="streamId" prop="streamId" width="120" />
         <el-table-column label="大小" prop="frameSize" width="120" />
         <el-table-column label="备注" prop="remark" width="120" />
@@ -219,11 +219,24 @@
             icon="el-icon-plus"
             size="mini"
             @click="addGroupId"
-            v-hasPermi="['business:labelVideGroupId::add']"
+            v-hasPermi="['business:labelVideGroupId:add']"
           >新增</el-button>
         </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="danger"
+            plain
+            icon="el-icon-delete"
+            size="mini"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['business:labelVideGroupId:remove']"
+          >删除</el-button>
+        </el-col>
       </el-row>
-      <el-table v-loading="loading" :data="idList">
+      <el-table v-loading="loading3" :data="idList" @selection-change="handleSelectionChange1">
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="id" prop="id" width="120" v-show="false" v-if="false" />
         <el-table-column label="组名" prop="groupName" width="120" />
         <el-table-column label="personId" prop="personId" width="120" />
         <el-table-column label="名称" prop="personName" width="120" />
@@ -236,15 +249,15 @@
 
       </el-table>
       <pagination
-        v-show="total>0"
-        :total="total"
+        v-show="total3>0"
+        :total="total3"
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
         @pagination="getStream(taggedStreamList.get(0).taskName)"
       />
     </el-dialog>
 
-    <!-- 添加group框 -->
+    <!-- 添加id框 -->
     <el-dialog :title="title4" :visible.sync="open4" width="400px" append-to-body>
       <el-form ref="form4" :model="form4" :rules="rules" label-width="80px">
         <el-row>
@@ -262,7 +275,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="24">
+          <el-col :span="224">
             <el-form-item label="图片">
               <el-upload
                 limit=limitNum
@@ -306,10 +319,11 @@ import { getToken } from "@/utils/auth";
 import {listLabelProject} from "@/api/business/labelProject";
 import {
   addLabelVideoGroup,
-  addLabelVideoGroupId,
+  addLabelVideoGroupId, delLabelVideoGroupId, delLabelVideoGroupIds,
   listVideoGroup,
   listVideoGroupId
 } from "@/api/business/labelVideoGroup";
+import {delRole} from "@/api/system/role";
 
 
 
@@ -350,6 +364,8 @@ export default {
       idList: [],
       title3: "",
       open3: false,
+      total3: 0,
+      loading3: true,
 
       title4: "",
       open4: false,
@@ -419,6 +435,13 @@ export default {
         }
       );
     },
+    /** 查询任务列表 */
+    getIdList() {
+      listVideoGroupId(this.groupName).then(response =>{
+        this.idList= response.rows;
+        this.total3= true;
+        this.loading3= false;
+      })},
     typeFormat(row, column) {
       return this.selectDictLabel(this.typeOptions, row.type);
     },
@@ -427,6 +450,17 @@ export default {
     cancel() {
       this.open = false;
       this.reset();
+    },
+    // 取消按钮
+    cancel4() {
+      this.open4 = false;
+      this.reset4();
+      listVideoGroupId(this.groupName).then(response =>{
+        this.idList= response.rows;
+        this.open3= true;
+        this.loading3= false;
+        this.title3= "id列表";
+      })
     },
     // 取消按钮（数据权限）
     cancelDataScope() {
@@ -441,6 +475,27 @@ export default {
       this.open1 = true;
       this.title1 = "添加组";
     },
+
+    // 多选框选中数据
+    handleSelectionChange1(selection) {
+      this.ids = selection.map(item => item.id)
+      this.single = selection.length!=1
+      this.multiple = !selection.length
+    },
+    /** 删除按钮操作 */
+    handleDelete(row) {
+      const ids = row.id || this.ids;
+      this.$confirm('是否确认删除数据项?', "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(function() {
+        return delLabelVideoGroupIds(ids);
+      }).then(() => {
+        this.msgSuccess("删除成功");
+        this.cancel4();
+      }).catch(() => {});
+    },
     addGroupId(row){
       this.open4= true;
       this.title4= "新增id";
@@ -450,6 +505,8 @@ export default {
       listVideoGroupId(row.groupName).then(response =>{
         this.idList= response.rows;
         this.open3= true;
+        this.total3= response.total;
+        this.loading3= false;
         this.title3= "id列表";
       })},
     // 表单重置
@@ -466,6 +523,20 @@ export default {
         inputSIze: 10
       };
       this.resetForm("form");
+    },
+    reset4() {
+      if (this.$refs.menu != undefined) {
+        this.$refs.menu.setCheckedKeys([]);
+      }
+      this.menuExpand = false,
+        this.menuNodeAll = false,
+        this.deptExpand = true,
+        this.deptNodeAll = false,
+        this.form = {
+          limitSIze: 100,
+          inputSIze: 10
+        };
+      this.resetForm("form3");
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -555,7 +626,8 @@ export default {
                 window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +this.taskName +'&streamId='+ taskStreamList[0].streamId);
               }else if(taskStreamList[0].status== 0){
                 alert("你有未完成标注的任务，即将跳转标注界面")
-                window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +this.taskName +'&streamId='+ taskStreamList[0].streamId);
+                window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +this.taskName +'&streamId='+
+                  taskStreamList[0].streamId);
               }
             }else{
               alert("图片标注待开发");
@@ -605,19 +677,16 @@ export default {
           if (this.form4.id != undefined) {
           } else {
             this.form4.groupName= this.groupName;
-           // this.form4.file= this.fileList[0];
-            alert(typeof (this.form4.file))
             let formData = new FormData();
             formData.append("personId", this.form4.personId);
             formData.append("personName", this.form4.personName);
-            formData.append("reamark", this.form4.reamark);
+            formData.append("remark", this.form4.remark);
             formData.append("groupName", this.groupName);
             formData.append('file', this.form4.file);
 
             addLabelVideoGroupId(formData).then(response => {
               this.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
+              this.cancel4();
             });
           }
         }

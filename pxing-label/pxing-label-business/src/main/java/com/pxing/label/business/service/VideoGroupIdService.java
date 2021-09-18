@@ -12,4 +12,6 @@ public interface VideoGroupIdService {
     List<VideoGroupIdEntity> selectVideoGroupIdList(String groupName);
 
     int insertVideoGroupId(VideoGroupIdEntity videoGroupIdEntity) throws IOException;
+
+    int deleteVideoGroupIdByIds(Long[] ids);
 }

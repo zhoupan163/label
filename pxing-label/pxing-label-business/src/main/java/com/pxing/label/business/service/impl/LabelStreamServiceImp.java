@@ -22,7 +22,7 @@ public class LabelStreamServiceImp implements LabelStreamService {
     @Override
     public List<LabelStreamVo> getLabelTaskUnfinishedStream(String taskName, String userName) {
         QueryWrapper<LabelStreamVo> querywrapper = new QueryWrapper<>();
-        querywrapper.eq("task_name", taskName).eq("label_by", userName);
+        querywrapper.eq("task_name", taskName).eq("label", userName);
         querywrapper.in("status", 0,4).orderByDesc("status");
         return labelStreamDao.selectList(querywrapper);
     }

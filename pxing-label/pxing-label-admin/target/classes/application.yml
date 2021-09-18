@@ -129,4 +129,6 @@ xss:
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
 
+uploadPath: /home/px/ngnix/file/data/
+uploadUrl: http://10.66.33.113:3002/
 

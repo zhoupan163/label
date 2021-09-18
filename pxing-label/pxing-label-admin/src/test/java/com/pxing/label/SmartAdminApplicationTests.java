@@ -10,6 +10,7 @@ import com.pxing.label.business.dao.TaskStreamDao;
 import com.pxing.label.business.domain.entity.*;
 import com.pxing.label.business.domain.vo.LabelTaskImageVo;
 import com.pxing.label.business.domain.vo.LabelTaskViaVo;
+import com.pxing.label.business.domain.vo.LabelViaProjectVo;
 import com.pxing.label.business.service.LabelStreamService;
 import com.pxing.label.business.service.LabelTaskService;
 import com.pxing.label.business.service.LabelViaService;
@@ -80,6 +81,8 @@ public class SmartAdminApplicationTests {
     public  void test4(){
         Query query1=Query.query(Criteria.where("stream_id").is("e6771376-14f7-11ec-92e8-000c293913c8"));
         List<ImageEntity> taskImageEntityList= mongoTemplate.find(query1 , ImageEntity.class);
+        //master_identification(String), 0917test(String), yanming(String), 0(Integer), 4(Integer)
+        List<LabelViaProjectVo> list= labelViaService.getSreamViaProject("master_identification", "56e4209e-16fc-11ec-92ea-000c293913c8", "yanming", "label");
         System.out.println("ok");
 
         //UpdateWrapper<TaskStreamEntity> updateWrapper= new UpdateWrapper<>();

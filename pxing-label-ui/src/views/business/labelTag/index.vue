@@ -126,7 +126,7 @@
               <el-option
                 v-for="item in sceneOptions"
                 :label="item.label"
-                :value="item.id"
+                :value="item.label"
               ></el-option>
             </el-select>
           </el-form-item>

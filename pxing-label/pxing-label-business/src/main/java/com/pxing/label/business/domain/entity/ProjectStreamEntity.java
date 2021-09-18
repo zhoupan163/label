@@ -35,7 +35,7 @@ public class ProjectStreamEntity {
     private String comment;
 
     @ApiModelProperty("上传时间")
-    private String updateTime;
+    private Long updateTime;
 
     @ApiModelProperty("开始时间")
     private String startTime;
@@ -63,5 +63,6 @@ public class ProjectStreamEntity {
 
     @ApiModelProperty("大小")
     private String frameSize;
+
 
 }

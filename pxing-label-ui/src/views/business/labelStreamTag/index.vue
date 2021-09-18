@@ -65,14 +65,14 @@
       <el-table-column label="传感器类型" prop="sensorType" width="120" />
       <el-table-column label="topic类型" prop="topicType" width="120" />
       <el-table-column label="标记状态" prop="tagStatus":formatter="statusFormat" width="120" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="220">
+      <el-table-column label="上传时间" align="center" prop="updateTime" width="220">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.updateTime) }}</span>
+          <span>{{ formatDate(scope.row.updateTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注信息" prop="remark" width="120" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope" v-if="scope.row.tagStatus== null">
+        <template slot-scope="scope" >
           <el-button
             size="mini"
             type="text"
@@ -167,6 +167,7 @@
 <script>
 
 import { tagStream ,selectStreamList , selectImageListByStreamId, selectTagListByProjectName} from "@/api/business/labelStreamTag"
+import Moment from 'moment'
 export default {
   name: "labelStreamTag",
   data() {
@@ -285,6 +286,13 @@ export default {
         }
       );
     },
+    //时间戳转换方法
+    formatDate(stamp) {
+
+       var date = new Date(stamp);
+       const time = Moment(date*1000).format('YYYY-MM-DD HH:mm:ss')
+       return time;
+     },
     statusFormat(row, column) {
       //alert(row.tagStatus);
       if(row.tagStatus== null){

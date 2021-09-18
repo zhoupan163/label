@@ -37,3 +37,11 @@ export function addLabelVideoGroupId(data) {
     data: data
   })
 }
+
+// 删除
+export function delLabelVideoGroupIds(ids) {
+  return request({
+    url: '/business/labelVideoGroupId/'+ ids,
+    method: 'delete'
+  })
+}
