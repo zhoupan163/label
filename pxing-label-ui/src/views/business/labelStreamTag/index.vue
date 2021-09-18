@@ -74,17 +74,19 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope" >
           <el-button
+            v-if="scope.row.tagStatus!= 1"
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="tag(scope.row)"
+            @click="tag(scope.row, 'add')"
             v-hasPermi="['business:labelStreamTag:tag']"
           >标记</el-button>
           <el-button
+            v-if="scope.row.tagStatus== 1"
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="tag(scope.row)"
+            @click="tag(scope.row, 'edit')"
             v-hasPermi="['business:labelStreamTag:tagUpdate']"
           >修改标记</el-button>
         </template>
@@ -99,31 +101,6 @@
       @pagination="getList"
     />
 
-    <!-- 选择指定的项目 -->
-    <el-dialog :title="title1" :visible.sync="open1" width="500px" append-to-body>
-      <el-table v-loading="loading" :data="projectList">
-        <el-table-column label="id" prop="id" width="120" />
-        <el-table-column label="项目名称" prop="projectName" width="120" />
-        <el-table-column label="备注" prop="remark" width="120" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-edit"
-              @click="selectProject(scope.row)"
-            >选取项目</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <pagination
-        v-show="total>0"
-        :total="total"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
-        @pagination="getProjectList(taskStreamList.get(0).taskName)"
-      />
-    </el-dialog>
 
     <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body>
       <el-row :gutter="20">
@@ -140,14 +117,26 @@
         </el-col>
         <el-col :span="6">
           <div class="app2">
+            <div class="tag1" v-for="(value ,key) in tagJson":key="key" >
+              <div class= "sence" >{{key}}</div>
+              <el-checkbox-group v-model="tagIdList">
+                <el-checkbox v-for="tag in value" :label="tag.id" :key="tag.id">{{tag.tagName}}</el-checkbox>
+              </el-checkbox-group>
+            </div>
+          </div>
+        </el-col>
+        <!--
+        <el-col :span="6">
+          <div class="app2">
             <div class="tag1" v-for="(value ,key) in tagJson":key="key">
               <div class= "sence" >{{key}}</div>
               <div class= "tags" v-for=" tag in value" >
-                <el-checkbox @change="handleCheckedTag($event, key, tag.id)">{{tag.tagName}}</el-checkbox>
+                <el-checkbox  @change="handleCheckedTag($event, key, tag.id)">{{tag.tagName}}</el-checkbox>
               </div>
             </div>
           </div>
         </el-col>
+        -->
     </el-row>
       <pagination
         v-show="total>0"
@@ -157,16 +146,22 @@
         @pagination="getList1()"
       />
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submitForm" >提交</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
   </div>
 </template>
 
 <script>
 
-import { tagStream ,selectStreamList , selectImageListByStreamId, selectTagListByProjectName} from "@/api/business/labelStreamTag"
+import {
+  selectStreamList,
+  selectImageListByStreamId,
+  selectTagListByProjectName,
+  selectTagListByStreamId, addTagStream, updateTagStream
+} from "@/api/business/labelStreamTag"
 import Moment from 'moment'
 export default {
   name: "labelStreamTag",
@@ -229,7 +224,10 @@ export default {
       tagJson: {},
       tagIdList: [],
       // 表单参数
-      form: {},
+      form: {
+        disabled: true
+      },
+      type: "add",
       defaultProps: {
         children: "children",
         label: "label"
@@ -340,7 +338,8 @@ export default {
       this.handleQuery();
     },
     /** 选取stream_id按钮操作 */
-    tag(row) {
+    tag(row, type) {
+      this.type= type;
       this.streamId= row.streamId;
       selectTagListByProjectName(row.projectName).then(response =>{
         this.tagJson= {};
@@ -364,20 +363,44 @@ export default {
         this.imageTableList= this.imageList.slice((this.queryParams.pageNum-1)*this.queryParams.pageSize, this.queryParams
           .pageNum*this.queryParams.pageSize)
         this.open = true;
+      });
+
+      if(type== "edit"){
+        selectTagListByStreamId(row.streamId).then(response => {
+          this.tagIdList=response.rows.map(item=> item.tagId);
+          this.title= "修改stream"
+          //alert("ok")
+        })
+      }else{
         this.title= "标记stream"
-      })
+      };
     },
     submitForm(){
       //alert(this.tagIdList);
+      if(this.tagIdList.length <1){
+        alert("至少需要选中一个标签");
+        return;
+      };
       const tagIds= this.tagIdList.join(",");
-      alert(tagIds);
-      tagStream({streamId: this.streamId, tagIds: tagIds}).then(response =>{
-         alert("标记成功");
-         this.cancel();
-         this.tagList= [];
-         this.tagJson={};
-         this.getList();
-       })
+      //alert(tagIds);
+      if(this.type =="edit"){
+        updateTagStream({streamId: this.streamId, tagIds: tagIds}).then(response =>{
+          alert("标记成功");
+          this.cancel();
+          this.tagList= [];
+          this.tagJson={};
+          this.getList();
+        })
+      } else{
+        addTagStream({streamId: this.streamId, tagIds: tagIds}).then(response =>{
+          alert("标记成功");
+          this.cancel();
+          this.tagList= [];
+          this.tagJson={};
+          this.getList();
+        })
+      };
+
     }
  }
 };

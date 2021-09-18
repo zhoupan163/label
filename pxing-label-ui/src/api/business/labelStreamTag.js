@@ -32,8 +32,25 @@ export function selectTagListByProjectName(projectName) {
   })
 }
 
+//查询已经标注的 tag
+export function selectTagListByStreamId(streamId) {
+  return request({
+    url: '/business/labelStreamTag/selectTagListByStreamId?streamId='+ streamId,
+    method: 'get'
+  })
+}
+
 //绑定tag
-export function tagStream(data) {
+export function updateTagStream(data) {
+  return request({
+    url: '/business/labelStreamTag/updateTagStream',
+    method: 'put',
+    params: data
+  })
+}
+
+//绑定tag
+export function addTagStream(data) {
   return request({
     url: '/business/labelStreamTag/tagStream',
     method: 'put',

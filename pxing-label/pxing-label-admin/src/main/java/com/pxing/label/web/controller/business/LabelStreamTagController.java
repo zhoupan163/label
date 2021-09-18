@@ -1,9 +1,6 @@
 package com.pxing.label.web.controller.business;
 
-import com.pxing.label.business.domain.entity.ImageEntity;
-import com.pxing.label.business.domain.entity.ProjectStreamEntity;
-import com.pxing.label.business.domain.entity.StreamEntity;
-import com.pxing.label.business.domain.entity.TagEntity;
+import com.pxing.label.business.domain.entity.*;
 import com.pxing.label.business.domain.vo.LabelTagVo;
 import com.pxing.label.business.domain.vo.StreamTagVo;
 import com.pxing.label.business.service.*;
@@ -28,9 +25,6 @@ public class LabelStreamTagController extends BaseController
 {
     @Autowired
     private StreamService streamService;
-
-    @Autowired
-    private LabelTaskService labelTaskService;
 
     @Autowired
     private ImageService imageService;
@@ -96,6 +90,16 @@ public class LabelStreamTagController extends BaseController
      * tag stream
      */
     //@PreAuthorize("@ss.hasPermi('business:labelTag:list')")
+    @PutMapping("/updateTagStream")
+    public AjaxResult updateTagStream(String streamId, Long[] tagIds)
+    {
+        return toAjax(streamTagService.updateTagStream(streamId, Arrays.asList(tagIds)));
+    }
+
+    /**
+     * tag stream
+     */
+    //@PreAuthorize("@ss.hasPermi('business:labelTag:list')")
     @PutMapping("/tagStream")
     public AjaxResult tagStream(String streamId, Long[] tagIds)
     {
@@ -113,6 +117,19 @@ public class LabelStreamTagController extends BaseController
     {
         startPage();
         List<ProjectStreamEntity> list = streamTagService.getTaggedStreamList(projectName, taskName);
+        return getDataTable(list);
+    }
+
+    /**
+     * 获取已经标记的stream的list列表 而未筛选的 记录
+     */
+    //@PreAuthorize("@ss.hasPermi('business:labelTag:list')")
+    @GetMapping("/selectTagListByStreamId")
+    @ResponseBody
+    public TableDataInfo getTagListBystream(@RequestParam("streamId") String streamId)
+    {
+        startPage();
+        List<StreamTagEntity> list = streamTagService.getTagListBystream(streamId);
         return getDataTable(list);
     }
 
