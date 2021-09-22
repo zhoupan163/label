@@ -44,8 +44,10 @@ public class TaskStreamServiceImp implements TaskStreamService {
             querywrapper.eq(type, userName).eq("status", 0);
         }else if (type.equals("qa1")){
             querywrapper.eq(type, userName).eq("status", 1);
-        }else{
+        }else if (type.equals("qa12")){
             querywrapper.eq(type, userName).eq("status", 2);
+        }else{
+            //预览功能  不做处理 返回所有数据
         }
         return taskStreamDao.selectList(querywrapper);
     }

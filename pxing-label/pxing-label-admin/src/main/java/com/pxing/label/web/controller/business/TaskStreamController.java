@@ -67,6 +67,17 @@ public class TaskStreamController extends BaseController{
         return getDataTable(list);
     }
 
+    //获取视频组的stream
+    @GetMapping("/getTaskStreamList")
+    @ResponseBody
+    public TableDataInfo getTaskStream(@RequestParam("taskName")String taskName,@RequestParam("groupName")String groupName,
+                                                 @RequestParam("type")String type)
+    {
+        startPage();
+        List<TaskStreamEntity> list= taskStreamService.getTaskStream(taskName, groupName, type, "");
+        return getDataTable(list);
+    }
+
 
     @PutMapping("assignTaskStream")
     public AjaxResult assignTaskStream(String streamId, String taskName, String type, HttpServletRequest request)

@@ -104,6 +104,27 @@
             @click="filterStream(scope.row)"
             v-hasPermi="['business:labelVideGroup:filterStream']"
           >筛选</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="qa(scope.row,1)"
+            v-hasPermi="['business:labelVideGroup:qa1']"
+          >一级审核</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="qa(scope.row,2)"
+            v-hasPermi="['business:labelVideGroup:qa2']"
+          >二级审核</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="previewResult(scope.row)"
+            v-hasPermi="['business:labelVideGroup:previewResult']"
+          >标注结果预览下载</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -309,12 +330,74 @@
         <el-button @click="cancel4">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 添加或修改任务配置对话框 -->
+    <el-dialog :title="title5" :visible.sync="open5" width="500px" append-to-body>
+      <el-table v-loading="loading5" :data="taskStreamList">
+        <el-table-column label="stream_id" prop="streamId" width="120" />
+        <el-table-column label="任务名称" prop="taskName" width="120" />
+        <el-table-column label="图片数量" prop="size" width="120" />
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="qaStream(scope.row)"
+            >选取审核</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getLabelTaskStream(taskStreamList.get(0).taskName)"
+      />
+    </el-dialog>
+
+    <!-- 添加或修改任务配置对话框 -->
+    <el-dialog :title="title6" :visible.sync="open6" width="700px" append-to-body>
+      <el-table v-loading="loading6" :data="taskStreamList">
+        <el-table-column label="任务名称" prop="taskName" width="100" />
+        <el-table-column label="stream_id" prop="streamId" width="100" />
+        <el-table-column label="视频组名" prop="groupName" width="100" />
+        <el-table-column label="图片数量" prop="size" width="80" />
+        <el-table-column label="状态" prop="status":formatter="statusFormat" width="100" />
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="view(scope.row)"
+            >预览</el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-download"
+              @click="downloadData(scope.row)"
+            >下载</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getLabelTaskStream(taskStreamList.get(0).taskName)"
+      />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listLabelTask, getkUnfinishedTaskStream, assignTaskStream, addLabelTask,
-  getTaggedStreamList, addTaskStream, getUnAssignedTaskStream} from "@/api/business/labelTask"
+import {
+  listLabelTask, getkUnfinishedTaskStream, assignTaskStream, addLabelTask,
+  getTaggedStreamList, addTaskStream, getUnAssignedTaskStream, getTaskStream
+} from "@/api/business/labelTask"
 import { getToken } from "@/utils/auth";
 import {listLabelProject} from "@/api/business/labelProject";
 import {
@@ -324,6 +407,7 @@ import {
   listVideoGroupId
 } from "@/api/business/labelVideoGroup";
 import {delRole} from "@/api/system/role";
+import {downLoadLabelData} from "@/api/business/labelData";
 
 
 
@@ -367,10 +451,22 @@ export default {
       total3: 0,
       loading3: true,
 
+      title5: "",
+      open5: false,
+      total5: 0,
+      loading5: true,
+
+      title6: "",
+      open6: false,
+      total6: 0,
+      loading6: true,
+
       title4: "",
       open4: false,
 
       groupName: undefined,
+
+      statusOptions: [],
 
       openDataScope: false,
       menuExpand: false,
@@ -423,6 +519,10 @@ export default {
     this.getDicts("business_labelTask_type").then(response => {
       this.typeOptions = response.data;
     });
+    this.getDicts("business_label_status").then(response => {
+      alert(response.total);
+      this.statusOptions = response.data;
+    });
   },
   methods: {
     /** 查询任务列表 */
@@ -445,7 +545,9 @@ export default {
     typeFormat(row, column) {
       return this.selectDictLabel(this.typeOptions, row.type);
     },
-
+    statusFormat(row, column) {
+      return this.selectDictLabel(this.statusOptions, row.status);
+    },
     // 取消按钮
     cancel() {
       this.open = false;
@@ -655,7 +757,6 @@ export default {
         let token=getToken();
         window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +this.taskName +'&streamId=' +row.streamId);
       });
-
     },
     submitForm: function() {
       this.$refs["form"].validate(valid => {
@@ -692,7 +793,60 @@ export default {
         }
       });
     },
+    /** 选取stream_id按钮操作 */
+    qa(row, qa_level) {
+      let token=getToken();
+      this.qa_type="qa"+qa_level;
+      getkUnfinishedTaskStream(row.taskName, row.groupName, this.qa_type).then(
+        response =>{
+          this.taskName= row.taskName;
+          this.taskStreamList = response.rows;
+          if(this.taskStreamList.length>0){
+            //this.msgInfo("此任务下未你有未完成审核的stream，即将跳转审核界面");
+            alert("此任务下未你有未完成审核的图片，即将跳转审核界面");
+            window.open('http://10.66.66.121:8082/check.html?taskName=' + row.taskName + "&qa_type="+
+              this.qa_type+ '&streamId=' +this.taskStreamList[0].streamId + "&token="+ token);
+          }else{
+            //this.reset();
+            getUnAssignedTaskStream(row.taskName, row.groupName, this.qa_type).then(
+              response => {
+                this.taskStreamList = response.rows;
+                this.total = response.total;
+                this.open5 = true;
+                this.title5 = row.groupName;
+                this.loading5= false;
+              });
+          }
+        }
+      )
+    },
+    //选取审核
+    qaStream(row){
+      assignTaskStream({streamId: row.streamId, taskName:this.taskName , type: this.qa_type}).then(response =>{
+        this.msgSuccess("选定成功，开始审核");
+        this.open5 = false;
+        let token=getToken();
+        window.open('http://10.66.66.121:8082/check.html?taskName=' + row.taskName + "&qa_type="+ this.qa_type +'' +
+          '&streamId=' +row.streamId+ "&token="+ token);
+      })
+    },
+    previewResult(row) {
+      getTaskStream(row.taskName, row.groupName, " previewResult").then(
+        response => {
+          this.taskStreamList = response.rows;
+          this.total5 = response.total;
+          this.open6 = true;
+          this.title6 = row.groupName;
+          this.loading6 = false;
+        });
+    },
+    view(row){
+      this.open6 = false;
+      let token=getToken();
+      window.open('http://10.66.66.121:8082/check.html?taskName=' + row.taskName + "&qa_type="+ "view" +'' +
+        '&streamId='+ row.streamId+ "&token="+ token);
+    },
 
   }
-};
+    };
 </script>

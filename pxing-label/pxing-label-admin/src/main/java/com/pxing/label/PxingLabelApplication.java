@@ -1,9 +1,11 @@
 package com.pxing.label;
 
-import org.mybatis.spring.annotation.MapperScan;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * 启动程序
@@ -11,6 +13,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  * @author pxing 官方网址：www.pxing.vip
  */
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
+@EnableTransactionManagement
 public class PxingLabelApplication
 {
     public static void main(String[] args)

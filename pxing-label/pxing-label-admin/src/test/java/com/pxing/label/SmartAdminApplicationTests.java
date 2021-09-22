@@ -79,8 +79,14 @@ public class SmartAdminApplicationTests {
 
     @Test
     public  void test4(){
-        Query query1=Query.query(Criteria.where("stream_id").is("e6771376-14f7-11ec-92e8-000c293913c8"));
-        List<ImageEntity> taskImageEntityList= mongoTemplate.find(query1 , ImageEntity.class);
+        Query query1=Query.query(Criteria.where("stream_id").is("2c488c1b-1825-11ec-92ea-000c293913c8"));
+        List<TaskImageEntity> taskImageEntityList= mongoTemplate.find(query1 , TaskImageEntity.class);
+        int a= 1126;
+        while(a< taskImageEntityList.size()){
+             TaskImageEntity taskImageEntity = taskImageEntityList.get(a);
+             mongoTemplate.remove(Query.query(Criteria.where("stream_id").is("2c488c1b-1825-11ec-92ea-000c293913c8").and("image_id").is(taskImageEntity.getImageId())), TaskImageEntity.class);
+             a+=1;
+        };
         //master_identification(String), 0917test(String), yanming(String), 0(Integer), 4(Integer)
         List<LabelViaProjectVo> list= labelViaService.getSreamViaProject("master_identification", "56e4209e-16fc-11ec-92ea-000c293913c8", "yanming", "label");
         System.out.println("ok");

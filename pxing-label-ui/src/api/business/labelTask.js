@@ -25,6 +25,14 @@ export function getUnAssignedTaskStream(taskName, groupName, type) {
   })
 }
 
+// 查询视频组的所有stream
+export function getTaskStream(taskName, groupName, type) {
+  return request({
+    url: '/business/taskStream/getTaskStreamList'+'?taskName='+ taskName+ "&type="+ type+ "&groupName="+ groupName,
+    method: 'get'
+  })
+}
+
 
 // 分配stream
 export function assignTaskStream(data) {
