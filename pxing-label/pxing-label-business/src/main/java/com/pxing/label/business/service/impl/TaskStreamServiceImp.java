@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.LongStream;
 
@@ -98,6 +99,12 @@ public class TaskStreamServiceImp implements TaskStreamService {
         QueryWrapper<TaskStreamEntity> querywrapper = new QueryWrapper<>();
         querywrapper.select("stream_id").eq("task_name", taskName);
         return taskStreamDao.selectList(querywrapper);
+    }
+
+    @Override
+    public List<TaskStreamEntity> getTaskStreamListByIds(Long[] ids) {
+        QueryWrapper<TaskStreamEntity> querywrapper = new QueryWrapper<>();
+        return taskStreamDao.selectList(querywrapper.in("id", Arrays.asList(ids)));
     }
 
 }

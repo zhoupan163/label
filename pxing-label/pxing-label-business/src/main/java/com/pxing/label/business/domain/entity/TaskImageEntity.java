@@ -28,7 +28,7 @@ public class TaskImageEntity {
     @ApiModelProperty("streamId")
     private String streamId;
 
-    @ApiModelProperty("任务Id")
+    @ApiModelProperty("任务名称")
     private String taskName;
 
     @ApiModelProperty("png_url")

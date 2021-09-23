@@ -184,14 +184,14 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="组名称" prop="groupName">
-              <el-input v-model="form.groupName" placeholder="请输入任务名称" maxlength="30" />
+              <el-input v-model="form.groupName" placeholder="请输入视频组名称" maxlength="30" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="备注">
-              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
+            <el-form-item label="备注" prop="remark">
+              <el-input v-model="form.remark" type="textarea" placeholder="请输入备注"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -280,24 +280,24 @@
 
     <!-- 添加id框 -->
     <el-dialog :title="title4" :visible.sync="open4" width="400px" append-to-body>
-      <el-form ref="form4" :model="form4" :rules="rules" label-width="80px">
+      <el-form ref="form4" :model="form4" :rules="idRules" label-width="80px">
         <el-row>
           <el-col :span="24">
-            <el-form-item label="id">
-              <el-input v-model="form4.personId" type="textarea" placeholder="请输入id"></el-input>
+            <el-form-item label="id"  prop="personId">
+              <el-input v-model="form4.personId"  placeholder="请输入id"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="name">
-              <el-input v-model="form4.personName" type="textarea" placeholder="请输入名称"></el-input>
+            <el-form-item label="name" prop="personName">
+              <el-input v-model="form4.personName"  placeholder="请输入名称"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="224">
-            <el-form-item label="图片">
+            <el-form-item label="图片" >
               <el-upload
                 limit=limitNum
                 :auto-upload="false"
@@ -318,7 +318,7 @@
 
         <el-row>
           <el-col :span="24">
-            <el-form-item label="备注">
+            <el-form-item label="备注"  prop="remark">
               <el-input v-model="form4.remark" type="textarea" placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
@@ -333,7 +333,7 @@
 
     <!-- 添加或修改任务配置对话框 -->
     <el-dialog :title="title5" :visible.sync="open5" width="500px" append-to-body>
-      <el-table v-loading="loading5" :data="taskStreamList">
+      <el-table v-loading="loading5" :data="taskStreamList" >
         <el-table-column label="stream_id" prop="streamId" width="120" />
         <el-table-column label="任务名称" prop="taskName" width="120" />
         <el-table-column label="图片数量" prop="size" width="120" />
@@ -358,13 +358,18 @@
     </el-dialog>
 
     <!-- 添加或修改任务配置对话框 -->
-    <el-dialog :title="title6" :visible.sync="open6" width="700px" append-to-body>
-      <el-table v-loading="loading6" :data="taskStreamList">
+    <el-dialog :title="title6" :visible.sync="open6" width="1400px" append-to-body>
+      <el-table v-loading="loading6" :data="taskStreamList" @selection-change="handleSelectionChange2">
+        <el-table-column type="selection" width="45" align="center" />
+        <el-table-column label="id" prop="id" width="100" />
         <el-table-column label="任务名称" prop="taskName" width="100" />
         <el-table-column label="stream_id" prop="streamId" width="100" />
         <el-table-column label="视频组名" prop="groupName" width="100" />
         <el-table-column label="图片数量" prop="size" width="80" />
         <el-table-column label="状态" prop="status":formatter="statusFormat" width="100" />
+        <el-table-column label="标注人" prop="label" width="100" />
+        <el-table-column label="一级审核人" prop="qa1" width="100" />
+        <el-table-column label="二级审核人" prop="qa2" width="100" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-button
@@ -373,18 +378,16 @@
               icon="el-icon-edit"
               @click="view(scope.row)"
             >预览</el-button>
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-download"
-              @click="downloadData(scope.row)"
-            >下载</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="downLoad">下 载</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
       <pagination
-        v-show="total>0"
-        :total="total"
+        v-show="total5>0"
+        :total="total5"
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
         @pagination="getLabelTaskStream(taskStreamList.get(0).taskName)"
@@ -407,7 +410,7 @@ import {
   listVideoGroupId
 } from "@/api/business/labelVideoGroup";
 import {delRole} from "@/api/system/role";
-import {downLoadLabelData} from "@/api/business/labelData";
+import {downLoadLabelData, downLoadStreamData} from "@/api/business/labelData";
 
 
 
@@ -494,6 +497,9 @@ export default {
       limitNum: 1,
       formLabelWidth: '80px',
 
+      taskStreamIds: [],
+      taskStreams: [],
+
       fileList: [],
 
       defaultProps: {
@@ -505,11 +511,25 @@ export default {
         taskName: [
           { required: true, message: "任务名称不能为空", trigger: "blur" }
         ],
-        projectId: [
-          { required: true, message: "项目名称不能为空", trigger: "blur" }
+        groupName: [
+          { required: true, message: "视频组名称不能为空", trigger: "blur" }
         ],
-        type: [
-          { required: true, message: "任务不能为空", trigger: "blur" }
+        remark: [
+          { required: true, message: "备注不能为空", trigger: "blur" }
+        ]
+      },
+      idRules: {
+        personId: [
+          { required: true, message: "id不能为空", trigger: "blur" }
+        ],
+        personName: [
+          { required: true, message: "名称不能为空", trigger: "blur" }
+        ],
+        image: [
+          { required: true, message: "图片不能为空", trigger: "blur" }
+        ],
+        remark: [
+          { required: true, message: "备注不能为空", trigger: "blur" }
         ]
       }
     };
@@ -520,7 +540,6 @@ export default {
       this.typeOptions = response.data;
     });
     this.getDicts("business_label_status").then(response => {
-      alert(response.total);
       this.statusOptions = response.data;
     });
   },
@@ -581,6 +600,13 @@ export default {
     // 多选框选中数据
     handleSelectionChange1(selection) {
       this.ids = selection.map(item => item.id)
+      this.single = selection.length!=1
+      this.multiple = !selection.length
+    },
+    // 多选框选中数据
+    handleSelectionChange2(selection) {
+      this.taskStreams = selection
+      this.taskStreamIds= selection.map(item => item.id)
       this.single = selection.length!=1
       this.multiple = !selection.length
     },
@@ -783,6 +809,10 @@ export default {
             formData.append("personName", this.form4.personName);
             formData.append("remark", this.form4.remark);
             formData.append("groupName", this.groupName);
+            if(!this.form4.file){
+              alert("请选择图片");
+              return;
+            };
             formData.append('file', this.form4.file);
 
             addLabelVideoGroupId(formData).then(response => {
@@ -846,7 +876,29 @@ export default {
       window.open('http://10.66.66.121:8082/check.html?taskName=' + row.taskName + "&qa_type="+ "view" +'' +
         '&streamId='+ row.streamId+ "&token="+ token);
     },
-
+    downLoad(){
+      //alert(typeof this.taskStreams)
+      //alert(this.taskStreams.length)
+      //alert(this.taskStreams[0].taskName)
+      if(this.taskStreamIds.length< 1){
+        alert("未选取下载任务")
+        return;
+      }
+      downLoadStreamData(this.taskStreamIds).then(
+        response =>{
+          this.open6 = false;
+          const aLink =document.createElement('a')
+          const blob = new Blob([response], { type: 'application/zip' })
+          //let fileName =`${row.taskName}`
+          let fileName = this.taskStreams[0].groupName
+          aLink.href = window.URL.createObjectURL(blob)
+          aLink.setAttribute('download', fileName)
+          document.body.appendChild(aLink)
+          aLink.click()
+          document.body.appendChild(aLink)
+        }
+      );
+    }
   }
     };
 </script>

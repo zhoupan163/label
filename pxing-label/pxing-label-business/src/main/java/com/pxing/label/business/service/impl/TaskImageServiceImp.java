@@ -6,7 +6,6 @@ package com.pxing.label.business.service.impl;
 
 import com.pxing.label.business.domain.entity.ImageEntity;
 import com.pxing.label.business.domain.entity.TaskImageEntity;
-import com.pxing.label.business.domain.entity.TaskStreamEntity;
 import com.pxing.label.business.service.ImageService;
 import com.pxing.label.business.service.TaskImageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class TaskImageServiceImp implements TaskImageService {
     private MongoTemplate mongoTemplate;
 
     @Override
-    public void addTaskImages(String streamId, String taskName) {
+    public void addTaskImages( String streamId, String taskName, String groupName) {
           List<ImageEntity> imageEntityList= imageService.selectImageListByStreamId(streamId);
           List<TaskImageEntity> taskImageEntityList =new ArrayList<>();
 
@@ -68,4 +66,12 @@ public class TaskImageServiceImp implements TaskImageService {
         Query query=Query.query(Criteria.where("task_name").is(taskName).and("status").is(3).and("stream_id").in(streamIdList));
         return mongoTemplate.find(query, TaskImageEntity.class);
     }
+
+    @Override
+    public List<TaskImageEntity> getTaskImageEntityList(String taskName, String streamId) {
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("stream_id").in(streamId));
+        return mongoTemplate.find(query, TaskImageEntity.class);
+    }
+
+
 }

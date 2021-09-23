@@ -39,7 +39,7 @@ public class TaskStreamController extends BaseController{
         LoginUser loginUser= tokenService.getLoginUser(request);
         taskStreamEntity.setCreateBy(loginUser.getUsername());
 
-        taskImageService.addTaskImages(taskStreamEntity.getStreamId(), taskStreamEntity.getTaskName());
+        taskImageService.addTaskImages(taskStreamEntity.getStreamId(), taskStreamEntity.getTaskName(), taskStreamEntity.getGroupName());
         return toAjax(taskStreamService.insertTaskStream(taskStreamEntity));
     }
 

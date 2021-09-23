@@ -19,4 +19,6 @@ public interface TaskStreamService {
     List<TaskStreamEntity> getFinishedTaskStream(String taskName, String groupName);
 
     List<TaskStreamEntity> getTaskStreamList(String taskName);
+
+    List<TaskStreamEntity> getTaskStreamListByIds(Long[] ids);
 }

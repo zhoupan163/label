@@ -87,4 +87,31 @@ public class LabelDataController extends BaseController
         ZipUtils.doZip("demo.zip",map,response);
     }
 
+
+    @GetMapping("/getStreamData/{ids}")
+    @ApiOperation(value = "下载压缩包")
+    @ResponseBody
+    public void getStreamZip(@PathVariable Long[] ids , HttpServletResponse response) throws Exception {
+        List<TaskStreamEntity> taskStreamEntityList= taskStreamService.getTaskStreamListByIds(ids);
+        Map<String, InputStream> map=new HashMap<>();
+
+        for(TaskStreamEntity taskStreamEntity: taskStreamEntityList){
+            List<TaskImageEntity> taskImageEntityList= taskImageService.getTaskImageEntityList(taskStreamEntity.getTaskName(), taskStreamEntity.getStreamId());
+            for(TaskImageEntity taskImageEntity: taskImageEntityList){
+                //数据为空的图片直接跳过
+                if(taskImageEntity.getAnnotationInfo().size()<1){
+                    continue;
+                };
+                List<String> list1= LabelAnnotionToMott.getMott(taskImageEntity);
+                InputStream txt= new ByteArrayInputStream(list1.get(0).getBytes(StandardCharsets.UTF_8));
+                InputStream png= HttpUtils.getInputStream(taskImageEntity.getPngUrl());
+
+                String folder= taskImageEntity.getTaskName()+ "/" + taskStreamEntity.getGroupName()+ "/"+ taskImageEntity.getStreamId()
+                        + "/"+ taskImageEntity.getImageId();
+                map.put("motTxt/"+ folder + ".txt",  txt);
+                map.put("png/"+ folder + ".png", png);
+            }
+        }
+        ZipUtils.doZip("demo.zip",map,response);
+    }
 }

@@ -9,10 +9,10 @@ export function downLoadLabelData(taskName) {
   })
 }
 
-// 下载标注任务
-export function downLoadStreamData(taskName, groupName, S) {
+// 批量下载标注视频组
+export function downLoadStreamData(ids) {
   return request({
-    url: '/business/labelData/getLabelTaskZip/'+ "?taskName=" +taskName,
+    url: '/business/labelData/getStreamData/' +ids,
     method: 'get',
     responseType: 'blob'
   })

@@ -10,7 +10,7 @@ import java.util.*;
 public class LabelAnnotionToMott {
 
     /**
-     * @param labelTaskImageVo
+     * @param taskImageEntity
      * @return String data
      */
 
@@ -35,7 +35,13 @@ public class LabelAnnotionToMott {
             int block = regionAttributes.getInteger("block");
             int fuzzy= regionAttributes.getInteger("fuzzy");
             int side= regionAttributes.getInteger("side");
-            int crop= regionAttributes.getInteger("crop");
+            JSONObject cropJson= regionAttributes.getJSONObject("crop");
+            String crop= "";
+            if(cropJson.containsKey("0")){
+                crop= "0";
+            }else{
+                crop= String.join(",", cropJson.keySet());
+            }
 
             String id= regionAttributes.getString("id");
             ids+= id+ sep;
