@@ -12,4 +12,6 @@ public interface LabelViaService {
     int updateViaInfo(LabelViaProjectVo labelViaProjectVo);
 
     int commitViaInfo(LabelViaProjectVo labelViaProjectVo);
+
+    void test();
 }

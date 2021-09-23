@@ -5,15 +5,18 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import com.pxing.label.business.domain.entity.TaskImageEntity;
+import com.pxing.label.business.domain.entity.TaskStreamEntity;
 import com.pxing.label.business.domain.vo.LabelViaProjectVo;
 import com.pxing.label.business.service.LabelViaService;
 import com.pxing.label.business.service.TaskStreamService;
+import com.pxing.label.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -102,6 +105,24 @@ public class LabelViaServiceImp implements LabelViaService {
         taskStreamService.commitTaskStream(labelViaProjectVo.getTaskName(), labelViaProjectVo.getStreamId());
 
         return count;
+    }
+
+    @Transactional(transactionManager = "mongoTransactionManager")
+    @Override
+    public void test() {
+        TaskImageEntity taskImageEntity= new TaskImageEntity();
+        taskImageEntity.setImageId("aaa");
+        taskImageEntity.setJpgUrl("123456.jpg");
+        mongoTemplate.insert(taskImageEntity);
+
+        Query query = Query.query(Criteria.where("jpg_url").is("123456.jpg"));
+        Update update= new Update();
+        update.set("status", 1);
+        mongoTemplate.updateFirst(query, update, TaskImageEntity.class);
+        int a=3/0;
+        update.set("tag", 1);
+        mongoTemplate.updateFirst(query, update, TaskImageEntity.class).getModifiedCount();
+        mongoTemplate.insert(taskImageEntity);
     }
 
 

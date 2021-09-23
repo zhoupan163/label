@@ -14,6 +14,7 @@ import com.pxing.label.common.core.page.TableDataInfo;
 import com.pxing.label.framework.web.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,6 +54,8 @@ public class LabelViaController extends BaseController
         return getDataTable(list);
     }
 
+
+    @Transactional (transactionManager = "mongoTransactionManager")
     @PostMapping("/updateViaInfo")
     @ResponseBody
     public AjaxResult updateViaInfo(@RequestBody String params)
@@ -62,6 +65,8 @@ public class LabelViaController extends BaseController
         return toAjax(labelViaService.updateViaInfo(labelViaProjectVo));
     }
 
+
+    @Transactional(transactionManager = "mongoTransactionManager")
     @PostMapping("/commitViaInfo")
     @ResponseBody
     //@RequestBody JSONObject params

@@ -11,6 +11,7 @@ import com.pxing.label.common.core.page.TableDataInfo;
 import com.pxing.label.common.enums.BusinessType;
 import com.pxing.label.framework.web.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,7 @@ public class TaskStreamController extends BaseController{
 
     @Autowired
     private TaskImageService taskImageService;
+
     @Log(title = "增加task_stream", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody TaskStreamEntity taskStreamEntity, HttpServletRequest request)
@@ -78,7 +80,7 @@ public class TaskStreamController extends BaseController{
         return getDataTable(list);
     }
 
-
+    @Transactional
     @PutMapping("assignTaskStream")
     public AjaxResult assignTaskStream(String streamId, String taskName, String type, HttpServletRequest request)
     {

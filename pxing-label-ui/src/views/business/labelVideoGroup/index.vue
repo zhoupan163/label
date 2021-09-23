@@ -877,9 +877,6 @@ export default {
         '&streamId='+ row.streamId+ "&token="+ token);
     },
     downLoad(){
-      //alert(typeof this.taskStreams)
-      //alert(this.taskStreams.length)
-      //alert(this.taskStreams[0].taskName)
       if(this.taskStreamIds.length< 1){
         alert("未选取下载任务")
         return;

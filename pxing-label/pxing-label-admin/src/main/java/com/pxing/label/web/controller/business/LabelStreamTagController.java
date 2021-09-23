@@ -8,6 +8,7 @@ import com.pxing.label.common.core.controller.BaseController;
 import com.pxing.label.common.core.domain.AjaxResult;
 import com.pxing.label.common.core.page.TableDataInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -86,6 +87,7 @@ public class LabelStreamTagController extends BaseController
         return getDataTable(list);
     }
 
+    @Transactional
     /**
      * tag stream
      */
@@ -96,10 +98,12 @@ public class LabelStreamTagController extends BaseController
         return toAjax(streamTagService.updateTagStream(streamId, Arrays.asList(tagIds)));
     }
 
+
     /**
      * tag stream
      */
     //@PreAuthorize("@ss.hasPermi('business:labelTag:list')")
+    @Transactional
     @PutMapping("/tagStream")
     public AjaxResult tagStream(String streamId, Long[] tagIds)
     {

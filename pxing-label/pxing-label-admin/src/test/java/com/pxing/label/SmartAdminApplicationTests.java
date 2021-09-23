@@ -107,9 +107,7 @@ public class SmartAdminApplicationTests {
 
     @Test
     public  void test6(){
-        String taskName="pedestrian_reid";
-
-       // labelViaService.getSreamViaProject((long) 1, (long) 1,"admin", "label");
+       labelViaService.test();
     }
 
     @Test

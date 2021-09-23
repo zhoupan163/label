@@ -15,6 +15,7 @@ import com.pxing.label.common.enums.BusinessType;
 import com.pxing.label.framework.web.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/business/labelVideoGroup")
-public class LabelVIdeoGroupController extends BaseController
+public class LabelVideoGroupController extends BaseController
 {
     @Autowired
     private VideoGroupService videoGroupService;
@@ -45,9 +46,10 @@ public class LabelVIdeoGroupController extends BaseController
     }
 
     /**
-     * 新增项目
+     * 新增视频组
      */
     //@PreAuthorize("@ss.hasPermi('business:labelTag:add')")
+    @Transactional
     @Log(title = "视频组添加", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@Validated @RequestBody VideoGroupEntity videoGroupEntity, HttpServletRequest request)
