@@ -13,6 +13,8 @@ import com.pxing.label.common.core.domain.model.LoginUser;
 import com.pxing.label.common.core.page.TableDataInfo;
 import com.pxing.label.common.enums.BusinessType;
 import com.pxing.label.framework.web.service.TokenService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,8 @@ import java.util.List;
 @RequestMapping("/business/labelVideoGroup")
 public class LabelVideoGroupController extends BaseController
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LabelVideoGroupController.class);
+
     @Autowired
     private VideoGroupService videoGroupService;
 
@@ -41,6 +45,12 @@ public class LabelVideoGroupController extends BaseController
     public TableDataInfo list()
     {
         startPage();
+        LOGGER.info("获取group组");
+        LOGGER.error("ERROR 级别日志");
+        LOGGER.warn("WARN 级别日志");
+        LOGGER.info("INFO 级别日志");
+        LOGGER.debug("DEBUG 级别日志");
+        LOGGER.trace("TRACE 级别日志");
         List<VideoGroupEntity> videoGroupEntityList= videoGroupService.selectVideoGroupList();
         return getDataTable( videoGroupEntityList);
     }

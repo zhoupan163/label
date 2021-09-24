@@ -32,9 +32,7 @@ server:
 
 # 日志配置
 logging:
-  level:
-    com.pxing: debug
-    org.springframework: warn
+  config: classpath:log4j2-boot-prod.xml
 
 # Spring配置
 spring:

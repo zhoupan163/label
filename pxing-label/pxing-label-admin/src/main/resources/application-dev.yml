@@ -32,9 +32,7 @@ server:
 
 # 日志配置
 logging:
-  level:
-    com.pxing: debug
-    org.springframework: warn
+  config: classpath:log4j2-boot-dev.xml
 
 # Spring配置
 spring:
@@ -187,6 +185,7 @@ xss:
 
 uploadPath: /home/zhoup/ngnix/file/data/
 uploadUrl: http://10.66.66.121:3002/
+
 
 
 

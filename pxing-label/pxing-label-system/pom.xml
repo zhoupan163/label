@@ -22,6 +22,7 @@
         <dependency>
             <groupId>com.pxing.label</groupId>
             <artifactId>pxing-label-common</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
     </dependencies>
