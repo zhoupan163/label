@@ -84,7 +84,8 @@ public class LabelViaServiceImp implements LabelViaService {
             //update.set("status", 0);
             update.set("annotationInfo", regions);
             count+= mongoTemplate.updateMulti(query, update, TaskImageEntity.class).getModifiedCount();
-        }
+        };
+        //int a= 10/0;
         return count;
     }
 
@@ -107,7 +108,7 @@ public class LabelViaServiceImp implements LabelViaService {
         return count;
     }
 
-    @Transactional(transactionManager = "mongoTransactionManager")
+
     @Override
     public void test() {
         TaskImageEntity taskImageEntity= new TaskImageEntity();

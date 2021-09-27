@@ -34,6 +34,7 @@ public class TaskStreamController extends BaseController{
     @Autowired
     private TaskImageService taskImageService;
 
+    @Transactional
     @Log(title = "增加task_stream", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody TaskStreamEntity taskStreamEntity, HttpServletRequest request)

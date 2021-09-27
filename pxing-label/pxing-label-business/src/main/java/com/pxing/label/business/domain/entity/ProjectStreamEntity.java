@@ -62,7 +62,7 @@ public class ProjectStreamEntity {
     private String rosbagId;
 
     @ApiModelProperty("大小")
-    private String frameSize;
+    private Integer frameSize;
 
 
 }

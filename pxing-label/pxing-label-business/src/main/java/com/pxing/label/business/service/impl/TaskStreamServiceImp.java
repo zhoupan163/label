@@ -9,6 +9,7 @@ import com.mongodb.client.result.UpdateResult;
 import com.pxing.label.business.dao.TaskStreamDao;
 import com.pxing.label.business.domain.entity.TaskImageEntity;
 import com.pxing.label.business.domain.entity.TaskStreamEntity;
+import com.pxing.label.business.service.TaskDetailService;
 import com.pxing.label.business.service.TaskStreamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -32,9 +33,13 @@ public class TaskStreamServiceImp implements TaskStreamService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private TaskDetailService taskDetailService;
+
     @Override
     public int insertTaskStream(TaskStreamEntity taskStreamEntity) {
            taskStreamEntity.setStatus(0);
+           taskDetailService.updateTaskDetailTotal(taskStreamEntity.getSize(), taskStreamEntity.getTaskName());
         return taskStreamDao.insert(taskStreamEntity);
     }
 

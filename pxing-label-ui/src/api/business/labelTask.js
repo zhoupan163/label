@@ -66,3 +66,11 @@ export function addTaskStream(data) {
     data: data
   })
 }
+
+// 查询未完成标注未锁定的图片
+export function getTaskDetail(taskName) {
+  return request({
+    url: '/business/labelTask/getTaskDetail/'+ taskName,
+    method: 'get'
+  })
+}

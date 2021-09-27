@@ -83,8 +83,9 @@
       </el-table-column>
       <el-table-column label="备注信息" prop="remark" width="120" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope" v-if="scope.row.type== 0">
+        <template slot-scope="scope">
           <el-button
+            v-if="scope.row.type!= 0"
             size="mini"
             type="text"
             icon="el-icon-edit"
@@ -92,6 +93,7 @@
             v-hasPermi="['business:labelTask:label']"
           >标注</el-button>
           <el-button
+            v-if="scope.row.type!= 0"
             size="mini"
             type="text"
             icon="el-icon-edit"
@@ -215,12 +217,52 @@
         @pagination="getStream(taggedStreamList.get(0).taskName)"
       />
     </el-dialog>
+
+    <!--拉取任务界面 -->
+    <el-dialog :title="title3" :visible.sync="open3" width="500px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="任务名称" prop="taskName">
+              <el-input v-model="form.taskName" disabled="disabled" maxlength="30" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="总数" prop="total">
+              <el-input v-model="form.total" disabled="disabled" maxlength="30" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="待标注数量" prop="unLabel">
+              <el-input v-model="form.unLabel" disabled="disabled" maxlength="30" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="选取数量" prop="number">
+              <el-input v-model="form.number" placeholder="请输入选取数量" maxlength="30" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm3">确 定</el-button>
+        <el-button @click="cancel3">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listLabelTask, getkUnfinishedTaskStream, assignTaskStream, addLabelTask,
-  getTaggedStreamList, addTaskStream, getUnAssignedTaskStream} from "@/api/business/labelTask"
+import {
+  listLabelTask, getkUnfinishedTaskStream, assignTaskStream, addLabelTask,
+  getTaggedStreamList, addTaskStream, getUnAssignedTaskStream, getTaskDetail
+} from "@/api/business/labelTask"
 import { getToken } from "@/utils/auth";
 import {listLabelProject} from "@/api/business/labelProject";
 
@@ -259,6 +301,10 @@ export default {
 
       title2: "",
       open2: false,
+
+      title3: "",
+      open3: false,
+
       openDataScope: false,
       menuExpand: false,
       menuNodeAll: false,
@@ -383,39 +429,22 @@ export default {
     },
     /** 选取stream_id按钮操作 */
     handleImagesTask(row) {
-      this.taskName= row.taskName;
-      let token= getToken();
-      getkUnfinishedTaskStream(row.taskName,row.groupName,"label").then(
-        response =>{
-          let taskStreamList = response.rows;
-          if(taskStreamList.length>0){
-            if(row.type==0){
-              if (taskStreamList[0].status== 4){
-                alert("你有审批驳回的任务，即将跳转标注界面")
-                window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +this.taskName +'&streamId='+ taskStreamList[0].streamId);
-              }else if(taskStreamList[0].status== 0){
-                alert("你有未完成标注的任务，即将跳转标注界面")
-
-                window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +this.taskName +'&streamId='+ taskStreamList[0].streamId);
-              }
-            }else{
-              alert("图片标注待开发");
-              //alert(aa)
-            };
-           // window.open('http://10.66.66.121:8082/?token=' + token.toString() + '&taskName=' +row.taskName);
-          }else{
-            this.msgInfo("请选定stream标定");
-            this.reset();
-            this.open = true;
-            this.title = row.taskName.toString();
-            getUnAssignedTaskStream(row.taskName, "label").then(
+      /*
+      this.reset();
+      this.open = true;
+      this.title = row.taskName.toString();
+      getUnAssignedTaskImage(row.taskName, "label").then(
               response => {
                 this.streamList = response.rows;
                 this.total = response.total;
               });
-          }
-        }
-      )
+       */
+      this.open3= true;
+      this.title3= "拉取数量标注";
+     getTaskDetail(row.taskName).then(response=>{
+         this.form= response.data;
+     });
+
     },
     selectStream(row){
       assignTaskStream({streamId: row.streamId, taskName: this.taskName, type: "label"}).then(response =>{

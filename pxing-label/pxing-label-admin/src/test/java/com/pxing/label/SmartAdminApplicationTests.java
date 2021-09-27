@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -107,7 +108,12 @@ public class SmartAdminApplicationTests {
 
     @Test
     public  void test6(){
-       labelViaService.test();
+       //labelViaService.test();
+        Criteria criteria = Criteria.where("task_name").is("图片标注测试");
+        Aggregation aggregation = Aggregation.newAggregation(Aggregation.match(criteria), Aggregation.project("missid"),
+                Aggregation.unwind("missid"), Aggregation.group("missid").count().as("count"),
+                Aggregation.project("count").and("missid").previousOperation(), Aggregation.sort(Sort.Direction.DESC, "count"));
+
     }
 
     @Test

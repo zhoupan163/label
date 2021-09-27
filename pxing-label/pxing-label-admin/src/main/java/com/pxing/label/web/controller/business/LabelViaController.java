@@ -54,27 +54,24 @@ public class LabelViaController extends BaseController
         return getDataTable(list);
     }
 
-
-    @Transactional (transactionManager = "mongoTransactionManager")
     @PostMapping("/updateViaInfo")
     @ResponseBody
     public AjaxResult updateViaInfo(@RequestBody String params)
     {
-        startPage();
         LabelViaProjectVo labelViaProjectVo= JSON.parseObject(params,LabelViaProjectVo.class);
-        return toAjax(labelViaService.updateViaInfo(labelViaProjectVo));
+        return toAjax(labelViaService.updateViaInfo(labelViaProjectVo)+ 1);
     }
 
 
-    @Transactional(transactionManager = "mongoTransactionManager")
+
     @PostMapping("/commitViaInfo")
     @ResponseBody
     //@RequestBody JSONObject params
     public AjaxResult  commitViaInfo(@RequestBody String params)
     {
-        startPage();
+
         LabelViaProjectVo labelViaProjectVo= JSON.parseObject(params,LabelViaProjectVo.class);
-        return toAjax(labelViaService.commitViaInfo(labelViaProjectVo));
+        return toAjax(labelViaService.commitViaInfo(labelViaProjectVo) +1);
     }
 
     @GetMapping("discardImg")
@@ -82,7 +79,7 @@ public class LabelViaController extends BaseController
     public  AjaxResult discardImg(@RequestParam("taskName")String taskName, @RequestParam("streamId")String streamId,
                                   @RequestParam("jpgUrl")String jpg_url){
         int res= taskImageService.discardImage(taskName, streamId, jpg_url);
-        return toAjax(res);
+        return toAjax(res+ 1);
 
     }
 
