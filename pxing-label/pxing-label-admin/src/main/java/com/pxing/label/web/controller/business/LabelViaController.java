@@ -12,6 +12,8 @@ import com.pxing.label.common.core.domain.AjaxResult;
 import com.pxing.label.common.core.domain.model.LoginUser;
 import com.pxing.label.common.core.page.TableDataInfo;
 import com.pxing.label.framework.web.service.TokenService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,8 @@ import java.util.List;
 @RequestMapping("/business/labelVia")
 public class LabelViaController extends BaseController
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LabelTaskController.class);
+
     @Autowired
     private LabelViaService labelViaService;
 
@@ -77,8 +81,8 @@ public class LabelViaController extends BaseController
     @GetMapping("discardImg")
     @ResponseBody
     public  AjaxResult discardImg(@RequestParam("taskName")String taskName, @RequestParam("streamId")String streamId,
-                                  @RequestParam("jpgUrl")String jpg_url){
-        int res= taskImageService.discardImage(taskName, streamId, jpg_url);
+                                  @RequestParam("jpgUrl")String jpgUrl){
+        int res= taskImageService.discardImage(taskName, streamId, jpgUrl);
         return toAjax(res+ 1);
 
     }

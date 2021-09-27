@@ -1,6 +1,7 @@
 package com.pxing.label.business.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.pxing.label.business.dao.TaskDetailDao;
 import com.pxing.label.business.domain.entity.TaskDetailEntity;
 import com.pxing.label.business.service.TaskDetailService;
@@ -31,5 +32,15 @@ public class TaskDetailServiceImp implements TaskDetailService {
     public int updateTaskDetailTotal(Integer frameSize, String taskName) {
 
         return taskDetailDao.updateTotal(frameSize, taskName);
+    }
+
+    @Override
+    public int updateTaskDetail(String taskName, String type, Integer number) {
+        UpdateWrapper<TaskDetailEntity> updateWrapper =new UpdateWrapper<>();
+        updateWrapper.eq("task_name", taskName);
+        if(type.equals("label")){
+            return taskDetailDao.pullTaskImage4Label(taskName, number);
+        }
+        return 0;
     }
 }

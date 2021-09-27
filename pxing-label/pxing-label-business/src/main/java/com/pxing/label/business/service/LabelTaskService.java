@@ -12,4 +12,6 @@ public interface LabelTaskService {
     List<TaskEntity> selectLabelTaskList(LabelTaskVo labelTask);
 
     int insertTaskEntity(TaskEntity taskEntity);
+
+    int pullTaskImage(String taskName, String type, Integer number, String userName);
 }

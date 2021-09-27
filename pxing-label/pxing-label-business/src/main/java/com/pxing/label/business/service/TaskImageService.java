@@ -14,4 +14,6 @@ public interface TaskImageService {
     List<TaskImageEntity> getFinishedImageList(String taskName, List<String> streamIdList);
 
     List<TaskImageEntity> getTaskImageEntityList(String taskName, String streamId);
+
+    int pullTaskImage(String taskName, String type, Integer number, String userName);
 }

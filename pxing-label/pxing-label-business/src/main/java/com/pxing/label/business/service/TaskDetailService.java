@@ -10,4 +10,6 @@ public interface TaskDetailService {
     int insertTaskDetail(String taskName);
 
     int updateTaskDetailTotal(Integer framesize, String taskName);
+
+    int updateTaskDetail(String name, String taskName, Integer number);
 }

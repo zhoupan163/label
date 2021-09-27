@@ -55,7 +55,7 @@ public class TaskImageServiceImp implements TaskImageService {
 
     @Override
     public int discardImage(String taskName, String streamId, String jpgUrl) {
-        Query query=Query.query(Criteria.where("task_name").is(taskName).and("stream_id").is(streamId).and("jpg_url").is(jpgUrl));
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("jpg_url").is(jpgUrl));
         Update update= new Update();
         update.set("status", 5);
         return (int)mongoTemplate.updateFirst(query,update, TaskImageEntity.class).getModifiedCount();
@@ -71,6 +71,18 @@ public class TaskImageServiceImp implements TaskImageService {
     public List<TaskImageEntity> getTaskImageEntityList(String taskName, String streamId) {
         Query query=Query.query(Criteria.where("task_name").is(taskName).and("stream_id").in(streamId));
         return mongoTemplate.find(query, TaskImageEntity.class);
+    }
+
+    @Override
+    public int pullTaskImage(String taskName, String type, Integer number, String userName) {
+        Query query=Query.query(Criteria.where("task_name").is(taskName).and("label").is("")).limit(number);
+        Update update= new Update();
+        update.set(type, userName);
+        int count=0;
+        for(int i=0; i< number; i++){
+            count+= (int)mongoTemplate.updateFirst(query, update ,TaskImageEntity.class).getModifiedCount();
+        }
+        return count;
     }
 
 

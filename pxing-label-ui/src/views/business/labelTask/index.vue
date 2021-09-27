@@ -261,7 +261,7 @@
 <script>
 import {
   listLabelTask, getkUnfinishedTaskStream, assignTaskStream, addLabelTask,
-  getTaggedStreamList, addTaskStream, getUnAssignedTaskStream, getTaskDetail
+  getTaggedStreamList, addTaskStream, getUnAssignedTaskStream, getTaskDetail, pullTaskImage
 } from "@/api/business/labelTask"
 import { getToken } from "@/utils/auth";
 import {listLabelProject} from "@/api/business/labelProject";
@@ -468,6 +468,15 @@ export default {
             });
           }
         }
+      });
+    },
+    submitForm3(){
+      alert(this.form.taskName);
+      pullTaskImage({taskName: this.form.taskName, number: this.form.number, type: "label"}).then(response =>{
+        alert("获取成功，跳转到标注界面");
+        let token= getToken();
+        window.open('http://10.66.65.141:8080/via-src-2.0.11/src/split.html?token=' + token + '&taskName='+
+          this.form.taskName+ '&type=' + "label" );
       });
     }
   }

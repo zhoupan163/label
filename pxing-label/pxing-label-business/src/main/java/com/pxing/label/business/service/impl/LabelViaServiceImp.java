@@ -10,6 +10,8 @@ import com.pxing.label.business.domain.vo.LabelViaProjectVo;
 import com.pxing.label.business.service.LabelViaService;
 import com.pxing.label.business.service.TaskStreamService;
 import com.pxing.label.common.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -25,6 +27,8 @@ import java.util.List;
 @Service
 public class LabelViaServiceImp implements LabelViaService {
 
+    private static final Logger logger = LoggerFactory.getLogger(LabelViaServiceImp.class);
+
     @Resource
     private MongoTemplate mongoTemplate;
 
@@ -37,7 +41,26 @@ public class LabelViaServiceImp implements LabelViaService {
         Query query=Query.query(Criteria.where("task_name").is(taskName).and("type").is("template"));
         LabelViaProjectVo labelViaProjectVo= mongoTemplate.findOne(query ,LabelViaProjectVo.class);
 
-        Query query1=Query.query(Criteria.where("task_name").is(taskName).and("stream_id").is(streamId).and("status").nin(5));
+        Query query1= new Query();
+            //图片任务
+        if(streamId!=null && streamId.equals("")){
+            Criteria criteria=  Criteria.where("task_name").is(taskName).and(type).is(userName);
+            if(type!=null && type.equals("label")){
+                criteria.and("status").is(0);
+            }else if(type!=null && type.equals("qa1")){
+                criteria.and("status").is(1);
+            }else if(type!=null && type.equals("qa2")){
+                criteria.and("status").is(2);
+            }else{
+                //预览界面
+                criteria.and("status").nin(5);
+            }
+            query1= Query.query(criteria);
+        }else{
+            //视频流任务
+            query1=Query.query(Criteria.where("task_name").is(taskName).and("stream_id").is(streamId).and("status").nin(5));
+        }
+
         List<TaskImageEntity> taskImageEntityList= mongoTemplate.find(query1 , TaskImageEntity.class);
 
         JSONObject via_img_metadata= new JSONObject();
@@ -51,7 +74,6 @@ public class LabelViaServiceImp implements LabelViaService {
             qaCommentList.add(taskImageEntity.getQaComment());
 
             imgStatusList.add(Integer.valueOf(taskImageEntity.getStatus()));
-
 
             JSONObject jsonObject= new JSONObject();
             jsonObject.put("filename", imageUrl);
@@ -79,13 +101,14 @@ public class LabelViaServiceImp implements LabelViaService {
         JSONObject via_img_metadata= labelViaProjectVo.getVia_img_metadata();
         for (String jpgUrl : labelViaProjectVo.getVia_image_id_list()) {
             JSONArray regions= via_img_metadata.getJSONObject(jpgUrl).getJSONArray("regions");
-            Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl).and("stream_id").is(labelViaProjectVo.getStreamId()));
+            Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl).and("task_name").is(labelViaProjectVo.getTaskName()));
             Update update= new Update();
             //update.set("status", 0);
             update.set("annotationInfo", regions);
             count+= mongoTemplate.updateMulti(query, update, TaskImageEntity.class).getModifiedCount();
         };
         //int a= 10/0;
+        logger.info("成功更新条数:{}",count);
         return count;
     }
 
@@ -97,13 +120,20 @@ public class LabelViaServiceImp implements LabelViaService {
         for (String jpgUrl : labelViaProjectVo.getVia_image_id_list()) {
             JSONArray regions= via_img_metadata.getJSONObject(jpgUrl).getJSONArray("regions");
             //驳回或者第一次提交操作 已经审批过的数据不再做修改
-            Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl).and("status").in(0, 4));
+            Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl).and("status").in(0, 4).
+                    and("task_name").is(labelViaProjectVo.getTaskName()));
             Update update= new Update();
             update.set("status", 1);
             update.set("annotationInfo", regions);
             count+= mongoTemplate.updateFirst(query, update, TaskImageEntity.class).getModifiedCount();
         };
-        taskStreamService.commitTaskStream(labelViaProjectVo.getTaskName(), labelViaProjectVo.getStreamId());
+        logger.info("成功提交条数:{}",count);
+
+        //视频流需要提交  非视频流不需要提交
+        if(labelViaProjectVo.getStreamId()!=null && !labelViaProjectVo.getStreamId().equals("")){
+            taskStreamService.commitTaskStream(labelViaProjectVo.getTaskName(), labelViaProjectVo.getStreamId());
+        }
+
 
         return count;
     }

@@ -32,7 +32,7 @@ import java.util.List;
 @RequestMapping("/business/labelTask")
 public class LabelTaskController extends BaseController
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LabelVideoGroupController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LabelTaskController.class);
 
     @Autowired
     private LabelTaskService labelTaskService;
@@ -76,6 +76,19 @@ public class LabelTaskController extends BaseController
         TaskDetailEntity taskDetailEntity= taskDetailService.getTaskDetail(taskName);
         logger.info(taskDetailEntity.toString());
         return AjaxResult.success(taskDetailEntity);
+    }
+
+    @Transactional
+    /**
+     * 拉取图片标注
+     */
+    //@PreAuthorize("@ss.hasPermi('business:labelTag:add')")
+    @PostMapping("pullTaskImage")
+    public AjaxResult pullTaskImage(String taskName,String type, Integer number, HttpServletRequest request)
+    {
+        //labelTaskService.pullTaskImage(taskName, number);
+        LoginUser loginUser= tokenService.getLoginUser(request);
+        return toAjax(labelTaskService.pullTaskImage(taskName, type, number, loginUser.getUsername()));
     }
 
 

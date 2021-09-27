@@ -74,3 +74,12 @@ export function getTaskDetail(taskName) {
     method: 'get'
   })
 }
+
+//添加task_stream
+export function pullTaskImage(data) {
+  return request({
+    url: '/business/labelTask/pullTaskImage',
+    method: 'post',
+    params: data
+  })
+}
