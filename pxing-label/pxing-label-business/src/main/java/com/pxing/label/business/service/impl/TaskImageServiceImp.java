@@ -7,6 +7,7 @@ package com.pxing.label.business.service.impl;
 import com.pxing.label.business.domain.entity.ImageEntity;
 import com.pxing.label.business.domain.entity.TaskImageEntity;
 import com.pxing.label.business.service.ImageService;
+import com.pxing.label.business.service.TaskDetailService;
 import com.pxing.label.business.service.TaskImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -24,6 +25,9 @@ public class TaskImageServiceImp implements TaskImageService {
 
     @Autowired
     private ImageService imageService;
+
+    @Autowired
+    private TaskDetailService taskDetailService;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -58,7 +62,11 @@ public class TaskImageServiceImp implements TaskImageService {
         Query query=Query.query(Criteria.where("task_name").is(taskName).and("jpg_url").is(jpgUrl));
         Update update= new Update();
         update.set("status", 5);
-        return (int)mongoTemplate.updateFirst(query,update, TaskImageEntity.class).getModifiedCount();
+        int a= (int)mongoTemplate.updateFirst(query,update, TaskImageEntity.class).getModifiedCount();
+        if(a>0){
+           taskDetailService.discardImage(taskName, a);
+        }
+        return a;
     }
 
     @Override
@@ -75,7 +83,15 @@ public class TaskImageServiceImp implements TaskImageService {
 
     @Override
     public int pullTaskImage(String taskName, String type, Integer number, String userName) {
-        Query query=Query.query(Criteria.where("task_name").is(taskName).and("label").is("")).limit(number);
+        Criteria criteria= Criteria.where("task_name").is(taskName).and(type).is("");
+        if(type!=null && type.equals("label")){
+            criteria.and("status").is(0);
+        }else if(type!=null && type.equals("qa1")){
+            criteria.and("status").is(1);
+        }else if(type!=null && type.equals("qa2")){
+            criteria.and("status").is(2);
+        }
+        Query query=Query.query(criteria).limit(number);
         Update update= new Update();
         update.set(type, userName);
         int count=0;
@@ -83,6 +99,21 @@ public class TaskImageServiceImp implements TaskImageService {
             count+= (int)mongoTemplate.updateFirst(query, update ,TaskImageEntity.class).getModifiedCount();
         }
         return count;
+    }
+
+    @Override
+    public int checkTaskImage(String taskName, String type, String username) {
+        Criteria criteria= Criteria.where("task_name").is(taskName).and(type).is(username);
+        if(type!=null && type.equals("label")){
+            criteria.and("status").is(0);
+        }else if(type!=null && type.equals("qa1")){
+            criteria.and("status").is(1);
+        }else if(type!=null && type.equals("qa1")){
+            criteria.and("status").is(2);
+        }
+
+        Query query=Query.query(criteria);
+        return (int)mongoTemplate.count(query, TaskImageEntity.class);
     }
 
 

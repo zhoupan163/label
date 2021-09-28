@@ -11,5 +11,13 @@ public interface TaskDetailService {
 
     int updateTaskDetailTotal(Integer framesize, String taskName);
 
-    int updateTaskDetail(String name, String taskName, Integer number);
+    int updateTaskDetail(String taskName, String type, Integer number);
+
+    int discardImage(String taskName, Integer number);
+
+    int commitLabeled(String taskName, Integer number);
+
+    int commitQa1(String taskName, Integer number);
+
+    int commitQa2(String taskName, int passCount);
 }

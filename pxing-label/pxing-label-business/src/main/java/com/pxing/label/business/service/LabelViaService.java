@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface LabelViaService {
 
-    List<LabelViaProjectVo> getSreamViaProject(String taskName, String streamId, String userName, String type);
+    List<LabelViaProjectVo> getViaProject(String taskName, String streamId, String userName, String type);
 
     int updateViaInfo(LabelViaProjectVo labelViaProjectVo);
 

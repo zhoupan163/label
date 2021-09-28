@@ -8,6 +8,7 @@ import com.pxing.label.business.domain.entity.TaskImageEntity;
 import com.pxing.label.business.domain.entity.TaskStreamEntity;
 import com.pxing.label.business.domain.vo.LabelViaProjectVo;
 import com.pxing.label.business.service.LabelViaService;
+import com.pxing.label.business.service.TaskDetailService;
 import com.pxing.label.business.service.TaskStreamService;
 import com.pxing.label.common.utils.StringUtils;
 import org.slf4j.Logger;
@@ -35,9 +36,12 @@ public class LabelViaServiceImp implements LabelViaService {
     @Autowired
     private TaskStreamService  taskStreamService;
 
+    @Autowired
+    private TaskDetailService taskDetailService;
+
 
     @Override
-    public List<LabelViaProjectVo> getSreamViaProject(String taskName, String streamId, String userName, String type) {
+    public List<LabelViaProjectVo> getViaProject(String taskName, String streamId, String userName, String type) {
         Query query=Query.query(Criteria.where("task_name").is(taskName).and("type").is("template"));
         LabelViaProjectVo labelViaProjectVo= mongoTemplate.findOne(query ,LabelViaProjectVo.class);
 
@@ -134,7 +138,8 @@ public class LabelViaServiceImp implements LabelViaService {
             taskStreamService.commitTaskStream(labelViaProjectVo.getTaskName(), labelViaProjectVo.getStreamId());
         }
 
-
+        //修改task_detail表
+        taskDetailService.commitLabeled(labelViaProjectVo.getTaskName(), count);
         return count;
     }
 

@@ -80,16 +80,17 @@ public class SmartAdminApplicationTests {
 
     @Test
     public  void test4(){
-        Query query1=Query.query(Criteria.where("stream_id").is("2c488c1b-1825-11ec-92ea-000c293913c8"));
+        String streamId="46a2a622-1e92-11ec-92ea-000c293913c8";
+        Query query1=Query.query(Criteria.where("stream_id").is(streamId));
         List<TaskImageEntity> taskImageEntityList= mongoTemplate.find(query1 , TaskImageEntity.class);
-        int a= 1126;
+        int a= 710;
         while(a< taskImageEntityList.size()){
              TaskImageEntity taskImageEntity = taskImageEntityList.get(a);
-             mongoTemplate.remove(Query.query(Criteria.where("stream_id").is("2c488c1b-1825-11ec-92ea-000c293913c8").and("image_id").is(taskImageEntity.getImageId())), TaskImageEntity.class);
+             mongoTemplate.remove(Query.query(Criteria.where("stream_id").is(streamId).and("image_id").is(taskImageEntity.getImageId())), TaskImageEntity.class);
              a+=1;
         };
         //master_identification(String), 0917test(String), yanming(String), 0(Integer), 4(Integer)
-        List<LabelViaProjectVo> list= labelViaService.getSreamViaProject("master_identification", "56e4209e-16fc-11ec-92ea-000c293913c8", "yanming", "label");
+        List<LabelViaProjectVo> list= labelViaService.getViaProject("master_identification", "56e4209e-16fc-11ec-92ea-000c293913c8", "yanming", "label");
         System.out.println("ok");
 
         //UpdateWrapper<TaskStreamEntity> updateWrapper= new UpdateWrapper<>();

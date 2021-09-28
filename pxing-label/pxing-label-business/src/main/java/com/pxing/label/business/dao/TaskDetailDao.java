@@ -15,7 +15,31 @@ public interface TaskDetailDao extends BaseMapper<TaskDetailEntity> {
     int updateTotal(@Param("frameSize") Integer frameSize, @Param("taskName") String taskName);
 
     @Update("update task_detail set un_label=un_label - ${number}, labeling=labeling + ${number} where task_name= '${taskName}'" +
-            "and un_label >${number}")
+            "and un_label >=${number}")
     int pullTaskImage4Label(@Param("taskName") String taskName, @Param("number") Integer number);
+
+    @Update("update task_detail set discarded= discarded + ${number}, labeling= labeling - ${number} where task_name= '${taskName}'" +
+            "and labeling >=${number}")
+    int discardImage(@Param("taskName") String taskName, @Param("number") Integer number);
+
+    @Update("update task_detail set labeling= labeling - ${number},labeled= labeled + ${number} where task_name= '${taskName}'")
+    int commitLabeled(@Param("taskName") String taskName, @Param("number") Integer number);
+
+    @Update("update task_detail set labeled= labeled - ${number}, qa1= qa1 + ${number} where task_name= '${taskName}'" +
+            "and labeled >=${number}")
+    int pullTaskImage4Qa1(@Param("taskName") String taskName, @Param("number") Integer number);
+
+    @Update("update task_detail set qa1ed= qa1ed + ${number},qa1= qa1 - ${number} where task_name= '${taskName}'"+
+            "and qa1 >=${number}")
+    int commitQa1(@Param("taskName") String taskName, @Param("number") Integer number);
+
+    @Update("update task_detail set  qa1ed= qa1ed - ${number}, qa2= qa2 + ${number} where task_name= '${taskName}'" +
+            "and qa1ed >=${number}")
+    int pullTaskImage4Qa2(@Param("taskName") String taskName, @Param("number") Integer number);
+
+    @Update("update task_detail set finished= finished + ${number},qa2=qa2 - ${number} where task_name= '${taskName}'"+
+            "and qa2 >=${number}")
+    int commitQa2(@Param("taskName") String taskName, @Param("number") Integer number);
+
 
 }

@@ -43,6 +43,9 @@ public class LabelTaskController extends BaseController
     @Autowired
     private TaskDetailService taskDetailService;
 
+    @Autowired
+    private TaskImageService taskImageService;
+
     @PreAuthorize("@ss.hasPermi('business:labelTask:list')")
     @GetMapping("/list")
     public TableDataInfo list(LabelTaskVo labelTaskVo)
@@ -67,11 +70,26 @@ public class LabelTaskController extends BaseController
     }
 
     /**
+     * 检查是否有已拉取未完成的图片任务
+     */
+    //@PreAuthorize("@ss.hasPermi('business:labelTag:add')")
+    @GetMapping("checkTaskImage")
+    @ResponseBody
+    public AjaxResult checkTaskImage(@RequestParam("taskName") String taskName,@RequestParam("type") String type, HttpServletRequest request)
+    {
+        LoginUser loginUser= tokenService.getLoginUser(request);
+        int a= taskImageService.checkTaskImage(taskName, type ,loginUser.getUsername());
+        logger.info("当前用户:{} 存在：{} 图片任务数量{}",loginUser.getUsername(), type, a);
+        return AjaxResult.success(a);
+    }
+
+    /**
      * 获取任务详细信息
      */
     //@PreAuthorize("@ss.hasPermi('business:labelTag:add')")
-    @GetMapping("getTaskDetail/{taskName}")
-    public AjaxResult getTaskDetail(@PathVariable String taskName)
+    @GetMapping("getTaskDetail")
+    @ResponseBody
+    public AjaxResult getTaskDetail(@RequestParam("taskName") String taskName, HttpServletRequest request)
     {
         TaskDetailEntity taskDetailEntity= taskDetailService.getTaskDetail(taskName);
         logger.info(taskDetailEntity.toString());
@@ -88,6 +106,7 @@ public class LabelTaskController extends BaseController
     {
         //labelTaskService.pullTaskImage(taskName, number);
         LoginUser loginUser= tokenService.getLoginUser(request);
+        logger.info("user{ } pull task:{} image:{} count:{} for: {}",loginUser.getUsername(), taskName, number , type);
         return toAjax(labelTaskService.pullTaskImage(taskName, type, number, loginUser.getUsername()));
     }
 

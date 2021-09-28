@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -52,6 +53,7 @@ public class LabelCheckController extends BaseController
     @Autowired
     private LabelStreamService labelStreamService;
 
+    @Transactional
     // 审核操作
     @PostMapping("/qa")
     @ResponseBody

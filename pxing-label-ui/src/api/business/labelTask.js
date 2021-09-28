@@ -67,10 +67,19 @@ export function addTaskStream(data) {
   })
 }
 
+// 查询是否存在已拉取未完成标注的图片
+export function checkTaskImage(taskName, type) {
+  return request({
+    url: '/business/labelTask/checkTaskImage?taskName='+ taskName+ '&type=' +type,
+    method: 'get'
+  })
+}
+
+
 // 查询未完成标注未锁定的图片
 export function getTaskDetail(taskName) {
   return request({
-    url: '/business/labelTask/getTaskDetail/'+ taskName,
+    url: '/business/labelTask/getTaskDetail/?taskName='+ taskName,
     method: 'get'
   })
 }
