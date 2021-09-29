@@ -51,7 +51,7 @@ public class LabelCheckServiceImp implements LabelCheckService {
         List<Pair<Query, Update>> updateList = new ArrayList<>();
         BulkOperations operations = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, TaskImageEntity.class);
         List<String> imgList = labelImageCheck.getImgList();
-        List<String> imgStatusList = labelImageCheck.getImgStatusList();
+        List<Integer> imgStatusList = labelImageCheck.getImgStatusList();
         List<String> imgQaCommentList = labelImageCheck.getImgQaCommentList();
         String taskName = labelImageCheck.getTaskName();
         String streamId = labelImageCheck.getStreamId();
@@ -63,12 +63,12 @@ public class LabelCheckServiceImp implements LabelCheckService {
         for (int i = 0; i < imgList.size(); i++) {
             Query query = Query.query(Criteria.where("task_name").is(taskName).and("jpg_url").is(imgList.get(i)));
 
-            String status=  imgStatusList.get(i);
+            int status=  imgStatusList.get(i);
             String comment= imgQaCommentList.get(i);
             Update update = new Update();
             update.set("qa_comment", comment );
             update.set("status", status);
-            if (status.equals(5)){
+            if (status==5){
                 rejectCount+=1;
             }else{
                 passCount+=1;

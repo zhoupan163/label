@@ -95,6 +95,7 @@ public class TaskImageServiceImp implements TaskImageService {
         Update update= new Update();
         update.set(type, userName);
         int count=0;
+        List<TaskImageEntity> taskImageEntityList= mongoTemplate.find(query, TaskImageEntity.class);
         for(int i=0; i< number; i++){
             count+= (int)mongoTemplate.updateFirst(query, update ,TaskImageEntity.class).getModifiedCount();
         }
@@ -108,7 +109,7 @@ public class TaskImageServiceImp implements TaskImageService {
             criteria.and("status").is(0);
         }else if(type!=null && type.equals("qa1")){
             criteria.and("status").is(1);
-        }else if(type!=null && type.equals("qa1")){
+        }else if(type!=null && type.equals("qa2")){
             criteria.and("status").is(2);
         }
 

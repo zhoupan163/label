@@ -529,7 +529,7 @@ export default {
                 this.form3.taskName+ '&type=' + this.form3.type + "&streamId=" );
             }else {
               window.open('http://10.66.65.141:8080/via-src-2.0.11/src/check.html?token=' + token + '&taskName=' +
-                this.form3.taskName + '&type=' + this.form3.type+ "&streamId=");
+                this.form3.taskName + '&qa_type=' + this.form3.type+ "&streamId=");
             }
           });
         } else {

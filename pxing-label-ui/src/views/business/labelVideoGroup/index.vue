@@ -142,6 +142,9 @@
       <el-table v-loading="loading" :data="streamList">
         <el-table-column label="streamId" prop="streamId" width="120" />
         <el-table-column label="大小" prop="size" width="120" />
+        <el-table-column label="标注人" prop="label" width="120" />
+        <el-table-column label="一级审核人" prop="qa1" width="120" />
+        <el-table-column label="一级审核人" prop="qa2" width="120" />
         <el-table-column label="创建时间" prop="createTime" width="120" />
         <el-table-column label="备注" prop="remark" width="120" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -337,6 +340,9 @@
         <el-table-column label="stream_id" prop="streamId" width="120" />
         <el-table-column label="任务名称" prop="taskName" width="120" />
         <el-table-column label="图片数量" prop="size" width="120" />
+        <el-table-column label="标注人" prop="label" width="120" />
+        <el-table-column label="一级审核人" prop="qa1" width="120" />
+        <el-table-column label="一级审核人" prop="qa2" width="120" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-button

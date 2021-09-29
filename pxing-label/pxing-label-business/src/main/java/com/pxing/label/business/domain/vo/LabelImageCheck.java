@@ -34,7 +34,7 @@ public class LabelImageCheck {
     private List<String> imgList;
 
     @ApiModelProperty("imgStatusList")
-    private List<String> imgStatusList;
+    private List<Integer> imgStatusList;
 
     @ApiModelProperty("imgQaCommentList")
     private List<String> imgQaCommentList;

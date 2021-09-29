@@ -70,7 +70,7 @@
           <span>{{ formatDate(scope.row.updateTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注信息" prop="remark" width="120" />
+      <el-table-column label="备注信息" prop="comment" width="120" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope" >
           <el-button
@@ -248,6 +248,7 @@ export default {
     this.getList();
     this.getDicts("tag_status").then(response => {
       this.tagStatusOptions = response.data;
+      console.log(this.tagStatusOptions);
       this.tagStatusOptions.forEach(row =>{
         this.tagStatusDict[row.dict_value]= row.dict_label;
       })
