@@ -49,7 +49,7 @@ public class StreamTagServiceImp implements StreamTagService {
     public List<ProjectStreamEntity> getTaggedStreamList(String projectName, String  taskName) {
         List<TaskStreamEntity> taskStreamEntityList= taskStreamService.getTaskStreamList(taskName);
         List<String> streamIdList= taskStreamEntityList.stream().map(TaskStreamEntity ::getStreamId).collect(Collectors.toList());
-        Query query= new Query(Criteria.where("tag_status").is(1).and("stream_id").nin(streamIdList));
+        Query query= new Query(Criteria.where("tag_status").is(1).and("project_name").is(projectName).and("stream_id").nin(streamIdList));
         return mongoTemplate.find(query, ProjectStreamEntity.class);
     }
 

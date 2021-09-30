@@ -113,6 +113,11 @@ public class TaskStreamServiceImp implements TaskStreamService {
         return taskStreamDao.selectList(querywrapper.in("id", Arrays.asList(ids)));
     }
 
+    @Override
+    public List<TaskStreamEntity> getTaskStreamListByTaskName(String taskName) {
+        QueryWrapper<TaskStreamEntity> querywrapper = new QueryWrapper<>();
+        return  taskStreamDao.selectList(querywrapper.in("task_name", taskName).notIn("status",0,4));
+    }
 
 
 }

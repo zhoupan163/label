@@ -1,17 +1,19 @@
 package com.pxing.label.business.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.mongodb.bulk.BulkWriteResult;
-import com.mongodb.client.result.UpdateResult;
+
 import com.pxing.label.business.dao.TaskStreamDao;
 import com.pxing.label.business.domain.entity.TaskImageEntity;
 import com.pxing.label.business.domain.entity.TaskStreamEntity;
 import com.pxing.label.business.domain.vo.*;
 import com.pxing.label.business.service.LabelCheckService;
 
-import com.pxing.label.business.service.LabelStreamService;
+
 import com.pxing.label.business.service.TaskDetailService;
-import com.pxing.label.business.service.TaskStreamService;
+import com.alibaba.fastjson.JSONArray;
+import com.pxing.label.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -47,12 +49,13 @@ public class LabelCheckServiceImp implements LabelCheckService {
     }
 
     @Override
-    public int qa(LabelImageCheck labelImageCheck) {
+    public int qa(LabelImageCheck labelImageCheck, String userName) {
         List<Pair<Query, Update>> updateList = new ArrayList<>();
         BulkOperations operations = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, TaskImageEntity.class);
         List<String> imgList = labelImageCheck.getImgList();
         List<Integer> imgStatusList = labelImageCheck.getImgStatusList();
         List<String> imgQaCommentList = labelImageCheck.getImgQaCommentList();
+        List<JSONArray> jsonArrayList= labelImageCheck.getQaArray();
         String taskName = labelImageCheck.getTaskName();
         String streamId = labelImageCheck.getStreamId();
         String qaType = labelImageCheck.getQaType();
@@ -65,29 +68,27 @@ public class LabelCheckServiceImp implements LabelCheckService {
 
             int status=  imgStatusList.get(i);
             String comment= imgQaCommentList.get(i);
+            JSONArray array= jsonArrayList.get(i);
             Update update = new Update();
-            update.set("qa_comment", comment );
             update.set("status", status);
-            if (status==5){
+
+            JSONObject qaJson= new JSONObject();
+            qaJson.put("user", userName);
+            qaJson.put("type", labelImageCheck.getQaType());
+            qaJson.put("comment", comment);
+            qaJson.put("time", DateUtils.getTime());
+
+
+            if (status==4){
+                update.inc("reject_count",1);
+                qaJson.put("action", "reject");
                 rejectCount+=1;
             }else{
                 passCount+=1;
+                qaJson.put("action", "pass");
             }
-            //审核不通过
-            /*
-
-            if (imgStatusList.get(i).equals("4")) {
-                update.set("status", 4);
-            } else {
-                if (qaType.equals("qa1")) {
-
-                    update.set("status", 2);
-                } else {
-                    update.set("status", 3);
-                }
-            };
-            *
-             */
+            array.add(qaJson);
+            update.set("qa_comment", array);
 
             Pair<Query, Update> updatePair = Pair.of(query, update);
             updateList.add(updatePair);
@@ -119,7 +120,6 @@ public class LabelCheckServiceImp implements LabelCheckService {
                     updateWrapper.set("status", 3);
                 }
             }
-            int a=10/0;
             return taskStreamDao.update(null, updateWrapper);
         }
     }

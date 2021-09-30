@@ -50,7 +50,7 @@ public class LabelViaServiceImp implements LabelViaService {
         if(streamId!=null && streamId.equals("")){
             Criteria criteria=  Criteria.where("task_name").is(taskName).and(type).is(userName);
             if(type!=null && type.equals("label")){
-                criteria.and("status").is(0);
+                criteria.and("status").in(0,4);
             }else if(type!=null && type.equals("qa1")){
                 criteria.and("status").is(1);
             }else if(type!=null && type.equals("qa2")){
@@ -70,15 +70,13 @@ public class LabelViaServiceImp implements LabelViaService {
         JSONObject via_img_metadata= new JSONObject();
         //获取图片
         List<String> imageList= new ArrayList<>();
-        List<String> qaCommentList= new ArrayList<>();
+        List<JSONArray> qaComment= new ArrayList<>();
         List<Integer> imgStatusList= new ArrayList<>();
         for(TaskImageEntity taskImageEntity : taskImageEntityList){
             String imageUrl= taskImageEntity.getJpgUrl();
             imageList.add(imageUrl);
-            qaCommentList.add(taskImageEntity.getQaComment());
-
+            qaComment.add(taskImageEntity.getQaComment());
             imgStatusList.add(Integer.valueOf(taskImageEntity.getStatus()));
-
             JSONObject jsonObject= new JSONObject();
             jsonObject.put("filename", imageUrl);
             jsonObject.put("size", -1);
@@ -88,7 +86,7 @@ public class LabelViaServiceImp implements LabelViaService {
         };
 
         labelViaProjectVo.setVia_image_id_list(imageList);
-        labelViaProjectVo.setQa_comment_list(qaCommentList);
+        labelViaProjectVo.setQaArray(qaComment);
         labelViaProjectVo.setImg_status_list(imgStatusList);
         labelViaProjectVo.setVia_img_metadata(via_img_metadata);
 

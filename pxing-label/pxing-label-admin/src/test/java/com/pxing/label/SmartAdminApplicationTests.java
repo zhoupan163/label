@@ -1,6 +1,7 @@
 package com.pxing.label;
 
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.mongodb.client.result.UpdateResult;
@@ -14,6 +15,7 @@ import com.pxing.label.business.domain.vo.LabelViaProjectVo;
 import com.pxing.label.business.service.LabelStreamService;
 import com.pxing.label.business.service.LabelTaskService;
 import com.pxing.label.business.service.LabelViaService;
+import com.pxing.label.common.utils.DateUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,12 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -75,6 +83,18 @@ public class SmartAdminApplicationTests {
     @Test
     public  void test3(){
         //labelTaskService.insertLabelTaskViaInfo(new LabelTaskViaVo());
+        JSONArray jsonArray= new JSONArray();
+        JSONObject j= new JSONObject();
+        j.put("type","qa1");
+        j.put("user","admin");
+
+        JSONObject j1= new JSONObject();
+        j1.put("type","qa2");
+        j1.put("user","admin");
+        jsonArray.add(j);
+        jsonArray.add(j1);
+        System.out.println(jsonArray);
+        System.out.println("haha");
     }
 
 
@@ -101,10 +121,31 @@ public class SmartAdminApplicationTests {
 
     @Test
     public  void test5(){
-        String taskName="pedestrian_reid";
-        String streamId="4134cf44-ffd4-11eb-92e8-000c293913c8";
-        //labelViaService.insertSreamViaProject(streamId,taskName);
+        Query query=Query.query(Criteria.where("task_name").is("test"));
+        Update update=new Update();
+        JSONArray jsonArray= new JSONArray();
+        JSONObject qaJson= new JSONObject();
+        qaJson.put("user","admin");
+        qaJson.put("type", "qa1");
+        qaJson.put("comment", "框的位置不太对");
+        qaJson.put("time", DateUtils.getTime());
+        qaJson.put("action", "reject");
 
+        JSONObject qaJson1= new JSONObject();
+        qaJson1.put("user","test01");
+        qaJson1.put("type", "qa2");
+        qaJson1.put("comment", "标的没问题");
+        qaJson1.put("time", DateUtils.getTime());
+        qaJson1.put("action", "pass");
+
+        jsonArray.add(qaJson);
+        jsonArray.add(qaJson1);
+        update.set("qa_comment",jsonArray);
+        long a= mongoTemplate.updateFirst(query, update, TaskImageEntity.class).getModifiedCount();
+        System.out.println(a);
+        Update update1=new Update();
+        long b= mongoTemplate.updateFirst(query, update1, TaskImageEntity.class).getModifiedCount();
+        System.out.println(b);
     }
 
     @Test
@@ -190,6 +231,31 @@ public class SmartAdminApplicationTests {
             //imageEntity.setCreateBy("admin");
             imageDao.insert(imageEntity);
          }
+    }
+
+    @Test
+    public void testDownLoad() throws IOException {
+        URL url1 = new URL("http://10.66.33.113:8080/dataset/jpg/camera_body_front_center_rgb/20210928/990ac49e-211c-11ec-92ea-000c293913c8/99e19bd6-211c-11ec-92ea-000c293913c8.jpg");
+        URLConnection uc = url1.openConnection();
+        InputStream inputStream = uc.getInputStream();
+
+        FileOutputStream out = new FileOutputStream("/home/zhoup/Downloads/1.jpg");
+        int j = 0;
+        while ((j = inputStream.read()) != -1) {
+            out.write(j);
+        }
+
+        File f = new File("/home/zhoup/Downloads/aa/aa/aa", "1.txt");
+        if (f.exists()) {
+            // 文件已经存在，输出文件的相关信息
+            System.out.println(f.getAbsolutePath());
+            System.out.println(f.getName());
+            System.out.println(f.length());
+        } else {
+            //  先创建文件所在的目录
+            f.getParentFile().mkdirs();
+            inputStream.close();
+        }
     }
 
 

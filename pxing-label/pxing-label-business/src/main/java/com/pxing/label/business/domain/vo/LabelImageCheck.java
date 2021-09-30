@@ -4,6 +4,7 @@ package com.pxing.label.business.domain.vo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import com.alibaba.fastjson.JSONArray;
 
 import java.util.Date;
 import java.util.List;
@@ -36,13 +37,10 @@ public class LabelImageCheck {
     @ApiModelProperty("imgStatusList")
     private List<Integer> imgStatusList;
 
+    @ApiModelProperty("qaArray")
+    private List<JSONArray> qaArray;
+
     @ApiModelProperty("imgQaCommentList")
     private List<String> imgQaCommentList;
-
-
-
-
-
-
 
 }

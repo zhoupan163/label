@@ -389,7 +389,7 @@
       </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="downLoad">下 载</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="cancel6">取 消</el-button>
       </div>
       <pagination
         v-show="total5>0"
@@ -578,6 +578,9 @@ export default {
       this.open = false;
       this.reset();
     },
+    cancel6(){
+      this.open6 = false;
+    },
     // 取消按钮
     cancel4() {
       this.open4 = false;
@@ -684,8 +687,10 @@ export default {
       this.handleQuery();
     },
     filterStream(row){
+      row.projectName="px";
       this.taskName= row.taskName;
       this.groupName= row.groupName;
+      console.log(row);
       getTaggedStreamList(row.projectName, row.taskName).then(response =>{
         this.taggedStreamList= response.rows;
         this.open2= true;
@@ -757,17 +762,17 @@ export default {
             if(true){
               if (taskStreamList[0].status== 4){
                 alert("你有审批驳回的任务，即将跳转标注界面")
-                window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +this.taskName +'&streamId='+ taskStreamList[0].streamId);
+                window.open('http://10.66.33.113:8082//?token=' + token + '&taskName=' +this.taskName +'&streamId='+ taskStreamList[0].streamId);
               }else if(taskStreamList[0].status== 0){
                 alert("你有未完成标注的任务，即将跳转标注界面")
-                window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +this.taskName +'&streamId='+
+                window.open('http://10.66.33.113:8082//?token=' + token + '&taskName=' +this.taskName +'&streamId='+
                   taskStreamList[0].streamId);
               }
             }else{
               alert("图片标注待开发");
               //alert(aa)
             };
-           // window.open('http://10.66.66.121:8082/?token=' + token.toString() + '&taskName=' +row.taskName);
+           // window.open('http://10.66.33.113:8082//?token=' + token.toString() + '&taskName=' +row.taskName);
           }else{
             this.msgInfo("请选定stream标定");
             this.reset();
@@ -787,7 +792,7 @@ export default {
         this.msgSuccess("选定成功，开始标注");
         this.open = false;
         let token=getToken();
-        window.open('http://10.66.66.121:8082/?token=' + token + '&taskName=' +this.taskName +'&streamId=' +row.streamId);
+        window.open('http://10.66.33.113:8082//?token=' + token + '&taskName=' +this.taskName +'&streamId=' +row.streamId);
       });
     },
     submitForm: function() {
@@ -840,7 +845,7 @@ export default {
           if(this.taskStreamList.length>0){
             //this.msgInfo("此任务下未你有未完成审核的stream，即将跳转审核界面");
             alert("此任务下未你有未完成审核的图片，即将跳转审核界面");
-            window.open('http://10.66.66.121:8082/check.html?taskName=' + row.taskName + "&qa_type="+
+            window.open('http://10.66.33.113:8082//check.html?taskName=' + row.taskName + "&qa_type="+
               this.qa_type+ '&streamId=' +this.taskStreamList[0].streamId + "&token="+ token);
           }else{
             //this.reset();
@@ -862,7 +867,7 @@ export default {
         this.msgSuccess("选定成功，开始审核");
         this.open5 = false;
         let token=getToken();
-        window.open('http://10.66.66.121:8082/check.html?taskName=' + row.taskName + "&qa_type="+ this.qa_type +'' +
+        window.open('http://10.66.33.113:8082//check.html?taskName=' + row.taskName + "&qa_type="+ this.qa_type +'' +
           '&streamId=' +row.streamId+ "&token="+ token);
       })
     },
@@ -879,7 +884,7 @@ export default {
     view(row){
       this.open6 = false;
       let token=getToken();
-      window.open('http://10.66.66.121:8082/check.html?taskName=' + row.taskName + "&qa_type="+ "view" +'' +
+      window.open('http://10.66.33.113:8082//check.html?taskName=' + row.taskName + "&qa_type="+ "view" +'' +
         '&streamId='+ row.streamId+ "&token="+ token);
     },
     downLoad(){

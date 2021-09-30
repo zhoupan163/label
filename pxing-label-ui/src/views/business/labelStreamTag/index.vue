@@ -1,43 +1,51 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" v-show="showSearch" :inline="true">
-      <el-form-item label="任务名称" prop="taskName">
-        <el-input
-          v-model="queryParams.taskName"
-          placeholder="请输入任务名称"
-          clearable
-          size="small"
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="关联项目id" prop="projectId">
-        <el-input
-          v-model="queryParams.projectId"
-          placeholder="请输入项目id"
-          clearable
-          size="small"
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="任务类型" prop="status">
+      <el-form-item label="项目名称" prop="status">
         <!--参考激活或者什么-->
         <el-select
-          v-model="queryParams.status"
-          placeholder="视频 图片 点云"
+          v-model="queryParams.projectName"
+          placeholder="请选择"
           clearable
           size="small"
           style="width: 240px"
         >
           <el-option
-            v-for="dict in typeOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
+            v-for="item in projectList"
+            :key="item.projectName"
+            :label="item.projectName"
+            :value="item.projectName"
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="传感器位置" prop="status">
+        <el-input
+          v-model="queryParams.sensorLocation"
+          placeholder="请输入"
+          clearable
+          size="small"
+          style="width: 240px"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="标记状态" prop="status">
+        <!--参考激活或者什么-->
+        <el-select
+          v-model="queryParams.tagStatus"
+          placeholder="请选择"
+          clearable
+          size="small"
+          style="width: 240px"
+        >
+          <el-option
+            v-for="item in tagStatusOptions"
+            :key="item.dictLabel"
+            :label="item.dictLabel"
+            :value="item.dictValue"
+          />
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="创建时间">
         <el-date-picker
           v-model="dateRange"
@@ -125,25 +133,13 @@
             </div>
           </div>
         </el-col>
-        <!--
-        <el-col :span="6">
-          <div class="app2">
-            <div class="tag1" v-for="(value ,key) in tagJson":key="key">
-              <div class= "sence" >{{key}}</div>
-              <div class= "tags" v-for=" tag in value" >
-                <el-checkbox  @change="handleCheckedTag($event, key, tag.id)">{{tag.tagName}}</el-checkbox>
-              </div>
-            </div>
-          </div>
-        </el-col>
-        -->
     </el-row>
       <pagination
         v-show="total>0"
         :total="imageTotal"
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
-        @pagination="getList1()"
+        @pagination="getList()"
       />
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm" >提交</el-button>
@@ -158,27 +154,22 @@
 
 import {
   selectStreamList,
+  listStreamList,
   selectImageListByStreamId,
   selectTagListByProjectName,
   selectTagListByStreamId, addTagStream, updateTagStream
 } from "@/api/business/labelStreamTag"
 import Moment from 'moment'
+import {listLabelProject} from "@/api/business/labelProject"
 export default {
   name: "labelStreamTag",
   data() {
     return {
       // 遮罩层
       loading: true,
-      // 导出遮罩层
-      exportLoading: false,
-      // 选中数组
-      ids: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
       // 显示搜索条件
       showSearch: true,
+      sensorLocationList:["front","back"],
       // 总条数
       total: 0,
       // 任务表格数据
@@ -197,6 +188,7 @@ export default {
       imageList: [],
       imageTableList: [],
       tagStatusDict: {},
+
       tagStatusOptions: [],
       // 弹出层标题
       title: "",
@@ -216,9 +208,9 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        taskName: undefined,
-        projectId: undefined,
-        status: undefined
+        projectName: undefined,
+        tagStatus: undefined,
+        sensorLocation: undefined
       },
       streamId: undefined,
       tagJson: {},
@@ -246,6 +238,10 @@ export default {
   },
   created() {
     this.getList();
+    listLabelProject().then(response => {
+      this.projectList= response.rows;
+    });
+    console.log(this.projectList);
     this.getDicts("tag_status").then(response => {
       this.tagStatusOptions = response.data;
       console.log(this.tagStatusOptions);
@@ -255,10 +251,8 @@ export default {
     });
   },
   methods: {
-    /** 查询任务列表 */
-    getList1(){
-      this.imageTableList= this.imageList.slice((this.queryParams.pageNum-1)*this.queryParams.pageSize, this.queryParams
-        .pageNum*this.queryParams.pageSize)
+    handleSelectionChange(){
+
     },
     handleCheckedTag(value ,key, tag){
       if(value){
@@ -277,7 +271,8 @@ export default {
         })
       });
       this.loading = true;
-      selectStreamList().then(
+      console.log(this.addDateRange(this.queryParams, this.dateRange));
+      listStreamList(this.addDateRange(this.queryParams, this.dateRange)).then(
         response => {
           this.streamList = response.rows;
           this.total = response.total;
@@ -287,7 +282,6 @@ export default {
     },
     //时间戳转换方法
     formatDate(stamp) {
-
        var date = new Date(stamp);
        const time = Moment(date*1000).format('YYYY-MM-DD HH:mm:ss')
        return time;
@@ -365,7 +359,6 @@ export default {
           .pageNum*this.queryParams.pageSize)
         this.open = true;
       });
-
       if(type== "edit"){
         selectTagListByStreamId(row.streamId).then(response => {
           this.tagIdList=response.rows.map(item=> item.tagId);

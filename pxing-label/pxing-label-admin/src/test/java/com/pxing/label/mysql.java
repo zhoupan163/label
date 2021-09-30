@@ -5,7 +5,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import java.sql.SQLException;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class mysql {
@@ -20,6 +21,8 @@ public class mysql {
 	private static String jdbcName = "com.mysql.cj.jdbc.Driver";
 	public static void main(String[] args) {
 		try {
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+			System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
 			Class.forName(jdbcName);
 			System.out.println("加载驱动成功！");
 		} catch (ClassNotFoundException e) {

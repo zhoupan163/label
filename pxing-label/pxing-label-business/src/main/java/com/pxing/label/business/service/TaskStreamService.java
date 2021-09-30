@@ -22,4 +22,5 @@ public interface TaskStreamService {
 
     List<TaskStreamEntity> getTaskStreamListByIds(Long[] ids);
 
+    List<TaskStreamEntity> getTaskStreamListByTaskName(String taskName);
 }

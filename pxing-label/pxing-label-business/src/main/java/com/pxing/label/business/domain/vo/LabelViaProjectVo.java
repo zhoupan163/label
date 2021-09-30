@@ -1,5 +1,6 @@
 package com.pxing.label.business.domain.vo;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -44,8 +45,8 @@ public class LabelViaProjectVo {
     @ApiModelProperty("via_image_id_list")
     private List<String> via_image_id_list;
 
-    @ApiModelProperty("qa_comment_list")
-    private List<String> qa_comment_list;
+    @ApiModelProperty("qa_array")
+    private List<JSONArray> qaArray;
 
     @ApiModelProperty("qa_status_list")
     private List<Integer> img_status_list;

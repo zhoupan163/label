@@ -1,5 +1,6 @@
 package com.pxing.label.business.domain.entity;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -60,7 +61,10 @@ public class TaskImageEntity {
     private String qa2;
 
     @ApiModelProperty("qaComment")
-    private String qaComment;
+    private JSONArray qaComment;
+
+    @ApiModelProperty("reject_count")
+    private JSONArray rejectCount;
 
     @ApiModelProperty("标注属性")
     private List<JSONObject> annotationInfo;

@@ -40,7 +40,7 @@ public class LabelAnnotionToMott {
             if(cropJson.containsKey("0")){
                 crop= "0";
             }else{
-                crop= String.join(",", cropJson.keySet());
+                crop= String.join("", cropJson.keySet());
             }
 
             String id= regionAttributes.getString("id");

@@ -4,6 +4,7 @@ package com.pxing.label.business.service.impl;
 
 
 
+import com.alibaba.fastjson.JSONArray;
 import com.pxing.label.business.domain.entity.ImageEntity;
 import com.pxing.label.business.domain.entity.TaskImageEntity;
 import com.pxing.label.business.service.ImageService;
@@ -53,6 +54,7 @@ public class TaskImageServiceImp implements TaskImageService {
               taskImageEntity.setQa2("");
               taskImageEntity.setAnnotationInfo(new ArrayList<>());
               taskImageEntityList.add(taskImageEntity);
+              taskImageEntity.setQaComment(new JSONArray());
           }
           mongoTemplate.insert(taskImageEntityList, TaskImageEntity.class);
     }
@@ -106,7 +108,7 @@ public class TaskImageServiceImp implements TaskImageService {
     public int checkTaskImage(String taskName, String type, String username) {
         Criteria criteria= Criteria.where("task_name").is(taskName).and(type).is(username);
         if(type!=null && type.equals("label")){
-            criteria.and("status").is(0);
+            criteria.and("status").in(0,4);
         }else if(type!=null && type.equals("qa1")){
             criteria.and("status").is(1);
         }else if(type!=null && type.equals("qa2")){

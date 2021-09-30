@@ -7,6 +7,8 @@ import com.pxing.label.business.service.*;
 import com.pxing.label.common.core.controller.BaseController;
 import com.pxing.label.common.core.domain.AjaxResult;
 import com.pxing.label.common.core.page.TableDataInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 项目信息
@@ -24,6 +27,8 @@ import java.util.List;
 @RequestMapping("/business/labelStreamTag/")
 public class LabelStreamTagController extends BaseController
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LabelStreamTagController.class);
+
     @Autowired
     private StreamService streamService;
 
@@ -55,10 +60,11 @@ public class LabelStreamTagController extends BaseController
      * 获取stream列表
      */
     //@PreAuthorize("@ss.hasPermi('business:labelTag:list')")
-    @GetMapping("/selectStreamList")
-    public TableDataInfo selectStreamList()
+    @GetMapping("list")
+    public TableDataInfo selectStreamList(Map<String,Object> map)
     {
         startPage();
+        logger.info(map.toString());
         List<ProjectStreamEntity> list = streamService.selectStreamList();
         return getDataTable(list);
     }

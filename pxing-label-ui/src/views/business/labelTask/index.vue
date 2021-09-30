@@ -85,6 +85,14 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.type== 0"
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="downloadTask(scope.row)"
+            v-hasPermi="['business:labelTask:download']"
+          >下载</el-button>
+          <el-button
             v-if="scope.row.type!= 0"
             size="mini"
             type="text"
@@ -262,8 +270,10 @@ import {
   listLabelTask, getkUnfinishedTaskStream, assignTaskStream, addLabelTask,
   getTaggedStreamList, addTaskStream, getUnAssignedTaskStream, getTaskDetail, pullTaskImage, checkTaskImage
 } from "@/api/business/labelTask"
+
 import { getToken } from "@/utils/auth";
 import {listLabelProject} from "@/api/business/labelProject";
+import {downLoadStreamData, downLoadTaskData} from "@/api/business/labelData";
 
 
 
@@ -379,6 +389,22 @@ export default {
     handleSelectionChange(){
     },
     /** 查询任务列表 */
+    downloadTask(row){
+      downLoadTaskData(row.taskName).then(
+        response =>{
+          this.open6 = false;
+          const aLink =document.createElement('a')
+          const blob = new Blob([response], { type: 'application/zip' })
+          let fileName =`${row.taskName}`
+          //let fileName = this.taskStreams[0].groupName
+          aLink.href = window.URL.createObjectURL(blob)
+          aLink.setAttribute('download', fileName)
+          document.body.appendChild(aLink)
+          aLink.click()
+          document.body.appendChild(aLink)
+        }
+      );
+    },
     getList() {
       listLabelProject().then(response => {
         this.projectOptions= response.rows;
@@ -476,10 +502,10 @@ export default {
           alert("存在未完成的图片");
           let token=getToken();
           if(type=="label"){
-            window.open('http://10.66.65.141:8080/via-src-2.0.11/src/split.html?token=' + token + '&taskName='+
+            window.open('http://10.66.33.113:8082//split.html?token=' + token + '&taskName='+
               row.taskName+ '&type=' + type);
           }else{
-            window.open('http://10.66.65.141:8080/via-src-2.0.11/src/check.html?token=' + token + '&taskName='+
+            window.open('http://10.66.33.113:8082//check.html?token=' + token + '&taskName='+
               row.taskName+ '&qa_type=' + type +"&streamId="+ "");
           }
           return;
@@ -525,10 +551,10 @@ export default {
             let token= getToken();
             this.open3= false;
             if(this.form3.type=="label"){
-              window.open('http://10.66.65.141:8080/via-src-2.0.11/src/split.html?token=' + token + '&taskName='+
+              window.open('http://10.66.33.113:8082//split.html?token=' + token + '&taskName='+
                 this.form3.taskName+ '&type=' + this.form3.type + "&streamId=" );
             }else {
-              window.open('http://10.66.65.141:8080/via-src-2.0.11/src/check.html?token=' + token + '&taskName=' +
+              window.open('http://10.66.33.113:8082//check.html?token=' + token + '&taskName=' +
                 this.form3.taskName + '&qa_type=' + this.form3.type+ "&streamId=");
             }
           });

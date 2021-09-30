@@ -20,8 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,9 +34,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/business/labelData")
-public class LabelDataController extends BaseController
-{
-
+public class LabelDataController extends BaseController {
 
 
     @Autowired
@@ -48,45 +47,32 @@ public class LabelDataController extends BaseController
     @ApiOperation(value = "下载压缩包")
     public void getZip(@RequestParam("taskName") String taskName, HttpServletResponse response) throws Exception {
 
-        List<TaskStreamEntity> taskStreamEntityList= taskStreamService.getFinishedTaskStream(taskName, "");
-        //List<Long> streamIdList= taskStreamEntityList.stream().map(TaskStreamEntity::getStreamId).collect(Collectors.toList());
-        List<String> streamIdList= new ArrayList<>();
-         //图片
-        List<TaskImageEntity> list= taskImageService.getFinishedImageList(taskName, streamIdList);
-        Map<String, InputStream> map=new HashMap<>();
-        Map<String,Set<String>> streamMap= new HashMap<>();
-        Set<String> result = new HashSet<>();
+        List<TaskStreamEntity> taskStreamEntityList = taskStreamService.getTaskStreamListByTaskName(taskName);
+        Map<String, InputStream> map = new HashMap<>();
+        int a=0;
+        for (TaskStreamEntity taskStreamEntity : taskStreamEntityList) {
+            List<TaskImageEntity> taskImageEntityList = taskImageService.getTaskImageEntityList(taskStreamEntity.getTaskName(), taskStreamEntity.getStreamId());
+            for (TaskImageEntity taskImageEntity : taskImageEntityList) {
+                //数据为空的图片直接跳过
+                if (taskImageEntity.getAnnotationInfo().size() < 1) {
+                    continue;
+                }
+                ;
+                List<String> list1 = LabelAnnotionToMott.getMott(taskImageEntity);
+                InputStream txt = new ByteArrayInputStream(list1.get(0).getBytes(StandardCharsets.UTF_8));
+                InputStream png = HttpUtils.getInputStream(taskImageEntity.getPngUrl());
 
-        for(TaskImageEntity taskImageEntity: list){
-             List<String> list1= LabelAnnotionToMott.getMott(taskImageEntity);
-             String ids= list1.get(1);
-             List<String> idList= Arrays.asList(ids.split(" "));
-             String streamId= String.valueOf(taskImageEntity.getStreamId());
-             Set<String> idSet= idList.stream().collect(Collectors.toSet());
-
-             if (!streamMap.containsKey(streamId)){
-                 streamMap.put(streamId, idSet);
-             }else{
-                 Set<String> oldSet= streamMap.get(streamId);
-                 //idSet.addAll(oldSet);
-                 result.clear();
-                 result.addAll(oldSet);
-                 result.addAll(idSet);
-                 streamMap.put(streamId, result);
-             };
-             InputStream txt= new ByteArrayInputStream(list1.get(0).getBytes(StandardCharsets.UTF_8));
-             InputStream png= HttpUtils.getInputStream(taskImageEntity.getPngUrl());
-
-             //map.put("motTxt/"+ taskImageEntity.getStream_id()+ "/"+ taskImageEntity.getImageId()+".txt",  txt);
-             //map.put("png/"+ taskImageEntity.getStream_id() +"/" + taskImageEntity.getImageId()+ ".png", png);
-        };
-        for(String streamId : streamMap.keySet()){
-            map.put("motTxt/"+ streamId+ "/"+ "idCount.txt",  new ByteArrayInputStream(String.valueOf(streamMap.get(streamId).size())
-                    .getBytes(StandardCharsets.UTF_8)));
+                String folder = taskImageEntity.getTaskName() + "/" + taskStreamEntity.getGroupName() + "/" + taskImageEntity.getStreamId()
+                        + "/" + taskImageEntity.getImageId();
+                map.put("motTxt/" + folder + ".txt", txt);
+                downLoadPng(png, "/home/zhoup/Downloads/"+ folder+".png");
+                a++;
+                System.out.println("第"+a+"张");
+               // map.put("png/" + folder + ".png", png);
+            }
         }
-        ZipUtils.doZip("demo.zip",map,response);
+        ZipUtils.doZip("demo.zip", map, response);
     }
-
 
     @GetMapping("/getStreamData/{ids}")
     @ApiOperation(value = "下载压缩包")
@@ -94,6 +80,7 @@ public class LabelDataController extends BaseController
     public void getStreamZip(@PathVariable Long[] ids , HttpServletResponse response) throws Exception {
         List<TaskStreamEntity> taskStreamEntityList= taskStreamService.getTaskStreamListByIds(ids);
         Map<String, InputStream> map=new HashMap<>();
+
 
         for(TaskStreamEntity taskStreamEntity: taskStreamEntityList){
             List<TaskImageEntity> taskImageEntityList= taskImageService.getTaskImageEntityList(taskStreamEntity.getTaskName(), taskStreamEntity.getStreamId());
@@ -108,10 +95,35 @@ public class LabelDataController extends BaseController
 
                 String folder= taskImageEntity.getTaskName()+ "/" + taskStreamEntity.getGroupName()+ "/"+ taskImageEntity.getStreamId()
                         + "/"+ taskImageEntity.getImageId();
+
                 map.put("motTxt/"+ folder + ".txt",  txt);
                 map.put("png/"+ folder + ".png", png);
             }
         }
         ZipUtils.doZip("demo.zip",map,response);
+    }
+
+    public void downLoadPng(InputStream inputStream, String folder) throws IOException {
+        System.out.println(folder);
+        mkdir(folder);
+        FileOutputStream out = new FileOutputStream(folder);
+        int j = 0;
+        while ((j = inputStream.read()) != -1) {
+            out.write(j);
+        }
+        inputStream.close();
+    }
+
+    public void mkdir(String folder){
+        File f = new File(folder);
+        if (f.exists()) {
+            // 文件已经存在，输出文件的相关信息
+            System.out.println(f.getAbsolutePath());
+            System.out.println(f.getName());
+            System.out.println(f.length());
+        } else {
+            //  先创建文件所在的目录
+            f.getParentFile().mkdirs();
+        }
     }
 }

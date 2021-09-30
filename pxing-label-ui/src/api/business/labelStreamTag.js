@@ -9,10 +9,11 @@ export function selectUnTaggedImageList(streamId) {
 }
 
 // 查询stream
-export function selectStreamList() {
+export function listStreamList(query) {
   return request({
-    url: '/business/labelStreamTag/selectStreamList',
-    method: 'get'
+    url: '/business/labelStreamTag/list',
+    method: 'get',
+    params: query
   })
 }
 

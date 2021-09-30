@@ -24,6 +24,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -57,8 +58,10 @@ public class LabelCheckController extends BaseController
     // 审核操作
     @PostMapping("/qa")
     @ResponseBody
-    public AjaxResult qa(@RequestBody LabelImageCheck labelImageCheck)
+    public AjaxResult qa(@RequestBody LabelImageCheck labelImageCheck, HttpServletRequest request)
     {
-        return toAjax(labelCheckService.qa(labelImageCheck));
+        LoginUser loginUser= tokenService.getLoginUser(request);
+        String  userName=loginUser.getUser().getUserName();
+        return toAjax(labelCheckService.qa(labelImageCheck, userName));
     }
 }

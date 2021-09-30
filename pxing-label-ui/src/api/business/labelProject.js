@@ -7,7 +7,7 @@ export function listLabelProject() {
     method: 'get'
   })
 }
-// 新增用户
+// 新增工程
 export function addLabelProject(data) {
   return request({
     url: '/business/labelProject/',
