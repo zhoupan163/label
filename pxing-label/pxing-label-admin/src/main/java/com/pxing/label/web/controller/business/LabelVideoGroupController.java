@@ -1,6 +1,8 @@
 package com.pxing.label.web.controller.business;
 
 
+import com.pxing.label.business.domain.dto.ProjectStreamDto;
+import com.pxing.label.business.domain.dto.TaskGroupDto;
 import com.pxing.label.business.domain.entity.TaskEntity;
 import com.pxing.label.business.domain.entity.VideoGroupEntity;
 import com.pxing.label.business.domain.vo.LabelTaskVo;
@@ -41,8 +43,8 @@ public class LabelVideoGroupController extends BaseController
     @Autowired
     private TokenService tokenService;
 
-    @GetMapping("/list")
-    public TableDataInfo list()
+    @PostMapping("/list")
+    public TableDataInfo list(@RequestBody TaskGroupDto taskGroupDto)
     {
         startPage();
         LOGGER.info("获取group组");
@@ -51,7 +53,7 @@ public class LabelVideoGroupController extends BaseController
         LOGGER.info("INFO 级别日志");
         LOGGER.debug("DEBUG 级别日志");
         LOGGER.trace("TRACE 级别日志");
-        List<VideoGroupEntity> videoGroupEntityList= videoGroupService.selectVideoGroupList();
+        List<VideoGroupEntity> videoGroupEntityList= videoGroupService.selectVideoGroupList(taskGroupDto);
         return getDataTable( videoGroupEntityList);
     }
 

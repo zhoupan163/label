@@ -48,6 +48,12 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         return dateTimeNow(YYYY_MM_DD);
     }
 
+    /**
+     * 获取时间long类型
+     * @return Long
+     */
+    public static Long getTimeStamp(String timeStr){ return  getTimeStamp(YYYY_MM_DD_HH_MM_SS,timeStr)/1000;}
+
     public static final String getTime()
     {
         return dateTimeNow(YYYY_MM_DD_HH_MM_SS);
@@ -78,6 +84,21 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         try
         {
             return new SimpleDateFormat(format).parse(ts);
+        }
+        catch (ParseException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static final  Long getTimeStamp(final String format, final String ts)
+    {
+        try
+        {
+            //SimpleDateFormat format=new SimpleDateFormat(format)
+            Date date = new SimpleDateFormat(format).parse(ts);
+            Long timestamp=date.getTime();
+            return timestamp ;
         }
         catch (ParseException e)
         {

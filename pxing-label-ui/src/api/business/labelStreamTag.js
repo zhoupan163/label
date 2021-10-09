@@ -12,8 +12,8 @@ export function selectUnTaggedImageList(streamId) {
 export function listStreamList(query) {
   return request({
     url: '/business/labelStreamTag/list',
-    method: 'get',
-    params: query
+    method: 'post',
+    data: query
   })
 }
 

@@ -11,44 +11,27 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="关联项目id" prop="projectId">
+      <el-form-item label="视频组名称" prop="groupName">
         <el-input
-          v-model="queryParams.projectId"
-          placeholder="请输入项目id"
+          v-model="queryParams.groupName"
+          placeholder="请输入视频组名称"
           clearable
           size="small"
           style="width: 240px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="任务类型" prop="status">
-        <!--参考激活或者什么-->
-        <el-select
-          v-model="queryParams.status"
-          placeholder="视频 图片 点云"
-          clearable
-          size="small"
-          style="width: 240px"
-        >
-          <el-option
-            v-for="dict in typeOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
-          v-model="dateRange"
-          size="small"
-          style="width: 240px"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
+          v-model="queryParams.dateRange"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          type="datetimerange"
+          :picker-options="pickerOptions"
+          range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-        ></el-date-picker>
+          align="right">
+        </el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -492,8 +475,8 @@ export default {
         pageNum: 1,
         pageSize: 10,
         taskName: undefined,
-        projectId: undefined,
-        status: undefined
+        groupName: undefined,
+        dateRange: []
       },
       // 表单参数
       form: {},
@@ -552,7 +535,8 @@ export default {
   methods: {
     /** 查询任务列表 */
     getList() {
-      listVideoGroup(this.addDateRange(this.queryParams, this.dateRange)).then(
+      console.log(this.queryParams)
+      listVideoGroup(this.queryParams).then(
         response => {
           this.groupList = response.rows;
           this.total = response.total;
@@ -762,17 +746,17 @@ export default {
             if(true){
               if (taskStreamList[0].status== 4){
                 alert("你有审批驳回的任务，即将跳转标注界面")
-                window.open('http://10.66.33.113:8082//?token=' + token + '&taskName=' +this.taskName +'&streamId='+ taskStreamList[0].streamId);
+                window.open('http://10.66.65.141:8080/via-src-2.0.11/src/?token=' + token + '&taskName=' +this.taskName +'&streamId='+ taskStreamList[0].streamId);
               }else if(taskStreamList[0].status== 0){
                 alert("你有未完成标注的任务，即将跳转标注界面")
-                window.open('http://10.66.33.113:8082//?token=' + token + '&taskName=' +this.taskName +'&streamId='+
+                window.open('http://10.66.65.141:8080/via-src-2.0.11/src/?token=' + token + '&taskName=' +this.taskName +'&streamId='+
                   taskStreamList[0].streamId);
               }
             }else{
               alert("图片标注待开发");
               //alert(aa)
             };
-           // window.open('http://10.66.33.113:8082//?token=' + token.toString() + '&taskName=' +row.taskName);
+           // window.open('http://10.66.65.141:8080/via-src-2.0.11/src/?token=' + token.toString() + '&taskName=' +row.taskName);
           }else{
             this.msgInfo("请选定stream标定");
             this.reset();
@@ -792,7 +776,7 @@ export default {
         this.msgSuccess("选定成功，开始标注");
         this.open = false;
         let token=getToken();
-        window.open('http://10.66.33.113:8082//?token=' + token + '&taskName=' +this.taskName +'&streamId=' +row.streamId);
+        window.open('http://10.66.65.141:8080/via-src-2.0.11/src/?token=' + token + '&taskName=' +this.taskName +'&streamId=' +row.streamId);
       });
     },
     submitForm: function() {
@@ -806,6 +790,7 @@ export default {
               this.getList();
             });
           }
+          this.open1 = false;
         }
       });
     },
@@ -845,7 +830,7 @@ export default {
           if(this.taskStreamList.length>0){
             //this.msgInfo("此任务下未你有未完成审核的stream，即将跳转审核界面");
             alert("此任务下未你有未完成审核的图片，即将跳转审核界面");
-            window.open('http://10.66.33.113:8082//check.html?taskName=' + row.taskName + "&qa_type="+
+            window.open('http://10.66.65.141:8080/via-src-2.0.11/src/check.html?taskName=' + row.taskName + "&qa_type="+
               this.qa_type+ '&streamId=' +this.taskStreamList[0].streamId + "&token="+ token);
           }else{
             //this.reset();
@@ -867,7 +852,7 @@ export default {
         this.msgSuccess("选定成功，开始审核");
         this.open5 = false;
         let token=getToken();
-        window.open('http://10.66.33.113:8082//check.html?taskName=' + row.taskName + "&qa_type="+ this.qa_type +'' +
+        window.open('http://10.66.65.141:8080/via-src-2.0.11/src/check.html?taskName=' + row.taskName + "&qa_type="+ this.qa_type +'' +
           '&streamId=' +row.streamId+ "&token="+ token);
       })
     },
@@ -884,7 +869,7 @@ export default {
     view(row){
       this.open6 = false;
       let token=getToken();
-      window.open('http://10.66.33.113:8082//check.html?taskName=' + row.taskName + "&qa_type="+ "view" +'' +
+      window.open('http://10.66.65.141:8080/via-src-2.0.11/src/check.html?taskName=' + row.taskName + "&qa_type="+ "view" +'' +
         '&streamId='+ row.streamId+ "&token="+ token);
     },
     downLoad(){

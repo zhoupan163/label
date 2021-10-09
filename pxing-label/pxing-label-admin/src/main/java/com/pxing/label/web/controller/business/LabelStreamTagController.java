@@ -1,5 +1,6 @@
 package com.pxing.label.web.controller.business;
 
+import com.pxing.label.business.domain.dto.ProjectStreamDto;
 import com.pxing.label.business.domain.entity.*;
 import com.pxing.label.business.domain.vo.LabelTagVo;
 import com.pxing.label.business.domain.vo.StreamTagVo;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -60,12 +62,15 @@ public class LabelStreamTagController extends BaseController
      * 获取stream列表
      */
     //@PreAuthorize("@ss.hasPermi('business:labelTag:list')")
-    @GetMapping("list")
-    public TableDataInfo selectStreamList(Map<String,Object> map)
+    @PostMapping("list")
+    //public TableDataInfo selectStreamList(@Validated @RequestBody ProjectStreamDto projectStreamDto)
+    //{
+   //@GetMapping("list")
+    public TableDataInfo selectStreamList(@RequestBody ProjectStreamDto projectStreamDto)
     {
         startPage();
-        logger.info(map.toString());
-        List<ProjectStreamEntity> list = streamService.selectStreamList();
+       // logger.info(projectStreamDto.getTagStatus().toString());
+        List<ProjectStreamEntity> list = streamService.selectStreamList(projectStreamDto);
         return getDataTable(list);
     }
 

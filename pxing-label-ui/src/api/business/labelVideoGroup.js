@@ -4,8 +4,8 @@ import request from '@/utils/request'
 export function listVideoGroup(query) {
   return request({
     url: '/business/labelVideoGroup/list',
-    method: 'get',
-    params: query
+    method: 'post',
+    data: query
   })
 }
 

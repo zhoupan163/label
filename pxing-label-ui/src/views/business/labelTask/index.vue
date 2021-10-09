@@ -1,17 +1,17 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" v-show="showSearch" :inline="true">
-      <el-form-item label="任务名称" prop="taskName">
+      <el-form-item label="视频组名称" prop="groupName">
         <el-input
-          v-model="queryParams.taskName"
-          placeholder="请输入任务名称"
+          v-model="queryParams.groupName"
+          placeholder="请输入名称"
           clearable
           size="small"
           style="width: 240px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="关联项目id" prop="projectId">
+      <el-form-item label="关联任务名称" prop="taskName">
         <el-input
           v-model="queryParams.projectId"
           placeholder="请输入项目id"
@@ -20,23 +20,6 @@
           style="width: 240px"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="任务类型" prop="status">
-        <!--参考激活或者什么-->
-        <el-select
-          v-model="queryParams.status"
-          placeholder="视频 图片 点云"
-          clearable
-          size="small"
-          style="width: 240px"
-        >
-          <el-option
-            v-for="dict in typeOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
       </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
@@ -135,7 +118,6 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
 
     <!-- 添加task框 -->
     <el-dialog :title="title1" :visible.sync="open1" width="600px" append-to-body>
@@ -418,6 +400,7 @@ export default {
       listLabelTask(this.addDateRange(this.queryParams, this.dateRange)).then(
         response => {
           this.taskList = response.rows;
+          console.log(this.taskList)
           this.total = response.total;
           this.loading = false;
         }
@@ -502,10 +485,15 @@ export default {
           alert("存在未完成的图片");
           let token=getToken();
           if(type=="label"){
-            window.open('http://10.66.33.113:8082//split.html?token=' + token + '&taskName='+
-              row.taskName+ '&type=' + type);
+            if(row.taskName=="split") {
+              window.open('http://10.66.65.141:8080/via-src-2.0.11/src/split.html?token=' + token + '&taskName=' +
+                row.taskName + '&type=' + type);
+            }else{
+              window.open('http://10.66.65.141:8080/via-src-2.0.11/src/availSpace.html?token=' + token + '&taskName=' +
+                row.taskName + '&type=' + type);
+            }
           }else{
-            window.open('http://10.66.33.113:8082//check.html?token=' + token + '&taskName='+
+            window.open('http://10.66.65.141:8080/via-src-2.0.11/src/check.html?token=' + token + '&taskName='+
               row.taskName+ '&qa_type=' + type +"&streamId="+ "");
           }
           return;
@@ -551,10 +539,10 @@ export default {
             let token= getToken();
             this.open3= false;
             if(this.form3.type=="label"){
-              window.open('http://10.66.33.113:8082//split.html?token=' + token + '&taskName='+
+              window.open('http://10.66.65.141:8080/via-src-2.0.11/src/split.html?token=' + token + '&taskName='+
                 this.form3.taskName+ '&type=' + this.form3.type + "&streamId=" );
             }else {
-              window.open('http://10.66.33.113:8082//check.html?token=' + token + '&taskName=' +
+              window.open('http://10.66.65.141:8080/via-src-2.0.11/src/check.html?token=' + token + '&taskName=' +
                 this.form3.taskName + '&qa_type=' + this.form3.type+ "&streamId=");
             }
           });

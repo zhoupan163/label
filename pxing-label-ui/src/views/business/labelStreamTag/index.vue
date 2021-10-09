@@ -46,25 +46,36 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="创建时间">
-        <el-date-picker
-          v-model="dateRange"
+      <el-form-item label="备注信息" >
+        <el-input
+          v-model="queryParams.remark"
+          placeholder="请输入"
+          clearable
           size="small"
           style="width: 240px"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="创建时间">
+        <el-date-picker
+          v-model="queryParams.dateRange"
+          type="datetimerange"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          :picker-options="pickerOptions"
+          range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-        ></el-date-picker>
+          align="right">
+        </el-date-picker>
       </el-form-item>
+
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="streamList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="streamList1" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="streamId" prop="streamId" width="120" />
       <el-table-column label="工程名称" prop="projectName" width="120" />
@@ -137,9 +148,9 @@
       <pagination
         v-show="total>0"
         :total="imageTotal"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
-        @pagination="getList()"
+        :page.sync="queryParams1.pageNum"
+        :limit.sync="queryParams1.pageSize"
+        @pagination="getList2()"
       />
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm" >提交</el-button>
@@ -174,6 +185,7 @@ export default {
       total: 0,
       // 任务表格数据
       streamList: [],
+      streamList1: [],
 
       pId: undefined,
       projectTotal: 0,
@@ -210,7 +222,13 @@ export default {
         pageSize: 10,
         projectName: undefined,
         tagStatus: undefined,
-        sensorLocation: undefined
+        sensorLocation: undefined,
+        dateRange: [],
+        remark: undefined,
+      },
+      queryParams1: {
+        pageNum: 1,
+        pageSize: 10,
       },
       streamId: undefined,
       tagJson: {},
@@ -271,14 +289,24 @@ export default {
         })
       });
       this.loading = true;
-      console.log(this.addDateRange(this.queryParams, this.dateRange));
-      listStreamList(this.addDateRange(this.queryParams, this.dateRange)).then(
+      console.log(this.queryParams);
+      listStreamList(this.queryParams).then(
         response => {
           this.streamList = response.rows;
+          this.getList1()
           this.total = response.total;
-          this.loading = false;
         }
       );
+    },
+    getList1(){
+      this.streamList1= this.streamList.slice(this.queryParams.pageSize * (this.queryParams.pageNum -1),
+        this.queryParams.pageSize * this.queryParams.pageNum)
+      this.loading = false;
+    },
+    getList2(){
+      this.imageTableList= this.imageList.slice((this.queryParams1.pageNum-1)*this.queryParams1.pageSize, this.queryParams1
+        .pageNum*this.queryParams1.pageSize)
+      this.open = true;
     },
     //时间戳转换方法
     formatDate(stamp) {
@@ -355,9 +383,7 @@ export default {
       selectImageListByStreamId(row.streamId).then(response => {
         this.imageList= response.rows;
         this.imageTotal= response.total;
-        this.imageTableList= this.imageList.slice((this.queryParams.pageNum-1)*this.queryParams.pageSize, this.queryParams
-          .pageNum*this.queryParams.pageSize)
-        this.open = true;
+        this.getList2();
       });
       if(type== "edit"){
         selectTagListByStreamId(row.streamId).then(response => {
