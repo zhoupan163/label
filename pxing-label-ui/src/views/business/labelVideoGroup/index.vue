@@ -52,7 +52,7 @@
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="groupList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="groupList1" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="组编号" prop="id" width="120" />
       <el-table-column label="组名称" prop="groupName" :show-overflow-tooltip="true" width="150" />
@@ -117,7 +117,7 @@
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
-      @pagination="getList"
+      @pagination="getList1"
     />
 
     <!-- 添加或修改任务配置对话框 -->
@@ -423,6 +423,7 @@ export default {
       total: 0,
       // 任务表格数据
       groupList: [],
+      groupList1: [],
       streamList: [],
       taskName: undefined,
 
@@ -540,9 +541,14 @@ export default {
         response => {
           this.groupList = response.rows;
           this.total = response.total;
-          this.loading = false;
+          this.getList1();
         }
       );
+    },
+    getList1(){
+      this.groupList1= this.groupList.slice((this.queryParams.pageNum-1)*this.queryParams.pageSize,
+        this.queryParams.pageNum * this.queryParams.pageSize)
+      this.loading = false;
     },
     /** 查询任务列表 */
     getIdList() {
@@ -746,17 +752,17 @@ export default {
             if(true){
               if (taskStreamList[0].status== 4){
                 alert("你有审批驳回的任务，即将跳转标注界面")
-                window.open('http://10.66.65.141:8080/via-src-2.0.11/src/?token=' + token + '&taskName=' +this.taskName +'&streamId='+ taskStreamList[0].streamId);
+                window.open(this.labelUrl + '/?token=' + token + '&taskName=' +this.taskName +'&streamId='+ taskStreamList[0].streamId);
               }else if(taskStreamList[0].status== 0){
                 alert("你有未完成标注的任务，即将跳转标注界面")
-                window.open('http://10.66.65.141:8080/via-src-2.0.11/src/?token=' + token + '&taskName=' +this.taskName +'&streamId='+
+                window.open(this.labelUrl + '/?token=' + token + '&taskName=' +this.taskName +'&streamId='+
                   taskStreamList[0].streamId);
               }
             }else{
               alert("图片标注待开发");
               //alert(aa)
             };
-           // window.open('http://10.66.65.141:8080/via-src-2.0.11/src/?token=' + token.toString() + '&taskName=' +row.taskName);
+           // window.open(this.labelUrl + '/?token=' + token.toString() + '&taskName=' +row.taskName);
           }else{
             this.msgInfo("请选定stream标定");
             this.reset();
@@ -776,7 +782,7 @@ export default {
         this.msgSuccess("选定成功，开始标注");
         this.open = false;
         let token=getToken();
-        window.open('http://10.66.65.141:8080/via-src-2.0.11/src/?token=' + token + '&taskName=' +this.taskName +'&streamId=' +row.streamId);
+        window.open(this.labelUrl + '/?token=' + token + '&taskName=' +this.taskName +'&streamId=' +row.streamId);
       });
     },
     submitForm: function() {
@@ -830,7 +836,7 @@ export default {
           if(this.taskStreamList.length>0){
             //this.msgInfo("此任务下未你有未完成审核的stream，即将跳转审核界面");
             alert("此任务下未你有未完成审核的图片，即将跳转审核界面");
-            window.open('http://10.66.65.141:8080/via-src-2.0.11/src/check.html?taskName=' + row.taskName + "&qa_type="+
+            window.open(this.labelUrl + '/check.html?taskName=' + row.taskName + "&qa_type="+
               this.qa_type+ '&streamId=' +this.taskStreamList[0].streamId + "&token="+ token);
           }else{
             //this.reset();
@@ -852,7 +858,7 @@ export default {
         this.msgSuccess("选定成功，开始审核");
         this.open5 = false;
         let token=getToken();
-        window.open('http://10.66.65.141:8080/via-src-2.0.11/src/check.html?taskName=' + row.taskName + "&qa_type="+ this.qa_type +'' +
+        window.open(this.labelUrl + '/check.html?taskName=' + row.taskName + "&qa_type="+ this.qa_type +'' +
           '&streamId=' +row.streamId+ "&token="+ token);
       })
     },
@@ -869,7 +875,7 @@ export default {
     view(row){
       this.open6 = false;
       let token=getToken();
-      window.open('http://10.66.65.141:8080/via-src-2.0.11/src/check.html?taskName=' + row.taskName + "&qa_type="+ "view" +'' +
+      window.open(this.labelUrl + '/check.html?taskName=' + row.taskName + "&qa_type="+ "view" +'' +
         '&streamId='+ row.streamId+ "&token="+ token);
     },
     downLoad(){

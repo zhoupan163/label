@@ -16,7 +16,7 @@ import './assets/icons' // icon
 import './permission' // permission control
 import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
-import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels, download, handleTree } from "@/utils/jeethink";
+import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels, download, handleTree ,labelUrl} from "@/utils/jeethink";
 import Pagination from "@/components/Pagination";
 // 自定义表格工具组件
 import RightToolbar from "@/components/RightToolbar"
@@ -41,6 +41,17 @@ Vue.prototype.selectDictLabel = selectDictLabel
 Vue.prototype.selectDictLabels = selectDictLabels
 Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
+
+
+//标注跳转url  后期改造为生产开发测试环境 文件配置方式
+//本地
+Vue.prototype.labelUrl= "http://10.66.65.141:8080/via-src-2.0.11/src"
+//测试环境
+//Vue.prototype.labelUrl= "http://10.66.33.114:8082"
+//生产环境
+//Vue.prototype.labelUrl= "http://10.66.33.113:8082"
+
+
 
 Vue.prototype.msgSuccess = function (msg) {
   this.$message({ showClose: true, message: msg, type: "success" });

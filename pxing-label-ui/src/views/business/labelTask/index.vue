@@ -485,15 +485,15 @@ export default {
           alert("存在未完成的图片");
           let token=getToken();
           if(type=="label"){
-            if(row.taskName=="split") {
-              window.open('http://10.66.65.141:8080/via-src-2.0.11/src/split.html?token=' + token + '&taskName=' +
+            if(row.taskName=="scene_semetic_segmentation") {
+              window.open(this.labelUrl+'/split.html?token=' + token + '&taskName=' +
                 row.taskName + '&type=' + type);
             }else{
-              window.open('http://10.66.65.141:8080/via-src-2.0.11/src/availSpace.html?token=' + token + '&taskName=' +
+              window.open(this.labelUrl+'/availSpace.html?token=' + token + '&taskName=' +
                 row.taskName + '&type=' + type);
             }
           }else{
-            window.open('http://10.66.65.141:8080/via-src-2.0.11/src/check.html?token=' + token + '&taskName='+
+            window.open(this.labelUrl+ '/check.html?token=' + token + '&taskName='+
               row.taskName+ '&qa_type=' + type +"&streamId="+ "");
           }
           return;
@@ -523,32 +523,38 @@ export default {
             addLabelTask(this.form).then(response => {
               this.msgSuccess("新增成功");
               this.form= {};
-              this.open = false;
+              this.open3 = false;
               this.getList();
             });
           }
         }
       });
     },
-    submitForm3(){
+    submitForm3() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           console.log('submit!');
-          pullTaskImage({taskName: this.form3.taskName, number: this.form3.number, type: this.form3.type}).then(response =>{
+          pullTaskImage({
+            taskName: this.form3.taskName,
+            number: this.form3.number,
+            type: this.form3.type
+          }).then(response => {
             alert("获取成功，即将彼跳转界面");
-            let token= getToken();
-            this.open3= false;
-            if(this.form3.type=="label"){
-              window.open('http://10.66.65.141:8080/via-src-2.0.11/src/split.html?token=' + token + '&taskName='+
-                this.form3.taskName+ '&type=' + this.form3.type + "&streamId=" );
-            }else {
-              window.open('http://10.66.65.141:8080/via-src-2.0.11/src/check.html?token=' + token + '&taskName=' +
-                this.form3.taskName + '&qa_type=' + this.form3.type+ "&streamId=");
+            let token = getToken();
+            this.open3 = false;
+            if(this.form3.type== "label"){
+              if (this.form3.taskName == "scene_semetic_segmentation") {
+                window.open(this.labelUrl+ '/split.html?token=' + token + '&taskName=' +
+                  this.form3.taskName + '&type=' + this.form3.type);
+              } else{
+                window.open(this.labelUrl+ '/availSpace.html?token=' + token + '&taskName=' +
+                  this.form3.taskName + '&type=' + this.form3.type);
+              }
+            }else{
+              window.open(this.labelUrl+ '/check.html?token=' + token + '&taskName=' +
+                this.form3.taskName + '&qa_type=' + this.form3.type + "&streamId="+ "");
             }
           });
-        } else {
-          alert('提交错误');
-          return ;
         }
       });
     }

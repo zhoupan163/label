@@ -73,7 +73,6 @@ public class LabelViaController extends BaseController
     //@RequestBody JSONObject params
     public AjaxResult  commitViaInfo(@RequestBody String params)
     {
-
         LabelViaProjectVo labelViaProjectVo= JSON.parseObject(params,LabelViaProjectVo.class);
         return toAjax(labelViaService.commitViaInfo(labelViaProjectVo) +1);
     }
