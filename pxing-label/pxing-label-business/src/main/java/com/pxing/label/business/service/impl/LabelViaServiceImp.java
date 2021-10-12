@@ -102,6 +102,8 @@ public class LabelViaServiceImp implements LabelViaService {
         int count= 0;
         JSONObject via_img_metadata= labelViaProjectVo.getVia_img_metadata();
         for (String jpgUrl : labelViaProjectVo.getVia_image_id_list()) {
+            logger.info("jpg_url:{}",jpgUrl);
+            JSONObject j1= via_img_metadata.getJSONObject(jpgUrl);
             JSONArray regions= via_img_metadata.getJSONObject(jpgUrl).getJSONArray("regions");
             Query query = Query.query(Criteria.where("jpg_url").is(jpgUrl).and("task_name").is(labelViaProjectVo.getTaskName()));
             Update update= new Update();
