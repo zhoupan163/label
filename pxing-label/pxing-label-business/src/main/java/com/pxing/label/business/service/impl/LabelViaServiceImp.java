@@ -70,12 +70,17 @@ public class LabelViaServiceImp implements LabelViaService {
         JSONObject via_img_metadata= new JSONObject();
         //获取图片
         List<String> imageList= new ArrayList<>();
-        List<JSONArray> qaComment= new ArrayList<>();
+        List<JSONArray> qaArray= new ArrayList<>();
         List<Integer> imgStatusList= new ArrayList<>();
         for(TaskImageEntity taskImageEntity : taskImageEntityList){
             String imageUrl= taskImageEntity.getJpgUrl();
             imageList.add(imageUrl);
-            qaComment.add(taskImageEntity.getQaComment());
+            if(taskImageEntity.getQaComment()!=null){
+                qaArray.add(taskImageEntity.getQaComment());
+            }else{
+                qaArray.add(new JSONArray());
+            }
+
             imgStatusList.add(Integer.valueOf(taskImageEntity.getStatus()));
             JSONObject jsonObject= new JSONObject();
             jsonObject.put("filename", imageUrl);
@@ -86,7 +91,7 @@ public class LabelViaServiceImp implements LabelViaService {
         };
 
         labelViaProjectVo.setVia_image_id_list(imageList);
-        labelViaProjectVo.setQaArray(qaComment);
+        labelViaProjectVo.setQaArray(qaArray);
         labelViaProjectVo.setImg_status_list(imgStatusList);
         labelViaProjectVo.setVia_img_metadata(via_img_metadata);
 

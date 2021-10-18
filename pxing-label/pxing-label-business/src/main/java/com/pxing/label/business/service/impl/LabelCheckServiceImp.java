@@ -111,7 +111,7 @@ public class LabelCheckServiceImp implements LabelCheckService {
             //视频审核需要修改task_stream
             UpdateWrapper<TaskStreamEntity> updateWrapper = new UpdateWrapper<>();
             updateWrapper.eq("task_name", taskName).eq("stream_id", streamId);
-            if (imgStatusList.contains("4")) {
+            if (imgStatusList.contains(4)) {
                 updateWrapper.set("status", 4);
             } else {
                 if (qaType.equals("qa1")) {
