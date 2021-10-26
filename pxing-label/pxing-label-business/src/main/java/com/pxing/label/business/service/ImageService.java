@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface ImageService {
 
-
     List<ImageEntity> selectImageListByStreamId(String streamId);
 }

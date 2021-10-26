@@ -17,7 +17,11 @@ public interface TaskDetailService {
 
     int commitLabeled(String taskName, Integer number);
 
-    int commitQa1(String taskName, Integer number);
+    int passQa1(String taskName, Integer number);
 
-    int commitQa2(String taskName, int passCount);
+    int passQa2(String taskName, int passCount);
+
+    int rejectQa1(String taskName, int rejectCount);
+
+    int rejectQa2(String taskName, int rejectCount);
 }

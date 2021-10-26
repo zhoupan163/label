@@ -31,15 +31,23 @@ public interface TaskDetailDao extends BaseMapper<TaskDetailEntity> {
 
     @Update("update task_detail set qa1ed= qa1ed + ${number},qa1= qa1 - ${number} where task_name= '${taskName}'"+
             "and qa1 >=${number}")
-    int commitQa1(@Param("taskName") String taskName, @Param("number") Integer number);
+    int passQa1(@Param("taskName") String taskName, @Param("number") Integer number);
+
+    @Update("update task_detail set qa1= qa1 - ${number}, labeling= labeling + ${number} where task_name= '${taskName}'"+
+            "and qa1 >=${number}")
+    int rejectQa1(@Param("taskName") String taskName, @Param("number") Integer number);
 
     @Update("update task_detail set  qa1ed= qa1ed - ${number}, qa2= qa2 + ${number} where task_name= '${taskName}'" +
             "and qa1ed >=${number}")
     int pullTaskImage4Qa2(@Param("taskName") String taskName, @Param("number") Integer number);
 
+    @Update("update task_detail set qa2= qa2 - ${number}, labeling= labeling+ ${number} where task_name= '${taskName}'"+
+            "and qa2 >=${number}")
+    int rejectQa2(@Param("taskName") String taskName, @Param("number") Integer number);
+
     @Update("update task_detail set finished= finished + ${number},qa2=qa2 - ${number} where task_name= '${taskName}'"+
             "and qa2 >=${number}")
-    int commitQa2(@Param("taskName") String taskName, @Param("number") Integer number);
+    int passQa2(@Param("taskName") String taskName, @Param("number") Integer number);
 
 
 }

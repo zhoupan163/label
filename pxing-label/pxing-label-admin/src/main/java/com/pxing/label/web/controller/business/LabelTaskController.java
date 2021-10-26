@@ -98,7 +98,7 @@ public class LabelTaskController extends BaseController
 
     @Transactional
     /**
-     * 拉取图片标注
+     * 拉取图片
      */
     //@PreAuthorize("@ss.hasPermi('business:labelTag:add')")
     @PostMapping("pullTaskImage")

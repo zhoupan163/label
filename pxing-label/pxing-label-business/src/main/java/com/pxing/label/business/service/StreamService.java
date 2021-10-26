@@ -5,10 +5,12 @@ import com.pxing.label.business.domain.dto.ProjectStreamDto;
 import com.pxing.label.business.domain.entity.ProjectStreamEntity;
 
 import java.util.List;
+import java.util.Map;
 
 public interface StreamService {
 
-    List<ProjectStreamEntity> selectStreamList(ProjectStreamDto projectStreamDto);
+
+    Map<String, Object> selectStreamList(ProjectStreamDto projectStreamDto);
 
     int updateTagStatusById(String streamId);
 }

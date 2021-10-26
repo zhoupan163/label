@@ -100,23 +100,10 @@ public class SmartAdminApplicationTests {
 
     @Test
     public  void test4(){
-        String streamId="46a2a622-1e92-11ec-92ea-000c293913c8";
-        Query query1=Query.query(Criteria.where("stream_id").is(streamId));
-        List<TaskImageEntity> taskImageEntityList= mongoTemplate.find(query1 , TaskImageEntity.class);
-        int a= 710;
-        while(a< taskImageEntityList.size()){
-             TaskImageEntity taskImageEntity = taskImageEntityList.get(a);
-             mongoTemplate.remove(Query.query(Criteria.where("stream_id").is(streamId).and("image_id").is(taskImageEntity.getImageId())), TaskImageEntity.class);
-             a+=1;
-        };
-        //master_identification(String), 0917test(String), yanming(String), 0(Integer), 4(Integer)
-        List<LabelViaProjectVo> list= labelViaService.getViaProject("master_identification", "56e4209e-16fc-11ec-92ea-000c293913c8", "yanming", "label");
+        String streamId="ee57195e-16f7-11ec-92ea-000c293913c8";
+        Query query1 = Query.query(Criteria.where("stream_id").is(streamId)).limit(10).skip(23);
+        List<ImageEntity> taskImageEntityList= mongoTemplate.find(query1 , ImageEntity.class);
         System.out.println("ok");
-
-        //UpdateWrapper<TaskStreamEntity> updateWrapper= new UpdateWrapper<>();
-        //updateWrapper.eq("task_name", "行人跟踪").eq("stream_id", "9ec51a6e-0994-11ec-92e8-000c293913c8").set("label", "admin");
-        //int a= taskStreamDao.update(null, updateWrapper);
-       // System.out.println("ok");
     }
 
     @Test

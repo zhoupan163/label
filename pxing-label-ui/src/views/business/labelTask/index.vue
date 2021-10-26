@@ -58,6 +58,13 @@
       <el-table-column label="任务名称" prop="taskName" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="关联项目名称" prop="projectName" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="任务类型":formatter="typeFormat" prop="type" width="120" />
+      <el-table-column label="图片总数量" prop="id" :show-overflow-tooltip="true" width="80" />
+      <el-table-column label="标注中图片数量" prop="id" :show-overflow-tooltip="true" width="80" />
+      <el-table-column label="数量" prop="id" :show-overflow-tooltip="true" width="80" />
+      <el-table-column label="一级审核中数量" prop="id" :show-overflow-tooltip="true" width="80" />
+      <el-table-column label="二级审核中数量" prop="id" :show-overflow-tooltip="true" width="80" />
+      <el-table-column label="审核完成数量" prop="id" :show-overflow-tooltip="true" width="80" />
+      <el-table-column label="驳回图片数量" prop="id" :show-overflow-tooltip="true" width="80" />
       <el-table-column label="任务创建人" prop="createBy" width="120" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="120">
         <template slot-scope="scope">
@@ -71,6 +78,7 @@
             v-if="scope.row.type== 0"
             size="mini"
             type="text"
+            v-show="false"
             icon="el-icon-edit"
             @click="downloadTask(scope.row)"
             v-hasPermi="['business:labelTask:download']"
@@ -488,8 +496,11 @@ export default {
             if(row.taskName=="scene_semetic_segmentation") {
               window.open(this.labelUrl+'/split.html?token=' + token + '&taskName=' +
                 row.taskName + '&type=' + type);
-            }else{
+            }else if(row.taskName=="movable_space_detection"){
               window.open(this.labelUrl+'/availSpace.html?token=' + token + '&taskName=' +
+                row.taskName + '&type=' + type);
+            }else{
+              window.open(this.labelUrl+'/edgeLine.html?token=' + token + '&taskName=' +
                 row.taskName + '&type=' + type);
             }
           }else{
@@ -546,9 +557,12 @@ export default {
               if (this.form3.taskName == "scene_semetic_segmentation") {
                 window.open(this.labelUrl+ '/split.html?token=' + token + '&taskName=' +
                   this.form3.taskName + '&type=' + this.form3.type);
-              } else{
+              }else if(row.taskName=="movable_space_detection"){
                 window.open(this.labelUrl+ '/availSpace.html?token=' + token + '&taskName=' +
                   this.form3.taskName + '&type=' + this.form3.type);
+              }else{
+                 window.open(this.labelUrl+ '/edgeLine.html?token=' + token + '&taskName=' +
+                    this.form3.taskName + '&type=' + this.form3.type);
               }
             }else{
               window.open(this.labelUrl+ '/check.html?token=' + token + '&taskName=' +

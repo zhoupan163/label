@@ -70,8 +70,10 @@ public class LabelStreamTagController extends BaseController
     {
         startPage();
        // logger.info(projectStreamDto.getTagStatus().toString());
-        List<ProjectStreamEntity> list = streamService.selectStreamList(projectStreamDto);
-        return getDataTable(list);
+        Map<String, Object> map= streamService.selectStreamList(projectStreamDto);
+        List<ProjectStreamEntity> list = (List<ProjectStreamEntity>) map.get("list");
+        Long total= (Long)map.get("total");
+        return getDataTable(list, total);
     }
 
     /**

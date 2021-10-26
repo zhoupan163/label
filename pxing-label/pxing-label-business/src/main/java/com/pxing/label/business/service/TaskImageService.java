@@ -1,9 +1,11 @@
 package com.pxing.label.business.service;
 
 
+import com.pxing.label.business.domain.dto.TaskImgDto;
 import com.pxing.label.business.domain.entity.TaskImageEntity;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TaskImageService {
 
@@ -18,4 +20,6 @@ public interface TaskImageService {
     int pullTaskImage(String taskName, String type, Integer number, String userName);
 
     int checkTaskImage(String taskName, String type, String username);
+
+    Map<String, Object> getTaskImageEntityList(TaskImgDto taskImgDto);
 }

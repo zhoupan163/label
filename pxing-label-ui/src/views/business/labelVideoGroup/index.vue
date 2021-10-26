@@ -54,17 +54,21 @@
 
     <el-table v-loading="loading" :data="groupList1" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="组编号" prop="id" width="120" />
-      <el-table-column label="组名称" prop="groupName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="任务名称" prop="taskName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="任务创建人" prop="createBy" width="120" />
+      <el-table-column label="组编号" prop="id" width="80" />
+      <el-table-column label="组名称" prop="groupName" :show-overflow-tooltip="true" width="100" />
+      <el-table-column label="任务名称" prop="taskName" :show-overflow-tooltip="true" width="120" />
+      <el-table-column label="视频总数量" prop="id" :show-overflow-tooltip="true" width="80" />
+      <el-table-column label="标注中数量" prop="id" :show-overflow-tooltip="true" width="80" />
+      <el-table-column label="一级审核中数量" prop="id" :show-overflow-tooltip="true" width="80" />
+      <el-table-column label="二级审核中数量" prop="id" :show-overflow-tooltip="true" width="80" />
+      <el-table-column label="任务创建人" prop="createBy" width="100" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注信息" prop="remark" width="120" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="300" >
         <template slot-scope="scope" >
           <el-button
             size="mini"
@@ -107,7 +111,7 @@
             icon="el-icon-edit"
             @click="previewResult(scope.row)"
             v-hasPermi="['business:labelVideGroup:previewResult']"
-          >标注结果预览下载</el-button>
+          >标注结果预览</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -371,7 +375,7 @@
         </el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="downLoad">下 载</el-button>
+        <el-button type="primary" @click="downLoad" v-show="false">下 载</el-button>
         <el-button @click="cancel6">取 消</el-button>
       </div>
       <pagination

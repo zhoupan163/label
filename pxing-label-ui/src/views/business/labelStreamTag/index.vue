@@ -292,8 +292,9 @@ export default {
       console.log(this.queryParams);
       listStreamList(this.queryParams).then(
         response => {
-          this.streamList = response.rows;
-          this.getList1()
+          this.streamList1 = response.rows;
+          this.loading = false;
+          //this.getList1()
           this.total = response.total;
         }
       );

@@ -5,7 +5,9 @@ package com.pxing.label.business.service.impl;
 
 
 import com.alibaba.fastjson.JSONArray;
+import com.pxing.label.business.domain.dto.TaskImgDto;
 import com.pxing.label.business.domain.entity.ImageEntity;
+import com.pxing.label.business.domain.entity.ProjectStreamEntity;
 import com.pxing.label.business.domain.entity.TaskImageEntity;
 import com.pxing.label.business.service.ImageService;
 import com.pxing.label.business.service.TaskDetailService;
@@ -18,7 +20,9 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -119,5 +123,35 @@ public class TaskImageServiceImp implements TaskImageService {
         return (int)mongoTemplate.count(query, TaskImageEntity.class);
     }
 
-
+    @Override
+    public Map<String,Object> getTaskImageEntityList(TaskImgDto taskImgDto) {
+        Criteria criteria= Criteria.where("_id").nin("");
+        if (taskImgDto.getTaskName()!= null){
+            criteria.and("task_name").regex(taskImgDto.getTaskName());
+        };
+        if(taskImgDto.getImageId()!=null){
+            criteria.and("image_id").regex(taskImgDto.getImageId());
+        };
+        if(taskImgDto.getStreamId()!=null){
+            criteria.and("stream_id").regex(taskImgDto.getStreamId());
+        };
+        if(taskImgDto.getStatus()!=null){
+            criteria.and("status").is(taskImgDto.getStatus());
+        };
+        if(taskImgDto.getLabel()!=null){
+            criteria.and("label").regex(taskImgDto.getLabel());
+        };
+        if(taskImgDto.getQa1()!=null){
+            criteria.and("qa1").regex(taskImgDto.getQa1());
+        };
+        if(taskImgDto.getQa2()!=null){
+            criteria.and("qa2").regex(taskImgDto.getQa2());
+        };
+        Map<String,Object> map= new HashMap<>();
+        Query query=Query.query(criteria).limit(taskImgDto.getPageSize()).skip( (taskImgDto.getPageNum() -1)*
+                taskImgDto.getPageSize());
+        map.put("list",  mongoTemplate.find(query, TaskImageEntity.class));
+        map.put("total", mongoTemplate.count(Query.query(criteria), TaskImageEntity.class));
+        return map;
+    }
 }

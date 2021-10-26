@@ -61,12 +61,23 @@ public class TaskDetailServiceImp implements TaskDetailService {
     }
 
     @Override
-    public int commitQa1(String taskName, Integer number) {
-        return taskDetailDao.commitQa1(taskName, number);
+    public int passQa1(String taskName, Integer number) {
+        return taskDetailDao.passQa1(taskName, number);
     }
 
     @Override
-    public int commitQa2(String taskName, int passCount) {
-        return taskDetailDao.commitQa2(taskName, passCount);
+    public int passQa2(String taskName, int passCount) {
+
+        return taskDetailDao.passQa2(taskName, passCount);
+    }
+
+    @Override
+    public int rejectQa1(String taskName, int rejectCount) {
+        return taskDetailDao.rejectQa1(taskName, rejectCount);
+    }
+
+    @Override
+    public int rejectQa2(String taskName, int rejectCount) {
+        return taskDetailDao.rejectQa2(taskName, rejectCount);
     }
 }

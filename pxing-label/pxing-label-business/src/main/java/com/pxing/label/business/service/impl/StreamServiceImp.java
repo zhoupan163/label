@@ -14,7 +14,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -25,16 +27,18 @@ public class StreamServiceImp implements StreamService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+
     @Override
-    public List<ProjectStreamEntity> selectStreamList(ProjectStreamDto projectStreamDto) {
-          //待优化查询条件
-          Criteria criteria= Criteria.where("frame_size").nin(0);
-          if (projectStreamDto.getProjectName()!=null){
-              criteria.and("project_name").is(projectStreamDto.getProjectName());
-          };
-          if(projectStreamDto.getSensorLocation()!=null){
-              criteria.and("sensor_location").regex(projectStreamDto.getSensorLocation());
-          };
+    public Map<String,Object> selectStreamList(ProjectStreamDto projectStreamDto) {
+        //待优化查询条件
+        Criteria criteria= Criteria.where("frame_size").nin(0);
+        if (projectStreamDto.getProjectName()!=null){
+            criteria.and("project_name").is(projectStreamDto.getProjectName());
+        };
+        if(projectStreamDto.getSensorLocation()!=null){
+            criteria.and("sensor_location").regex(projectStreamDto.getSensorLocation());
+        };
         if(projectStreamDto.getRemark()!=null){
             criteria.and("comment").regex(projectStreamDto.getRemark());
         };
@@ -47,11 +51,13 @@ public class StreamServiceImp implements StreamService {
             criteria.and("update_time").gte(DateUtils.getTimeStamp(projectStreamDto.getDateRange().get(0))).lte
                     (DateUtils.getTimeStamp(projectStreamDto.getDateRange().get(1)));
         };
-        Query query=Query.query(criteria);
-          //Query query=Query.query(criteria).with(PageRequest.of(projectStreamDto.getPageNum()* projectStreamDto.getPageSize(),
-             //     projectStreamDto.getPageSize()));
-          mongoTemplate.find(query, ProjectStreamEntity.class);
-        return mongoTemplate.find(query, ProjectStreamEntity.class);
+        //Query query=Query.query(criteria);
+        Query query=Query.query(criteria).limit(projectStreamDto.getPageSize()).skip( (projectStreamDto.getPageNum() -1)*
+                        projectStreamDto.getPageSize());
+        Map<String, Object> map= new HashMap<>();
+        map.put("list",  mongoTemplate.find(query, ProjectStreamEntity.class));
+        map.put("total", mongoTemplate.count(Query.query(criteria), ProjectStreamEntity.class));
+        return map;
     }
 
     @Override

@@ -123,7 +123,6 @@ public class LabelViaServiceImp implements LabelViaService {
 
     @Override
     public int commitViaInfo(LabelViaProjectVo labelViaProjectVo) {
-
         int count= 0;
         JSONObject via_img_metadata= labelViaProjectVo.getVia_img_metadata();
         for (String jpgUrl : labelViaProjectVo.getVia_image_id_list()) {
@@ -137,12 +136,10 @@ public class LabelViaServiceImp implements LabelViaService {
             count+= mongoTemplate.updateFirst(query, update, TaskImageEntity.class).getModifiedCount();
         };
         logger.info("成功提交条数:{}",count);
-
         //视频流需要提交  非视频流不需要提交
         if(labelViaProjectVo.getStreamId()!=null && !labelViaProjectVo.getStreamId().equals("")){
             taskStreamService.commitTaskStream(labelViaProjectVo.getTaskName(), labelViaProjectVo.getStreamId());
         }
-
         //修改task_detail表
         taskDetailService.commitLabeled(labelViaProjectVo.getTaskName(), count);
         return count;

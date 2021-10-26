@@ -102,9 +102,20 @@ public class LabelCheckServiceImp implements LabelCheckService {
 
             };
             if(qaType!=null && qaType.equals("qa1")&&passCount>0){
-                taskDetailService.commitQa1(taskName, passCount);
+                if(passCount>0){
+                    taskDetailService.passQa1(taskName, passCount);
+                }
+                if(rejectCount>0){
+                    //taskDetailService.rejectQa1(taskName, rejectCount);
+                }
+
             }else if(qaType!=null && qaType.equals("qa2")&&passCount>0){
-                taskDetailService.commitQa2(taskName, passCount);
+                if(passCount>0){
+                   taskDetailService.passQa2(taskName, passCount);
+                }
+                if(rejectCount>0) {
+                    //taskDetailService.rejectQa2(taskName, rejectCount);
+                 }
                 }
             return 1;
         } else {
